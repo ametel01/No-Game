@@ -4,7 +4,30 @@ protostar_version = "0.2.5"
 ["protostar.project"]
 libs_path = "lib"
 
+["protostar.shared_command_configs"]
+cairo_path = ["./src"]
+output = "proto/build"
+disable_hint_validation = true
+
 ["protostar.contracts"]
+facilities = [
+    "src/facilities.Facilities.cairo"
+]
 main = [
-    "src/main.cairo",
+    "src/main/Ogame.cairo"
+]
+minter = [
+   "src/minter/erc721_minter.cairo"
+]
+research = [
+    "src/research/ResearchLab.cairo"
+]
+resources = [
+    "src/resources/Resources.cairo"
+]
+shipyard = [
+    "src/shipyard/Shipyard.cairo"
+]
+erc20 = [
+    "src/token/erc20/ERC20_Mintable_Burnable.cairo"
 ]
