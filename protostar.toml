@@ -6,12 +6,11 @@ libs_path = "lib"
 
 ["protostar.shared_command_configs"]
 cairo_path = ["./src"]
-output = "proto/build"
 disable_hint_validation = true
 
 ["protostar.contracts"]
 facilities = [
-    "src/facilities.Facilities.cairo"
+    "src/facilities/Facilities.cairo"
 ]
 main = [
     "src/main/Ogame.cairo"
