@@ -6,10 +6,10 @@ from starkware.cairo.common.pow import pow
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.math import assert_le
 from starkware.cairo.common.bool import TRUE, FALSE
-from contracts.Ogame.IOgame import IOgame
-from contracts.Tokens.erc20.interfaces.IERC20 import IERC20
-from contracts.utils.formulas import Formulas
-from contracts.ResearchLab.library import ResearchLab
+from main.IOgame import IOgame
+from token.erc20.interfaces.IERC20 import IERC20
+from utils.formulas import Formulas
+from research.library import ResearchLab
 
 ##############################################################################################
 #                                   STRUCTS                                                  #

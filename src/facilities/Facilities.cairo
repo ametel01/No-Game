@@ -5,9 +5,9 @@ from starkware.starknet.common.syscalls import get_caller_address, get_block_tim
 from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.bool import TRUE
-from contracts.utils.formulas import Formulas
-from contracts.Facilities.library import Facilities, _ogame_address
-from contracts.Ogame.IOgame import IOgame
+from utils.formulas import Formulas
+from facilities.library import Facilities, _ogame_address
+from main.IOgame import IOgame
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -23,7 +23,7 @@ func _shipyard_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
 ) -> (metal : felt, crystal : felt, deuterium : felt, time_unlocked : felt):
     alloc_locals
     assert_not_zero(caller)
-    Facilities.check_building_que_not_busy(caller)
+    Facilities.check_que_not_busy(caller)
     Facilities.shipyard_requirements_check(caller)
     let (ogame_address) = _ogame_address.read()
     let (_, _, _, _, robot_factory_level, _, shipyard_level, _) = IOgame.get_structures_levels(
@@ -57,7 +57,7 @@ func _robot_factory_upgrade_start{
 }(caller : felt) -> (metal : felt, crystal : felt, deuterium : felt, time_unlocked : felt):
     alloc_locals
     assert_not_zero(caller)
-    Facilities.check_building_que_not_busy(caller)
+    Facilities.check_que_not_busy(caller)
     let (ogame_address) = _ogame_address.read()
     let (_, _, _, _, robot_factory_level, _, _, _) = IOgame.get_structures_levels(
         ogame_address, caller
@@ -90,7 +90,7 @@ func _research_lab_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
 ) -> (metal : felt, crystal : felt, deuterium : felt, time_unlocked : felt):
     alloc_locals
     assert_not_zero(caller)
-    Facilities.check_building_que_not_busy(caller)
+    Facilities.check_que_not_busy(caller)
     let (ogame_address) = _ogame_address.read()
     let (_, _, _, _, robot_factory_level, research_lab_level, _, _) = IOgame.get_structures_levels(
         ogame_address, caller
@@ -123,7 +123,7 @@ func _nanite_factory_upgrade_start{
 }(caller : felt) -> (metal : felt, crystal : felt, deuterium : felt, time_unlocked : felt):
     alloc_locals
     assert_not_zero(caller)
-    Facilities.check_building_que_not_busy(caller)
+    Facilities.check_que_not_busy(caller)
     Facilities.nanite_factory_requirements_check(caller)
     let (ogame_address) = _ogame_address.read()
     let (
