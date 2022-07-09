@@ -4,13 +4,17 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_not_zero
 from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
 from starkware.cairo.common.uint256 import Uint256
-from contracts.utils.Ownable import Ownable_initializer, Ownable_only_owner
-from contracts.utils.constants import TRUE, RESEARCH_LAB_BUILDING_ID
-from contracts.Resources.IResources import IResources
-from contracts.ResearchLab.IResearchLab import IResearchLab
-from contracts.Shipyard.IShipyard import IShipyard
-from contracts.Facilities.IFacilities import IFacilities
-from contracts.Ogame.library import reset_building_que, reset_timelock
+from starkware.cairo.common.bool import TRUE
+from openzeppelin.access.ownable import Ownable
+from main.library import NoGame
+from resources.IResources import IResources
+from resources.library import Resources
+from research.IResearchLab import IResearchLab
+from shipyard.IShipyard import IShipyard
+from facilities.IFacilities import IFacilities
+from utils.formulas import Formulas
+from main.structs import TechLevels, BuildingQue, Cost, Planet, MineLevels, Energy, Fleet
+
 from contracts.StructuresManager import (
     get_upgrades_cost,
     _generate_planet,
@@ -24,68 +28,14 @@ from contracts.StructuresManager import (
     _end_solar_plant_upgrade,
     _get_planet,
 )
-from contracts.Resources.library import Resources
-from contracts.ResourcesManager import (
-    _collect_resources,
-    _get_net_energy,
-    _calculate_available_resources,
-)
-
-from contracts.utils.formulas import Formulas
-from contracts.Ogame.storage import (
-    _number_of_planets,
-    _planets,
-    _planet_to_owner,
-    _players_spent_resources,
-    erc721_token_address,
-    erc20_metal_address,
-    erc20_crystal_address,
-    erc20_deuterium_address,
-    resources_address,
-    facilities_address,
-    research_lab_address,
-    shipyard_address,
-    shipyard_level,
-    robot_factory_level,
-    research_lab_level,
-    nanite_factory_level,
-    buildings_timelock,
-    building_qued,
-    _energy_tech,
-    _computer_tech,
-    _laser_tech,
-    _armour_tech,
-    _astrophysics,
-    _espionage_tech,
-    _hyperspace_drive,
-    _hyperspace_tech,
-    _impulse_drive,
-    _ion_tech,
-    _plasma_tech,
-    _weapons_tech,
-    _shielding_tech,
-    _combustion_drive,
-    _ships_cargo,
-    _ships_recycler,
-    _ships_espionage_probe,
-    _ships_solar_satellite,
-    _ships_light_fighter,
-    _ships_cruiser,
-    _ships_battleship,
-    _ships_deathstar,
-)
-from contracts.Ogame.structs import TechLevels, BuildingQue, Cost, Planet, MineLevels, Energy, Fleet
 
 #########################################################################################
 #                                   Constructor                                         #
 #########################################################################################
 
 @constructor
-func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    erc721_address : felt, owner : felt
-):
-    erc721_token_address.write(erc721_address)
-    Ownable_initializer(owner)
+func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(owner : felt):
+    Ownable.initializer(owner)
     return ()
 end
 
@@ -94,7 +44,7 @@ end
 #########################################################################################
 
 @view
-func number_of_planets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+func numberOfPlanets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     n_planets : felt
 ):
     let (n) = _number_of_planets.read()
@@ -110,61 +60,22 @@ func owner_of{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}
 end
 
 @view
-func get_erc721_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    res : felt
+func getTokensAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt
 ):
-    let (res) = erc721_token_address.read()
-    return (res)
+    let (erc721, metal, crystal, deuterium) = NoGame.get_tokens_addresses()
 end
 
 @view
-func get_metal_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    res : felt
+func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    _resources : felt, _facilities : felt, _shipyard : felt, _research : felt
 ):
-    let (res) = erc20_metal_address.read()
-    return (res)
+    let (resources, facilities, shipyard, research) = NoGame.get_modules_addresses()
+    return (resources, facilities, shipyard, research)
 end
 
 @view
-func get_crystal_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    res : felt
-):
-    let (res) = erc20_crystal_address.read()
-    return (res)
-end
-
-@view
-func get_deuterium_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    res : felt
-):
-    let (res) = erc20_deuterium_address.read()
-    return (res)
-end
-
-@view
-func get_facilities_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    ) -> (res : felt):
-    let (res) = facilities_address.read()
-    return (res)
-end
-
-@view
-func get_research_lab_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    ) -> (res : felt):
-    let (res) = research_lab_address.read()
-    return (res)
-end
-
-@view
-func get_shipyard_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    res : felt
-):
-    let (res) = shipyard_address.read()
-    return (res)
-end
-
-@view
-func get_structures_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getStructuresLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (
     metal_mine : felt,
@@ -176,16 +87,9 @@ func get_structures_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     shipyard : felt,
     nanite_factory : felt,
 ):
-    let (planet_id) = _planet_to_owner.read(caller)
-    let (planet) = _planets.read(planet_id)
-    let metal = planet.mines.metal
-    let crystal = planet.mines.crystal
-    let deuterium = planet.mines.deuterium
-    let solar_plant = planet.energy.solar_plant
-    let (robot_factory) = robot_factory_level.read(planet_id)
-    let (research_lab) = research_lab_level.read(planet_id)
-    let (shipyard) = shipyard_level.read(planet_id)
-    let (nanite) = nanite_factory_level.read(planet_id)
+    let (
+        metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite
+    ) = NoGame.get_structures_levels(caller)
     return (
         metal_mine=metal,
         crystal_mine=crystal,
@@ -199,20 +103,12 @@ func get_structures_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 end
 
 @view
-func resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
-    alloc_locals
-    let (id) = _planet_to_owner.read(caller)
-    let (planet) = _planets.read(id)
-    let (metal_available, crystal_available, deuterium_available) = _calculate_available_resources(
-        caller
-    )
-    let metal = planet.mines.metal
-    let crystal = planet.mines.crystal
-    let deuterium = planet.mines.deuterium
-    let solar_plant = planet.energy.solar_plant
-    let (energy_available) = _get_net_energy(metal, crystal, deuterium, solar_plant)
+    let (
+        metal_available, crystal_available, deuterium_available, energy_available
+    ) = NoGame.getResourcesAvailable()
     return (metal_available, crystal_available, deuterium_available, energy_available)
 end
 
@@ -272,7 +168,7 @@ end
 func set_erc20_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     metal_token : felt, crystal_token : felt, deuterium_token : felt
 ):
-    Ownable_only_owner()
+    Ownable.assert_only_owner()
     erc20_metal_address.write(metal_token)
     erc20_crystal_address.write(crystal_token)
     erc20_deuterium_address.write(deuterium_token)
@@ -283,7 +179,7 @@ end
 func set_modules_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     _resources_address, _facilities_address : felt, _lab_address : felt, _shipyard_address : felt
 ):
-    Ownable_only_owner()
+    Ownable.assert_only_owner()
 
     resources_address.write(_resources_address)
     facilities_address.write(_facilities_address)

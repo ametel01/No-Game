@@ -5,9 +5,9 @@ from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.bool import TRUE
 from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
-from contracts.Shipyard.library import _ogame_address, Shipyard
-from contracts.Ogame.IOgame import IOgame
-from contracts.utils.formulas import Formulas
+from shipyard.library import _ogame_address, Shipyard
+from main.IOgame import IOgame
+from utils.formulas import Formulas
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -205,7 +205,9 @@ func _build_cruiser_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     caller : felt, number_of_units : felt
 ) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
     alloc_locals
-    let (metal_required, crystal_required, deuterium_required) = Shipyard.cruiser_cost(number_of_units)
+    let (metal_required, crystal_required, deuterium_required) = Shipyard.cruiser_cost(
+        number_of_units
+    )
     assert_not_zero(caller)
     Shipyard.check_que_not_busy(caller)
     Shipyard.cruiser_requirements_check(caller)

@@ -5,11 +5,10 @@ from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.bool import TRUE
 from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
-from contracts.ResearchLab.library import _ogame_address, ResearchLab
+from research.library import _ogame_address, ResearchLab
 from contracts.ResourcesManager import _pay_resources_erc20
-from contracts.Ogame.IOgame import IOgame
-from contracts.Ogame.library import _check_que_not_busy
-from contracts.utils.formulas import Formulas
+from main.IOgame import IOgame
+from utils.formulas import Formulas
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(

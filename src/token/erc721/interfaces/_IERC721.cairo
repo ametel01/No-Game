@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: MIT
-# OpenZeppelin Contracts for Cairo v0.2.0 (token/erc721/interfaces/IERC721.cairo)
+# OpenZeppelin Cairo Contracts v0.1.0 (token/erc721/interfaces/IERC721.cairo)
 
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
 
-from openzeppelin.introspection.IERC165 import IERC165
+from contracts.utils.IERC165 import IERC165
 
 @contract_interface
 namespace IERC721:
@@ -16,11 +16,11 @@ namespace IERC721:
     end
 
     func safeTransferFrom(
-        from_ : felt, to : felt, tokenId : Uint256, data_len : felt, data : felt*
+        _from : felt, to : felt, tokenId : Uint256, data_len : felt, data : felt*
     ):
     end
 
-    func transferFrom(from_ : felt, to : felt, tokenId : Uint256):
+    func transferFrom(_from : felt, to : felt, tokenId : Uint256):
     end
 
     func approve(approved : felt, tokenId : Uint256):

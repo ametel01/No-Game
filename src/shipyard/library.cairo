@@ -3,13 +3,13 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_le, unsigned_div_rem
 from starkware.cairo.common.math_cmp import is_le
-from contracts.utils.constants import TRUE, FALSE
-from contracts.Ogame.IOgame import IOgame
-from contracts.Tokens.erc20.interfaces.IERC20 import IERC20
-from starkware.cairo.common.pow import pow
-from contracts.ResearchLab.library import ResearchLab
-from contracts.Ogame.structs import TechLevels
+from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
+from main.IOgame import IOgame
+from token.erc20.interfaces.IERC20 import IERC20
+from starkware.cairo.common.pow import pow
+from research.library import ResearchLab
+from main.structs import TechLevels
 
 #########################################################################################
 #                                           CONSTANTS                                   #
@@ -102,7 +102,7 @@ namespace Shipyard:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -119,7 +119,7 @@ namespace Shipyard:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -139,7 +139,7 @@ namespace Shipyard:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -159,7 +159,7 @@ namespace Shipyard:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -173,7 +173,7 @@ namespace Shipyard:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -190,7 +190,7 @@ namespace Shipyard:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -210,7 +210,7 @@ namespace Shipyard:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -227,7 +227,7 @@ namespace Shipyard:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -460,7 +460,7 @@ namespace Shipyard:
         deuterium_required : felt,
     ):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, _, shipyard_level, _) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (build_time) = production_time(metal_required, crystal_required, shipyard_level)

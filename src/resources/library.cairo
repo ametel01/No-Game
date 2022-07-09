@@ -6,16 +6,14 @@ from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.uint256 import Uint256
 from starkware.cairo.common.bool import TRUE, FALSE
-from contracts.utils.constants import UINT256_DECIMALS
-from contracts.Ogame.IOgame import IOgame
-from contracts.Tokens.erc20.interfaces.IERC20 import IERC20
-from contracts.Tokens.erc721.interfaces.IERC721 import IERC721
-from contracts.utils.formulas import Formulas
-from contracts.Facilities.library import Facilities
-from contracts.Ogame.storage import (
+from main.IOgame import IOgame
+from token.erc20.interfaces.IERC20 import IERC20
+from token.erc721.interfaces.IERC721 import IERC721
+from utils.formulas import Formulas
+from facilities.library import Facilities
+from main.storage import (
     erc721_token_address,
-    _planets,
-    _resources_timer,
+    planets,
     erc20_metal_address,
     erc20_crystal_address,
     erc20_deuterium_address,
@@ -23,6 +21,8 @@ from contracts.Ogame.storage import (
 #########################################################################################
 #                                           CONSTANTS                                   #
 #########################################################################################
+
+const E18 = 10 ** 18
 
 const METAL_MINE_ID = 41
 const CRYSTAL_MINE_ID = 42
@@ -67,6 +67,10 @@ end
 func resources_qued(address : felt, id : felt) -> (is_qued : felt):
 end
 
+@storage_var
+func resources_timer(planet_id : Uint256) -> (last_collection_timestamp : felt):
+end
+
 namespace Resources:
     #########################################################################################
     #                                           CONSTANTS                                   #
@@ -86,8 +90,8 @@ namespace Resources:
         alloc_locals
         let (erc721_address) = erc721_token_address.read()
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
-        let (planet) = _planets.read(planet_id)
-        let (time_start) = _resources_timer.read(planet_id)
+        let (planet) = planets.read(planet_id)
+        let (time_start) = resources_timer.read(planet_id)
         let metal_level = planet.mines.metal
         let crystal_level = planet.mines.crystal
         let deuterium_level = planet.mines.deuterium
@@ -144,7 +148,7 @@ namespace Resources:
         let (erc721_address) = erc721_token_address.read()
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
         let (time_now) = get_block_timestamp()
-        _resources_timer.write(planet_id, time_now)
+        resources_timer.write(planet_id, time_now)
         return ()
     end
 
@@ -154,9 +158,9 @@ namespace Resources:
         let (metal_address) = erc20_metal_address.read()
         let (crystal_address) = erc20_crystal_address.read()
         let (deuterium_address) = erc20_deuterium_address.read()
-        let metal = Uint256(metal_amount * UINT256_DECIMALS, 0)
-        let crystal = Uint256(crystal_amount * UINT256_DECIMALS, 0)
-        let deuterium = Uint256(deuterium_amount * UINT256_DECIMALS, 0)
+        let metal = Uint256(metal_amount * E18, 0)
+        let crystal = Uint256(crystal_amount * E18, 0)
+        let deuterium = Uint256(deuterium_amount * E18, 0)
         IERC20.mint(metal_address, to, metal)
         IERC20.mint(crystal_address, to, crystal)
         IERC20.mint(deuterium_address, to, deuterium)
@@ -170,9 +174,9 @@ namespace Resources:
         let (metal_address) = erc20_metal_address.read()
         let (crystal_address) = erc20_crystal_address.read()
         let (deuterium_address) = erc20_deuterium_address.read()
-        let metal = Uint256(metal_amount * UINT256_DECIMALS, 0)
-        let crystal = Uint256(crystal_amount * UINT256_DECIMALS, 0)
-        let deuterium = Uint256(deuterium_amount * UINT256_DECIMALS, 0)
+        let metal = Uint256(metal_amount * E18, 0)
+        let crystal = Uint256(crystal_amount * E18, 0)
+        let deuterium = Uint256(deuterium_amount * E18, 0)
         IERC20.burn(metal_address, address, metal)
         IERC20.burn(crystal_address, address, crystal)
         IERC20.burn(deuterium_address, address, deuterium)
@@ -208,6 +212,25 @@ namespace Resources:
         let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
         let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
         return (metal_available.low, crystal_available.low, deuterium_available.low)
+    end
+
+    # TODO: add satellites to energy calculation
+    func get_net_energy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        metal_level : felt, crystal_level : felt, deuterium_level : felt, solar_plant_level : felt
+    ) -> (net_energy : felt):
+        alloc_locals
+        let (metal_consumption) = Formulas.consumption_energy(metal_level)
+        let (crystal_consumption) = Formulas.consumption_energy(crystal_level)
+        let (deuterium_consumption) = Formulas.consumption_energy_deuterium(deuterium_level)
+        let total_energy_required = metal_consumption + crystal_consumption + deuterium_consumption
+        let (energy_available) = Formulas.solar_plant_production(solar_plant_level)
+        let (not_negative_energy) = is_le(total_energy_required, energy_available)
+        if not_negative_energy == FALSE:
+            return (0)
+        else:
+            let res = energy_available - total_energy_required
+        end
+        return (res)
     end
 
     func check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -247,7 +270,7 @@ namespace Resources:
         deuterium_required : felt,
     ) -> (time_unlocked : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = IOgame.get_structures_levels(
+        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (build_time) = Formulas.buildings_production_time(

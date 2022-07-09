@@ -26,7 +26,7 @@ func _shipyard_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     Facilities.check_que_not_busy(caller)
     Facilities.shipyard_requirements_check(caller)
     let (ogame_address) = _ogame_address.read()
-    let (_, _, _, _, robot_factory_level, _, shipyard_level, _) = IOgame.get_structures_levels(
+    let (_, _, _, _, robot_factory_level, _, shipyard_level, _) = IOgame.getStructuresLevels(
         ogame_address, caller
     )
     let (metal_required, crystal_required, deuterium_required) = Facilities.shipyard_upgrade_cost(
@@ -59,7 +59,7 @@ func _robot_factory_upgrade_start{
     assert_not_zero(caller)
     Facilities.check_que_not_busy(caller)
     let (ogame_address) = _ogame_address.read()
-    let (_, _, _, _, robot_factory_level, _, _, _) = IOgame.get_structures_levels(
+    let (_, _, _, _, robot_factory_level, _, _, _) = IOgame.getStructuresLevels(
         ogame_address, caller
     )
     let (
@@ -92,7 +92,7 @@ func _research_lab_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     assert_not_zero(caller)
     Facilities.check_que_not_busy(caller)
     let (ogame_address) = _ogame_address.read()
-    let (_, _, _, _, robot_factory_level, research_lab_level, _, _) = IOgame.get_structures_levels(
+    let (_, _, _, _, robot_factory_level, research_lab_level, _, _) = IOgame.getStructuresLevels(
         ogame_address, caller
     )
     let (
@@ -126,9 +126,9 @@ func _nanite_factory_upgrade_start{
     Facilities.check_que_not_busy(caller)
     Facilities.nanite_factory_requirements_check(caller)
     let (ogame_address) = _ogame_address.read()
-    let (
-        _, _, _, _, robot_factory_level, _, _, nanite_factory_level
-    ) = IOgame.get_structures_levels(ogame_address, caller)
+    let (_, _, _, _, robot_factory_level, _, _, nanite_factory_level) = IOgame.getStructuresLevels(
+        ogame_address, caller
+    )
     let (
         metal_required, crystal_required, deuterium_required
     ) = Facilities.nanite_factory_upgrade_cost(nanite_factory_level)

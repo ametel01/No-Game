@@ -5,12 +5,12 @@ from starkware.cairo.common.uint256 import Uint256
 from starkware.cairo.common.math import assert_le
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
-from contracts.utils.constants import TRUE, FALSE
-from contracts.Ogame.IOgame import IOgame
-from contracts.Tokens.erc20.interfaces.IERC20 import IERC20
-from contracts.Ogame.structs import TechLevels
-from contracts.utils.formulas import Formulas
+from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
+from main.IOgame import IOgame
+from openzeppelin.token.erc20.interfaces.IERC20 import IERC20
+from main.structs import TechLevels
+from utils.formulas import Formulas
 
 ########################################################################################
 #                                           STRUCTS                                     #
@@ -622,7 +622,7 @@ namespace ResearchLab:
         deuterium_required : felt,
     ):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, research_lab_level, _, nanite_level) = IOgame.get_structures_levels(
+        let (_, _, _, _, _, research_lab_level, _, nanite_level) = IOgame.getStructuresLevels(
             ogame_address, caller
         )
         let (research_time) = Formulas.buildings_production_time(

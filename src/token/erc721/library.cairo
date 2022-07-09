@@ -73,6 +73,10 @@ end
 func ERC721_token_uri(token_id : Uint256) -> (token_uri : felt):
 end
 
+@storage_var
+func ERC721_owner_to_id(owner : felt) -> (token_id : Uint256):
+end
+
 namespace ERC721:
     #
     # Constructor
@@ -160,6 +164,14 @@ namespace ERC721:
         # if tokenURI is not set, it will return 0
         let (token_uri) = ERC721_token_uri.read(token_id)
         return (token_uri)
+    end
+
+    func owner_to_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+        token_id : felt
+    ):
+        let (owner) = get_caller_address()
+        let (token_id) = ERC721_owner_to_id.read(owner)
+        return (token_id)
     end
 
     #

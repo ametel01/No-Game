@@ -2,9 +2,9 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_not_zero
-from contracts.Resources.library import Resources, _ogame_address
-from contracts.Ogame.IOgame import IOgame
-from contracts.utils.formulas import Formulas
+from resources.library import Resources, _ogame_address
+from main.IOgame import IOgame
+from utils.formulas import Formulas
 
 @external
 func _metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -16,7 +16,7 @@ func _metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     let (ogame_address) = _ogame_address.read()
     let (
         metal_level, _, _, _, robot_factory_level, _, _, nanite_level
-    ) = IOgame.get_structures_levels(ogame_address, caller)
+    ) = IOgame.getStructuresLevels(ogame_address, caller)
     let (metal_required, crystal_required, deuterium_required) = Formulas.metal_building_cost(
         metal_level
     )

@@ -1,7 +1,8 @@
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
-from contracts.Ogame.structs import BuildingQue, Planet
+from main.structs import BuildingQue, Planet
+
 ##################################################################################
 #                              TOKENS ADDRESSES                              #
 ##################################################################################
@@ -36,26 +37,21 @@ end
 
 # @dev Returns the total number of planets present in the universe.
 @storage_var
-func _number_of_planets() -> (n : felt):
+func number_of_planets() -> (n : felt):
 end
 
 # @dev Returns the planet struct of a given planet.
 # @params The planet ID which is = to the NFT ID.
 @storage_var
-func _planets(planet_id : Uint256) -> (planet : Planet):
-end
-
-# @dev Mapping between player address and planet ID.
-# @params The player address
-@storage_var
-func _planet_to_owner(address : felt) -> (planet_id : Uint256):
+func planets(planet_id : Uint256) -> (planet : Planet):
 end
 
 @storage_var
-func _players_spent_resources(address : felt) -> (spent_resources : felt):
+func players_spent_resources(address : felt) -> (spent_resources : felt):
 end
+
 ##################################################################################
-#                              COMPONENTS ADDRESSES                              #
+#                              MODULES ADDRESSES                                 #
 ##################################################################################
 
 @storage_var
@@ -75,15 +71,39 @@ func research_lab_address() -> (address : felt):
 end
 
 ##################################################################################
-#                              LOCKS AND QUES                                    #
+#                              RESOURCES STORAGE                                 #
 ##################################################################################
 
 @storage_var
-func _resources_timer(planet_id : Uint256) -> (last_collection_timestamp : felt):
+func metal_available(planet_id : Uint256) -> (res : felt):
 end
 
 @storage_var
-func building_qued(caller : felt, building_id : felt) -> (is_qued : felt):
+func crystal_available(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func deuterium_available(planet_id : Uint256) -> (res : felt):
+end
+
+##################################################################################
+#                              MINING STRUCTURES STORAGE                         #
+##################################################################################
+
+@storage_var
+func metal_mine_level(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func crystal_mine_level(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func deuterium_mine_level(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func solar_plant_level(planet_id : Uint256) -> (res : felt):
 end
 
 ##################################################################################
@@ -116,59 +136,59 @@ end
 ##################################################################################
 
 @storage_var
-func _energy_tech(planet_id : Uint256) -> (level : felt):
+func energy_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _computer_tech(planet_id : Uint256) -> (level : felt):
+func computer_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _laser_tech(planet_id : Uint256) -> (level : felt):
+func laser_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _armour_tech(planet_id : Uint256) -> (level : felt):
+func armour_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _ion_tech(planet_id : Uint256) -> (level : felt):
+func ion_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _espionage_tech(planet_id : Uint256) -> (level : felt):
+func espionage_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _plasma_tech(planet_id : Uint256) -> (level : felt):
+func plasma_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _weapons_tech(planet_id : Uint256) -> (level : felt):
+func weapons_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _shielding_tech(planet_id : Uint256) -> (level : felt):
+func shielding_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _hyperspace_tech(planet_id : Uint256) -> (level : felt):
+func hyperspace_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _astrophysics(planet_id : Uint256) -> (level : felt):
+func astrophysics(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _combustion_drive(planet_id : Uint256) -> (level : felt):
+func combustion_drive(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _hyperspace_drive(planet_id : Uint256) -> (level : felt):
+func hyperspace_drive(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
-func _impulse_drive(planet_id : Uint256) -> (level : felt):
+func impulse_drive(planet_id : Uint256) -> (level : felt):
 end
 
 ##################################################################################
@@ -176,33 +196,33 @@ end
 ##################################################################################
 
 @storage_var
-func _ships_cargo(planet_id : Uint256) -> (amount : felt):
+func ships_cargo(planet_id : Uint256) -> (amount : felt):
 end
 
 @storage_var
-func _ships_recycler(planet_id : Uint256) -> (amount : felt):
+func ships_recycler(planet_id : Uint256) -> (amount : felt):
 end
 
 @storage_var
-func _ships_espionage_probe(planet_id : Uint256) -> (amount : felt):
+func ships_espionage_probe(planet_id : Uint256) -> (amount : felt):
 end
 
 @storage_var
-func _ships_solar_satellite(planet_id : Uint256) -> (amount : felt):
+func ships_solar_satellite(planet_id : Uint256) -> (amount : felt):
 end
 
 @storage_var
-func _ships_light_fighter(planet_id : Uint256) -> (amount : felt):
+func ships_light_fighter(planet_id : Uint256) -> (amount : felt):
 end
 
 @storage_var
-func _ships_cruiser(planet_id : Uint256) -> (amount : felt):
+func ships_cruiser(planet_id : Uint256) -> (amount : felt):
 end
 
 @storage_var
-func _ships_battleship(planet_id : Uint256) -> (amount : felt):
+func ships_battleship(planet_id : Uint256) -> (amount : felt):
 end
 
 @storage_var
-func _ships_deathstar(planet_id : Uint256) -> (amount : felt):
+func ships_deathstar(planet_id : Uint256) -> (amount : felt):
 end

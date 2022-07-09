@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.uint256 import Uint256
 
-from contracts.Ogame.structs import Planet, Cost, TechLevels, BuildingQue
+from main.structs import Planet, Cost, TechLevels, BuildingQue
 
 @contract_interface
 namespace IOgame:
@@ -24,7 +24,7 @@ namespace IOgame:
     func get_deuterium_address() -> (res : felt):
     end
 
-    func get_structures_levels(caller : felt) -> (
+    func getStructuresLevels(caller : felt) -> (
         metal_mine : felt,
         crystal_mine : felt,
         deuterium_mine : felt,
