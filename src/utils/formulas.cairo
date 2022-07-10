@@ -6,7 +6,7 @@ from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
 from starkware.cairo.common.bool import TRUE, FALSE
-from main.storage import players_spent_resources
+from main.storage import NoGame_players_spent_resources
 
 ##############
 # Production #
@@ -321,7 +321,7 @@ namespace Formulas:
     func calculate_player_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ) -> (points : felt):
-        let (total_spent) = players_spent_resources.read(address)
+        let (total_spent) = NoGame_players_spent_resources.read(address)
         let (points, _) = unsigned_div_rem(total_spent, 1000)
         return (points)
     end
