@@ -7,7 +7,7 @@ from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
-from main.IOgame import IOgame
+from main.INoGame import INoGame
 from token.erc20.interfaces.IERC20 import IERC20
 from main.structs import TechLevels
 from utils.formulas import Formulas
@@ -517,7 +517,7 @@ namespace ResearchLab:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> ():
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, enengy_available) = IOgame.resources_available(ogame_address, caller)
+        let (_, _, _, enengy_available) = NoGame.resources_available(ogame_address, caller)
         with_attr error_message("research lab must be at level 1"):
             assert_le(300000, enengy_available)
         end
@@ -529,9 +529,9 @@ namespace ResearchLab:
         caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt):
         let (ogame_address) = _ogame_address.read()
-        let (metal_address) = IOgame.get_metal_address(ogame_address)
-        let (crystal_address) = IOgame.get_crystal_address(ogame_address)
-        let (deuterium_address) = IOgame.get_deuterium_address(ogame_address)
+        let (metal_address) = INoGame.get_metal_address(ogame_address)
+        let (crystal_address) = INoGame.get_crystal_address(ogame_address)
+        let (deuterium_address) = INoGame.get_deuterium_address(ogame_address)
         let (metal_available) = IERC20.balanceOf(metal_address, caller)
         let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
         let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
@@ -542,7 +542,7 @@ namespace ResearchLab:
         caller : felt
     ) -> (result : TechLevels):
         let (ogame_address) = _ogame_address.read()
-        let (tech_levels) = IOgame.get_tech_levels(ogame_address, caller)
+        let (tech_levels) = NoGame.get_tech_levels(ogame_address, caller)
         return (tech_levels)
     end
 
@@ -622,7 +622,7 @@ namespace ResearchLab:
         deuterium_required : felt,
     ):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, research_lab_level, _, nanite_level) = IOgame.getStructuresLevels(
+        let (_, _, _, _, _, research_lab_level, _, nanite_level) = INoGame.getStructuresLevels(
             ogame_address, caller
         )
         let (research_time) = Formulas.buildings_production_time(
