@@ -4,7 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.bool import TRUE
 from resources.library import Resources, _ogame_address
-from main.IOgame import IOgame
+from main.INoGame import INoGame
 from utils.formulas import Formulas
 
 @view
@@ -26,7 +26,7 @@ func _metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     let (ogame_address) = _ogame_address.read()
     let (
         metal_level, _, _, _, robot_factory_level, _, _, nanite_level
-    ) = IOgame.getStructuresLevels(ogame_address, caller)
+    ) = NoGame.getStructuresLevels(ogame_address, caller)
     let (metal_required, crystal_required, deuterium_required) = Formulas.metal_building_cost(
         metal_level
     )
