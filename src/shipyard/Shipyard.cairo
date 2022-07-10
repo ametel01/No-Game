@@ -6,7 +6,7 @@ from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.bool import TRUE
 from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
 from shipyard.library import _ogame_address, Shipyard
-from main.IOgame import IOgame
+from main.INoGame import INoGame
 from utils.formulas import Formulas
 
 @constructor
