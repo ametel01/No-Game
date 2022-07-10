@@ -10,51 +10,64 @@ from utils.formulas import Formulas
 from facilities.library import Facilities
 from resources.library import Resources
 from main.storage import (
-    metal_mine_level,
-    crystal_mine_level,
-    deuterium_mine_level,
-    solar_plant_level,
-    planets,
-    players_spent_resources,
-    erc721_token_address,
-    erc20_metal_address,
-    erc20_crystal_address,
-    erc20_deuterium_address,
-    resources_address,
-    facilities_address,
-    research_lab_address,
-    shipyard_address,
-    shipyard_level,
-    robot_factory_level,
-    research_lab_level,
-    nanite_factory_level,
-    energy_tech,
-    computer_tech,
-    laser_tech,
-    armour_tech,
-    astrophysics,
-    espionage_tech,
-    hyperspace_drive,
-    hyperspace_tech,
-    impulse_drive,
-    ion_tech,
-    plasma_tech,
-    weapons_tech,
-    shielding_tech,
-    combustion_drive,
-    ships_cargo,
-    ships_recycler,
-    ships_espionage_probe,
-    ships_solar_satellite,
-    ships_light_fighter,
-    ships_cruiser,
-    ships_battleship,
-    ships_deathstar,
+    NoGame_number_of_planets,
+    NoGame_metal_mine_level,
+    NoGame_crystal_mine_level,
+    NoGame_deuterium_mine_level,
+    NoGame_solar_plant_level,
+    NoGame_players_spent_resources,
+    NoGame_erc721_token_address,
+    NoGame__metal_address,
+    NoGame__crystal_address,
+    NoGame__deuterium_address,
+    NoGame_resources_address,
+    NoGame_facilities_address,
+    NoGame_research_lab_address,
+    NoGame_shipyard_address,
+    NoGame_shipyard_level,
+    NoGame_robot_factory_level,
+    NoGame_research_lab_level,
+    NoGame_nanite_factory_level,
+    NoGame_energy_tech,
+    NoGame_computer_tech,
+    NoGame_laser_tech,
+    NoGame_armour_tech,
+    NoGame_astrophysics,
+    NoGame_espionage_tech,
+    NoGame_hyperspace_drive,
+    NoGame_hyperspace_tech,
+    NoGame_impulse_drive,
+    NoGame_ion_tech,
+    NoGame_plasma_tech,
+    NoGame_weapons_tech,
+    NoGame_shielding_tech,
+    NoGame_combustion_drive,
+    NoGame_ships_cargo,
+    NoGame_ships_recycler,
+    NoGame_ships_espionage_probe,
+    NoGame_ships_solar_satellite,
+    NoGame_ships_light_fighter,
+    NoGame_ships_cruiser,
+    NoGame_ships_battleship,
+    NoGame_ships_deathstar,
 )
 
 from main.structs import BuildingQue, Planet, Cost
 
 namespace NoGame:
+    func get_number_of_planets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ) -> (res : felt):
+        let (n_planets) = number_of_planets.read()
+        return (n_planets)
+    end
+
+    func owner_of{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+        planet_id : Uint256
+    ):
+        let (planet_id) = _get_planet_id()
+        return (planet_id)
+    end
+
     func get_tokens_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ) -> (erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt):
         let (erc721) = erc721_token_address.read()
@@ -151,7 +164,6 @@ namespace NoGame:
         )
     end
 
-    @view
     func get_resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
@@ -167,6 +179,12 @@ namespace NoGame:
         let (energy_available) = Resources.get_net_energy(metal, crystal, deuterium, solar_plant)
         return (metal_available, crystal_available, deuterium_available, energy_available)
     end
+
+    func get_resources_que_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(caller : felt) -> (building_id : felt, timelock_end : felt):
+        let (resources_addr) = resources_address.read()
+
+    
+
 end
 
 func _get_planet_id{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(

@@ -2,9 +2,19 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_not_zero
+from starkware.cairo.common.bool import TRUE
 from resources.library import Resources, _ogame_address
 from main.IOgame import IOgame
 from utils.formulas import Formulas
+
+@view
+func getBuildingTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+):
+    let (building_id, timelock_end) = Resources.get_buildings_timelock_status(caller)
+
+    return (building_id, timelock_end)
+end
 
 @external
 func _metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -32,7 +42,7 @@ func _metal_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     caller : felt
 ) -> (success : felt):
     alloc_locals
-    Resources.check_trying_to_complete_the_right_resource(caller, Facilities.SHIPYARD_ID)
+    Resources.check_trying_to_complete_the_right_resource(caller, Resources.METAL_MINE_ID)
     Resources.check_waited_enough(caller)
     Resources.reset_que(caller, Resources.METAL_MINE_ID)
     Resources.reset_timelock(caller)

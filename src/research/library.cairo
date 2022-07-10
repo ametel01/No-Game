@@ -8,7 +8,7 @@ from starkware.cairo.common.pow import pow
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from main.IOgame import IOgame
-from openzeppelin.token.erc20.interfaces.IERC20 import IERC20
+from token.erc20.interfaces.IERC20 import IERC20
 from main.structs import TechLevels
 from utils.formulas import Formulas
 

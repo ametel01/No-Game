@@ -1,7 +1,10 @@
 %lang starknet
 
 @contract_interface
-namespace IResources: 
+namespace IResources:
+    func getBuildingTimelockStatus(caller) -> (building_id : felt, timelock_end : felt):
+    end
+
     func metal_upgrade_start():
     end
 

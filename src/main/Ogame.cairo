@@ -15,19 +15,19 @@ from facilities.IFacilities import IFacilities
 from utils.formulas import Formulas
 from main.structs import TechLevels, BuildingQue, Cost, Planet, MineLevels, Energy, Fleet
 
-from contracts.StructuresManager import (
-    get_upgrades_cost,
-    _generate_planet,
-    _start_metal_upgrade,
-    _end_metal_upgrade,
-    _start_crystal_upgrade,
-    _end_crystal_upgrade,
-    _start_deuterium_upgrade,
-    _end_deuterium_upgrade,
-    _start_solar_plant_upgrade,
-    _end_solar_plant_upgrade,
-    _get_planet,
-)
+# from contracts.StructuresManager import (
+#     get_upgrades_cost,
+#     _generate_planet,
+#     _start_metal_upgrade,
+#     _end_metal_upgrade,
+#     _start_crystal_upgrade,
+#     _end_crystal_upgrade,
+#     _start_deuterium_upgrade,
+#     _end_deuterium_upgrade,
+#     _start_solar_plant_upgrade,
+#     _end_solar_plant_upgrade,
+#     _get_planet,
+# )
 
 #########################################################################################
 #                                   Constructor                                         #
@@ -47,15 +47,15 @@ end
 func numberOfPlanets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     n_planets : felt
 ):
-    let (n) = _number_of_planets.read()
+    let (n) = NoGame.get_number_of_planets()
     return (n_planets=n)
 end
 
 @view
-func owner_of{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    address : felt
-) -> (planet_id : Uint256):
-    let (id) = _planet_to_owner.read(address)
+func ownerOf{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    planet_id : Uint256
+):
+    let (id) = NoGame.owner_of()
     return (id)
 end
 
@@ -108,12 +108,12 @@ func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
     let (
         metal_available, crystal_available, deuterium_available, energy_available
-    ) = NoGame.getResourcesAvailable()
+    ) = NoGame.get_resources_available()
     return (metal_available, crystal_available, deuterium_available, energy_available)
 end
 
 @view
-func get_structures_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getStructuresUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (
     metal_mine : Cost,
@@ -121,18 +121,21 @@ func get_structures_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     deuterium_mine : Cost,
     solar_plant : Cost,
     robot_factory : Cost,
+    shipyard : Cost,
+    research_lab : Cost,
+    nanite : Cost,
 ):
-    let (metal, crystal, deuterium, solar_plant, robot_factory) = get_upgrades_cost(caller)
-    return (metal, crystal, deuterium, solar_plant, robot_factory)
+    let (
+        metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite
+    ) = NoGame.get_upgrades_cost(caller)
+    return (metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite)
 end
 
 @view
-func build_time_completion{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func resourcesTimeCompletion{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (building_id : felt, time_end : felt):
-    let (que_details) = buildings_timelock.read(caller)
-    let time_end = que_details.lock_end
-    let building_id = que_details.id
+    let (building_id, time_end) = IResources.getBuildingTimelockStatus(caller)
     return (building_id, time_end)
 end
 

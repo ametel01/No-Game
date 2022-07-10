@@ -59,16 +59,16 @@ func deuterium_address() -> (address : felt):
 end
 
 @storage_var
-func resources_timelock(address : felt) -> (cued_details : ResourcesQue):
+func Resources_timelock(address : felt) -> (cued_details : ResourcesQue):
 end
 
 # @dev Stores the que status for a specific ship.
 @storage_var
-func resources_qued(address : felt, id : felt) -> (is_qued : felt):
+func Resources_qued(address : felt, id : felt) -> (is_qued : felt):
 end
 
 @storage_var
-func resources_timer(planet_id : Uint256) -> (last_collection_timestamp : felt):
+func Resources_timer(planet_id : Uint256) -> (last_collection_timestamp : felt):
 end
 
 namespace Resources:
@@ -91,7 +91,7 @@ namespace Resources:
         let (erc721_address) = erc721_token_address.read()
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
         let (planet) = planets.read(planet_id)
-        let (time_start) = resources_timer.read(planet_id)
+        let (time_start) = Resources_timer.read(planet_id)
         let metal_level = planet.mines.metal
         let crystal_level = planet.mines.crystal
         let deuterium_level = planet.mines.deuterium
@@ -148,7 +148,7 @@ namespace Resources:
         let (erc721_address) = erc721_token_address.read()
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
         let (time_now) = get_block_timestamp()
-        resources_timer.write(planet_id, time_now)
+        Resources_timer.write(planet_id, time_now)
         return ()
     end
 
@@ -233,10 +233,20 @@ namespace Resources:
         return (res)
     end
 
+    func get_buildings_timelock_status{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (building_id : felt, time_end : felt):
+        let (status) = Resources_timelock.read(caller)
+        let building_id = status.builiding_id
+        let time_end = status.timelock
+
+        return (building_id, time_end)
+    end
+
     func check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ):
-        let (que_status) = resources_timelock.read(caller)
+        let (que_status) = Resources_timelock.read(caller)
         let current_timelock = que_status.lock_end
         with_attr error_message("RESOURCES::QUE IS BUSY!!!"):
             assert current_timelock = 0
@@ -279,15 +289,15 @@ namespace Resources:
         let (time_now) = get_block_timestamp()
         let time_end = time_now + build_time
         let que_details = ResourcesQue(BUILDING_ID, time_end)
-        resources_qued.write(caller, BUILDING_ID, TRUE)
-        resources_timelock.write(caller, que_details)
+        Resources_qued.write(caller, BUILDING_ID, TRUE)
+        Resources_timelock.write(caller, que_details)
         return (time_end)
     end
 
     func check_trying_to_complete_the_right_resource{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt, BUILDING_ID : felt):
-        let (is_qued) = resources_qued.read(caller, BUILDING_ID)
+        let (is_qued) = Resources_qued.read(caller, BUILDING_ID)
         with_attr error_message("RESOURCES::TRIED TO COMPLETE THE WRONG FACILITY!!!"):
             assert is_qued = TRUE
         end
@@ -300,7 +310,7 @@ namespace Resources:
         alloc_locals
         tempvar syscall_ptr = syscall_ptr
         let (time_now) = get_block_timestamp()
-        let (que_details) = resources_timelock.read(caller)
+        let (que_details) = Resources_timelock.read(caller)
         let timelock_end = que_details.lock_end
         let (waited_enough) = is_le(timelock_end, time_now)
         with_attr error_message("RESOURCES::TIMELOCK NOT YET EXPIRED!!!"):
@@ -312,14 +322,14 @@ namespace Resources:
     func reset_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt, building_id : felt
     ):
-        resources_qued.write(address, building_id, FALSE)
+        Resources_qued.write(address, building_id, FALSE)
         return ()
     end
 
     func reset_timelock{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
-        resources_timelock.write(address, ResourcesQue(0, 0))
+        Resources_timelock.write(address, ResourcesQue(0, 0))
         return ()
     end
 end
