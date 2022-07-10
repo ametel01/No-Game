@@ -5,23 +5,14 @@ from starkware.cairo.common.uint256 import Uint256
 from main.structs import Planet, Cost, TechLevels, BuildingQue
 
 @contract_interface
-namespace IOgame:
-    func number_of_planets() -> (n_planets : felt):
+namespace INoGame:
+    func numberOfPlanets() -> (n_planets : felt):
     end
 
-    func owner_of(address : felt) -> (planet_id : Uint256):
+    func ownerOf(address : felt) -> (planet_id : Uint256):
     end
 
-    func erc721_address() -> (res : felt):
-    end
-
-    func get_metal_address() -> (res : felt):
-    end
-
-    func get_crystal_address() -> (res : felt):
-    end
-
-    func get_deuterium_address() -> (res : felt):
+    func getTokensAddresses() -> (erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt):
     end
 
     func getStructuresLevels(caller : felt) -> (

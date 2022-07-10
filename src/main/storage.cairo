@@ -8,7 +8,7 @@ from main.structs import BuildingQue, Planet
 ##################################################################################
 # @dev Returns the address of the game's ERC721 contract.
 @storage_var
-func NoGame_token_address() -> (address : felt):
+func NoGame_erc721_token_address() -> (address : felt):
 end
 
 # @dev Returns the address of the owner of the ERC721 contract.

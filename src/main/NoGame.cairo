@@ -52,10 +52,10 @@ func numberOfPlanets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
 end
 
 @view
-func ownerOf{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+func ownerOf{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(caller : felt) -> (
     planet_id : Uint256
 ):
-    let (id) = NoGame.owner_of()
+    let (id) = NoGame.owner_of(caller)
     return (id)
 end
 
@@ -132,15 +132,15 @@ func getStructuresUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
 end
 
 @view
-func resourcesTimeCompletion{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getResourcesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (building_id : felt, time_end : felt):
-    let (building_id, time_end) = IResources.getBuildingTimelockStatus(caller)
+    let (building_id, time_end) = NoGame.get_resources_que_status(caller)
     return (building_id, time_end)
 end
 
 @view
-func get_buildings_timelock_status{
+func getFacilitiesQueStatus{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (status : BuildingQue):
     let (que_details) = buildings_timelock.read(caller)

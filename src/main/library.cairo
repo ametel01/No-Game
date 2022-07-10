@@ -17,9 +17,9 @@ from main.storage import (
     NoGame_solar_plant_level,
     NoGame_players_spent_resources,
     NoGame_erc721_token_address,
-    NoGame__metal_address,
-    NoGame__crystal_address,
-    NoGame__deuterium_address,
+    NoGame_metal_address,
+    NoGame_crystal_address,
+    NoGame_deuterium_address,
     NoGame_resources_address,
     NoGame_facilities_address,
     NoGame_research_lab_address,
@@ -61,29 +61,30 @@ namespace NoGame:
         return (n_planets)
     end
 
-    func owner_of{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    func owner_of{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(caller : felt
+    ) -> (
         planet_id : Uint256
     ):
-        let (planet_id) = _get_planet_id()
+        let (planet_id) = _get_planet_id(caller)
         return (planet_id)
     end
 
     func get_tokens_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ) -> (erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt):
-        let (erc721) = erc721_token_address.read()
-        let (metal) = erc20_metal_address.read()
-        let (crystal) = erc20_crystal_address.read()
-        let (deuterium) = erc20_deuterium_address.read()
+        let (erc721) = NoGame_erc721_token_address.read()
+        let (metal) = NoGame_metal_address.read()
+        let (crystal) = NoGame_crystal_address.read()
+        let (deuterium) = NoGame_deuterium_address.read()
 
         return (erc721, metal, crystal, deuterium)
     end
 
     func get_modules_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ) -> (_resources, _facilities, _shipyard, _research):
-        let (resources) = resources_address.read()
-        let (facilities) = facilities_address.read()
-        let (shipyard) = shipyard.address.read()
-        let (research) = research.address.read()
+        let (resources) = NoGame_resources_address.read()
+        let (facilities) = NoGame_facilities_address.read()
+        let (shipyard) = NoGame_shipyard.address.read()
+        let (research) = NoGame_research.address.read()
 
         return (resources, facilities, shipyard, research)
     end
@@ -101,16 +102,16 @@ namespace NoGame:
         up_nanite : Cost,
     ):
         alloc_locals
-        let (erc721_address) = erc721_token_address.read()
+        let (erc721_address) = NoGame_erc721_token_address.read()
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
-        let (metal_level) = metal_mine_level.read(planet_id)
-        let (crystal_level) = crystal_mine_level.read(planet_id)
-        let (deuterium_level) = deuterium_mine_level.read(planet_id)
-        let (solar_level) = solar_plant_level.read(planet_id)
-        let (robot_level) = robot_factory_level.read(planet_id)
-        let (_shipyard_level) = shipyard_level.read(planet_id)
-        let (nanite_level) = nanite_factory_level.read(planet_id)
-        let (lab_level) = research_lab_level.read(planet_id)
+        let (metal_level) = NoGame_metal_mine_level.read(planet_id)
+        let (crystal_level) = NoGame_crystal_mine_level.read(planet_id)
+        let (deuterium_level) = NoGame_deuterium_mine_level.read(planet_id)
+        let (solar_level) = NoGame_solar_plant_level.read(planet_id)
+        let (robot_level) = NoGame_robot_factory_level.read(planet_id)
+        let (_shipyard_level) = NoGame_shipyard_level.read(planet_id)
+        let (nanite_level) = NoGame_nanite_factory_level.read(planet_id)
+        let (lab_level) = NoGame_research_lab_level.read(planet_id)
         let (m_metal, m_crystal) = Formulas.metal_building_cost(metal_level)
         let (c_metal, c_crystal) = Formulas.crystal_building_cost(crystal_level)
         let (d_metal, d_crystal) = Formulas.deuterium_building_cost(deuterium_level)
@@ -144,14 +145,14 @@ namespace NoGame:
         nanite_factory : felt,
     ):
         let (planet_id) = _get_planet_id(caller)
-        let metal = metal_mine_level.read(planet_id)
-        let crystal = crystal_mine_level.read(planet_id)
-        let deuterium = deuterium_mine_level.read(planet_id)
-        let solar_plant = solar_plant_level.read(planet_id)
-        let (robot_factory) = robot_factory_level.read(planet_id)
-        let (research_lab) = research_lab_level.read(planet_id)
-        let (shipyard) = shipyard_level.read(planet_id)
-        let (nanite) = nanite_factory_level.read(planet_id)
+        let metal = NoGame_metal_mine_level.read(planet_id)
+        let crystal = NoGame_crystal_mine_level.read(planet_id)
+        let deuterium = NoGame_deuterium_mine_level.read(planet_id)
+        let solar_plant = NoGame_solar_plant_level.read(planet_id)
+        let (robot_factory) = NoGame_robot_factory_level.read(planet_id)
+        let (research_lab) = NoGame_research_lab_level.read(planet_id)
+        let (shipyard) = NoGame_shipyard_level.read(planet_id)
+        let (nanite) = NoGame_nanite_factory_level.read(planet_id)
         return (
             metal_mine=metal,
             crystal_mine=crystal,
@@ -172,25 +173,25 @@ namespace NoGame:
         let (
             metal_available, crystal_available, deuterium_available
         ) = Resources.get_available_resources(caller)
-        let (metal) = metal_mine_level.read(planet_id)
-        let (crystal) = crystal_mine_level.read(planet_id)
-        let (deuterium) = deuterium_mine_level.read(planet_id)
-        let (solar_plant) = solar_plant_level.read(planet_id)
+        let (metal) = NoGame_metal_mine_level.read(planet_id)
+        let (crystal) = NoGame_crystal_mine_level.read(planet_id)
+        let (deuterium) = NoGame_deuterium_mine_level.read(planet_id)
+        let (solar_plant) = NoGame_solar_plant_level.read(planet_id)
         let (energy_available) = Resources.get_net_energy(metal, crystal, deuterium, solar_plant)
         return (metal_available, crystal_available, deuterium_available, energy_available)
     end
 
     func get_resources_que_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(caller : felt) -> (building_id : felt, timelock_end : felt):
-        let (resources_addr) = resources_address.read()
-
-    
-
+        let (resources_addr) = NoGame_resources_address.read()
+        let (building_id, time_end) = IResources.getBuildingTimelockStatus(resources_addr, caller)
+        return (building_id, time_end)
+    end
 end
 
 func _get_planet_id{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (planet_id : Uint256):
-    let (erc721) = erc721_token_address.read()
+    let (erc721) = NoGame_erc721_token_address.read()
     let (planet_id) = IERC721.ownerToPlanet(erc721, caller)
 
     return (planet_id)
