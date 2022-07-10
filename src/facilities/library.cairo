@@ -6,7 +6,7 @@ from starkware.cairo.common.pow import pow
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.math import assert_le
 from starkware.cairo.common.bool import TRUE, FALSE
-from main.IOgame import IOgame
+from main.INoGame import INoGame
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 from research.library import ResearchLab
@@ -67,7 +67,7 @@ namespace Facilities:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, robot_factory_level, _, _, _) = IOgame.getStructuresLevels(
+        let (_, _, _, _, robot_factory_level, _, _, _) = NoGame.getStructuresLevels(
             ogame_address, caller
         )
         with_attr error_message("FACILITIES::ROBOT FACTORY MUST BE AT LEVEL 2"):
@@ -80,7 +80,7 @@ namespace Facilities:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, robot_factory_level, _, _, _) = IOgame.getStructuresLevels(
+        let (_, _, _, _, robot_factory_level, _, _, _) = INoGame.getStructuresLevels(
             ogame_address, caller
         )
         let (tech_levels) = ResearchLab.get_tech_levels(caller)
@@ -165,9 +165,9 @@ namespace Facilities:
         caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt):
         let (ogame_address) = _ogame_address.read()
-        let (metal_address) = IOgame.get_metal_address(ogame_address)
-        let (crystal_address) = IOgame.get_crystal_address(ogame_address)
-        let (deuterium_address) = IOgame.get_deuterium_address(ogame_address)
+        let (metal_address) = INoGame.get_metal_address(ogame_address)
+        let (crystal_address) = INoGahe.get_crystal_address(ogame_address)
+        let (deuterium_address) = INoGame.get_deuterium_address(ogame_address)
         let (metal_available) = IERC20.balanceOf(metal_address, caller)
         let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
         let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
@@ -250,7 +250,7 @@ namespace Facilities:
         deuterium_required : felt,
     ) -> (time_unlocked : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = IOgame.getStructuresLevels(
+        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = NoGame.getStructuresLevels(
             ogame_address, caller
         )
         let (build_time) = Formulas.buildings_production_time(
