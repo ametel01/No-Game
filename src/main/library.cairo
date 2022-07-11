@@ -9,6 +9,7 @@ from token.erc721.interfaces.IERC721 import IERC721
 from utils.formulas import Formulas
 from facilities.library import Facilities
 from resources.library import Resources
+from resources.IResources import IResources
 from main.storage import (
     NoGame_number_of_planets,
     NoGame_metal_mine_level,
@@ -57,7 +58,7 @@ from main.structs import BuildingQue, Planet, Cost
 namespace NoGame:
     func get_number_of_planets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ) -> (res : felt):
-        let (n_planets) = number_of_planets.read()
+        let (n_planets) = NoGame_number_of_planets.read()
         return (n_planets)
     end
 
@@ -82,8 +83,8 @@ namespace NoGame:
         ) -> (_resources, _facilities, _shipyard, _research):
         let (resources) = NoGame_resources_address.read()
         let (facilities) = NoGame_facilities_address.read()
-        let (shipyard) = NoGame_shipyard.address.read()
-        let (research) = NoGame_research.address.read()
+        let (shipyard) = NoGame_shipyard_address.read()
+        let (research) = NoGame_research_lab_address.read()
 
         return (resources, facilities, shipyard, research)
     end
