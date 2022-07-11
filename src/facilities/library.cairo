@@ -164,7 +164,9 @@ namespace Facilities:
         caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt):
         let (ogame_address) = _ogame_address.read()
-        let (_, metal_address,crystal_address, deuterium_address) = INoGame.getTokensAddresses(ogame_address)
+        let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(
+            ogame_address
+        )
         let (metal_available) = IERC20.balanceOf(metal_address, caller)
         let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
         let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
