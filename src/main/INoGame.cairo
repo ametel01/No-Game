@@ -12,7 +12,9 @@ namespace INoGame:
     func ownerOf(address : felt) -> (planet_id : Uint256):
     end
 
-    func getTokensAddresses() -> (erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt):
+    func getTokensAddresses() -> (
+        erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt
+    ):
     end
 
     func getStructuresLevels(caller : felt) -> (

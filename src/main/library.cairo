@@ -61,10 +61,9 @@ namespace NoGame:
         return (n_planets)
     end
 
-    func owner_of{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(caller : felt
-    ) -> (
-        planet_id : Uint256
-    ):
+    func owner_of{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (planet_id : Uint256):
         let (planet_id) = _get_planet_id(caller)
         return (planet_id)
     end
@@ -181,7 +180,9 @@ namespace NoGame:
         return (metal_available, crystal_available, deuterium_available, energy_available)
     end
 
-    func get_resources_que_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(caller : felt) -> (building_id : felt, timelock_end : felt):
+    func get_resources_que_status{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (building_id : felt, timelock_end : felt):
         let (resources_addr) = NoGame_resources_address.read()
         let (building_id, time_end) = IResources.getBuildingTimelockStatus(resources_addr, caller)
         return (building_id, time_end)

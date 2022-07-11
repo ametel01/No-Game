@@ -140,9 +140,9 @@ func getResourcesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 end
 
 @view
-func getFacilitiesQueStatus{
-    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(caller : felt) -> (status : BuildingQue):
+func getFacilitiesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (status : BuildingQue):
     let (que_details) = buildings_timelock.read(caller)
     return (que_details)
 end

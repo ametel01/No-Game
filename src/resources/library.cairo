@@ -36,7 +36,6 @@ end
 #                                           STORAGES                                    #
 #########################################################################################
 
-
 @storage_var
 func Resources_no_game_address() -> (address : felt):
 end
@@ -72,9 +71,11 @@ namespace Resources:
     ) -> (metal : felt, crystal : felt, deuterium : felt):
         alloc_locals
         let (no_game_addr) = Resources_no_game_address.read()
-        let (erc721_address,_,_,_) = INoGame.getTokensAddresses(no_game_addr)
+        let (erc721_address, _, _, _) = INoGame.getTokensAddresses(no_game_addr)
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
-        let (metal_level, crystal_level, deuterium_level, solar_plant_level, _,_,_,_) = INoGame.getStructuresLevels(no_game_addr, caller)
+        let (
+            metal_level, crystal_level, deuterium_level, solar_plant_level, _, _, _, _
+        ) = INoGame.getStructuresLevels(no_game_addr, caller)
         let (time_start) = Resources_timer.read(planet_id)
         let (energy_required_metal) = Formulas.consumption_energy(metal_level)
         let (energy_required_crystal) = Formulas.consumption_energy(crystal_level)
@@ -83,20 +84,20 @@ namespace Resources:
         let (energy_available) = Formulas.solar_plant_production(solar_plant_level)
         let (enough_energy) = is_le(total_energy_required, energy_available)
         # Calculate amount of resources produced.
-        let (metal_produced) = Formulas.metal_mine_production(
-            time_start, metal_level
-        )
-        let (crystal_produced) = Formulas.crystal_mine_production(
-            time_start, crystal_level
-        )
-        let (deuterium_produced) = Formulas.deuterium_mine_production(
-            time_start, deuterium_level
-        )
+        let (metal_produced) = Formulas.metal_mine_production(time_start, metal_level)
+        let (crystal_produced) = Formulas.crystal_mine_production(time_start, crystal_level)
+        let (deuterium_produced) = Formulas.deuterium_mine_production(time_start, deuterium_level)
         # If energy available < than energy required scale down amount produced.
         if enough_energy == FALSE:
             let (
                 actual_metal, actual_crystal, actual_deuterium
-            ) = Formulas.energy_production_scaler(metal_produced, crystal_produced,deuterium_produced,total_energy_required,energy_available)
+            ) = Formulas.energy_production_scaler(
+                metal_produced,
+                crystal_produced,
+                deuterium_produced,
+                total_energy_required,
+                energy_available,
+            )
             let metal = actual_metal
             let crystal = actual_crystal
             let deuterium = actual_deuterium
@@ -120,7 +121,7 @@ namespace Resources:
             deuterium_amount=deuterium_produced,
         )
         let (no_game) = Resources_no_game_address.read()
-        let (erc721_address,_,_,_) = INoGame.getTokensAddresses(no_game)
+        let (erc721_address, _, _, _) = INoGame.getTokensAddresses(no_game)
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
         let (time_now) = get_block_timestamp()
         Resources_timer.write(planet_id, time_now)
@@ -131,7 +132,9 @@ namespace Resources:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(to : felt, metal_amount : felt, crystal_amount : felt, deuterium_amount : felt):
         let (no_game) = Resources_no_game_address.read()
-        let (_,metal_address,crystal_address,deuterium_address) = INoGame.getTokensAddresses(no_game)
+        let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(
+            no_game
+        )
         let metal = Uint256(metal_amount * E18, 0)
         let crystal = Uint256(crystal_amount * E18, 0)
         let deuterium = Uint256(deuterium_amount * E18, 0)
@@ -146,7 +149,9 @@ namespace Resources:
     ):
         assert_not_zero(address)
         let (no_game) = Resources_no_game_address.read()
-        let (_,metal_address,crystal_address,deuterium_address) = INoGame.getTokensAddresses(no_game)
+        let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(
+            no_game
+        )
         let metal = Uint256(metal_amount * E18, 0)
         let crystal = Uint256(crystal_amount * E18, 0)
         let deuterium = Uint256(deuterium_amount * E18, 0)
@@ -178,7 +183,9 @@ namespace Resources:
         caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt):
         let (no_game) = Resources_no_game_address.read()
-        let (_,metal_address,crystal_address,deuterium_address) = INoGame.getTokensAddresses(no_game)
+        let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(
+            no_game
+        )
         let (metal_available) = IERC20.balanceOf(metal_address, caller)
         let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
         let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
