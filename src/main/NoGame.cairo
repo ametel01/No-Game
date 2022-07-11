@@ -829,7 +829,7 @@ func impulse_drive_upgrade_complete{
 end
 
 @external
-func get_tech_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getTechLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (result : TechLevels):
     let (planet_id) = _planet_to_owner.read(caller)

@@ -8,6 +8,7 @@ from starkware.cairo.common.pow import pow
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from main.INoGame import INoGame
+from main.library import NoGame
 from token.erc20.interfaces.IERC20 import IERC20
 from main.structs import TechLevels
 from utils.formulas import Formulas

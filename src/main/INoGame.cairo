@@ -41,7 +41,7 @@ namespace INoGame:
     ):
     end
 
-    func get_tech_levels(caller : felt) -> (result : TechLevels):
+    func getTechLevels(caller : felt) -> (result : TechLevels):
     end
 
     func build_time_completion(caller : felt) -> (timestamp : felt):

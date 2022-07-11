@@ -13,7 +13,7 @@ facilities = [
     "src/facilities/Facilities.cairo"
 ]
 main = [
-    "src/main/Ogame.cairo"
+    "src/main/NoGame.cairo"
 ]
 minter = [
    "src/minter/erc721_minter.cairo"

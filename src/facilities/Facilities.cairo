@@ -25,9 +25,9 @@ func _shipyard_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     assert_not_zero(caller)
     Facilities.check_que_not_busy(caller)
     Facilities.shipyard_requirements_check(caller)
-    let (ogame_address) = _ogame_address.read()
-    let (_, _, _, _, robot_factory_level, _, shipyard_level, _) = NoGame.getStructuresLevels(
-        ogame_address, caller
+    let (no_game) = _ogame_address.read()
+    let (_, _, _, _, robot_factory_level, _, shipyard_level, _) = INoGame.getStructuresLevels(
+        no_game, caller
     )
     let (metal_required, crystal_required, deuterium_required) = Facilities.shipyard_upgrade_cost(
         shipyard_level
@@ -91,9 +91,9 @@ func _research_lab_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     alloc_locals
     assert_not_zero(caller)
     Facilities.check_que_not_busy(caller)
-    let (ogame_address) = _ogame_address.read()
-    let (_, _, _, _, robot_factory_level, research_lab_level, _, _) = NoGame.getStructuresLevels(
-        ogame_address, caller
+    let (no_game) = _ogame_address.read()
+    let (_, _, _, _, robot_factory_level, research_lab_level, _, _) = INoGame.getStructuresLevels(
+        no_game, caller
     )
     let (
         metal_required, crystal_required, deuterium_required

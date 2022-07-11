@@ -36,6 +36,7 @@ end
 #                                           STORAGES                                    #
 #########################################################################################
 
+
 @storage_var
 func Resources_no_game_address() -> (address : felt):
 end
@@ -73,6 +74,7 @@ namespace Resources:
         let (no_game_addr) = Resources_no_game_address.read()
         let (erc721_address,_,_,_) = INoGame.getTokensAddresses(no_game_addr)
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
+        let (metal_level, crystal_level, deuterium_level, solar_plant_level, _,_,_,_) = INoGame.getStructuresLevels(no_game_addr, caller)
         let (time_start) = Resources_timer.read(planet_id)
         let (energy_required_metal) = Formulas.consumption_energy(metal_level)
         let (energy_required_crystal) = Formulas.consumption_energy(crystal_level)
@@ -117,7 +119,8 @@ namespace Resources:
             crystal_amount=crystal_produced,
             deuterium_amount=deuterium_produced,
         )
-        let (erc721_address) = NoGame_erc721_token_address.read()
+        let (no_game) = Resources_no_game_address.read()
+        let (erc721_address,_,_,_) = INoGame.getTokensAddresses(no_game)
         let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
         let (time_now) = get_block_timestamp()
         Resources_timer.write(planet_id, time_now)
@@ -127,9 +130,8 @@ namespace Resources:
     func _receive_resources_erc20{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(to : felt, metal_amount : felt, crystal_amount : felt, deuterium_amount : felt):
-        let (metal_address) = NoGame_metal_address.read()
-        let (crystal_address) = NoGame_crystal_address.read()
-        let (deuterium_address) = NoGame_deuterium_address.read()
+        let (no_game) = Resources_no_game_address.read()
+        let (_,metal_address,crystal_address,deuterium_address) = INoGame.getTokensAddresses(no_game)
         let metal = Uint256(metal_amount * E18, 0)
         let crystal = Uint256(crystal_amount * E18, 0)
         let deuterium = Uint256(deuterium_amount * E18, 0)
@@ -143,9 +145,8 @@ namespace Resources:
         address : felt, metal_amount : felt, crystal_amount : felt, deuterium_amount : felt
     ):
         assert_not_zero(address)
-        let (metal_address) = NoGame_metal_address.read()
-        let (crystal_address) = NoGame_crystal_address.read()
-        let (deuterium_address) = NoGame_deuterium_address.read()
+        let (no_game) = Resources_no_game_address.read()
+        let (_,metal_address,crystal_address,deuterium_address) = INoGame.getTokensAddresses(no_game)
         let metal = Uint256(metal_amount * E18, 0)
         let crystal = Uint256(crystal_amount * E18, 0)
         let deuterium = Uint256(deuterium_amount * E18, 0)
@@ -176,10 +177,8 @@ namespace Resources:
     func get_available_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (metal_address) = NoGame.get_metal_address(ogame_address)
-        let (crystal_address) = NoGame.get_crystal_address(ogame_address)
-        let (deuterium_address) = NoGame.get_deuterium_address(ogame_address)
+        let (no_game) = Resources_no_game_address.read()
+        let (_,metal_address,crystal_address,deuterium_address) = INoGame.getTokensAddresses(no_game)
         let (metal_available) = IERC20.balanceOf(metal_address, caller)
         let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
         let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
@@ -251,9 +250,9 @@ namespace Resources:
         crystal_required : felt,
         deuterium_required : felt,
     ) -> (time_unlocked : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = NoGame.getStructuresLevels(
-            ogame_address, caller
+        let (no_game) = Resources_no_game_address.read()
+        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = INoGame.getStructuresLevels(
+            no_game, caller
         )
         let (build_time) = Formulas.buildings_production_time(
             metal_required, crystal_required, robot_factory_level, nanite_level
