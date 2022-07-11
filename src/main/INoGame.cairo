@@ -6,7 +6,7 @@ from main.structs import Planet, Cost, TechLevels, BuildingQue
 
 @contract_interface
 namespace INoGame:
-    func numberOfPlanets() -> (n_planets : felt):
+    func getNumberOfPlanets() -> (n_planets : felt):
     end
 
     func ownerOf(address : felt) -> (planet_id : Uint256):
