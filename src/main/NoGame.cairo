@@ -15,20 +15,6 @@ from facilities.IFacilities import IFacilities
 from utils.formulas import Formulas
 from main.structs import TechLevels, BuildingQue, Cost, Planet, MineLevels, Energy, Fleet
 
-# from contracts.StructuresManager import (
-#     get_upgrades_cost,
-#     _generate_planet,
-#     _start_metal_upgrade,
-#     _end_metal_upgrade,
-#     _start_crystal_upgrade,
-#     _end_crystal_upgrade,
-#     _start_deuterium_upgrade,
-#     _end_deuterium_upgrade,
-#     _start_solar_plant_upgrade,
-#     _end_solar_plant_upgrade,
-#     _get_planet,
-# )
-
 #########################################################################################
 #                                   Constructor                                         #
 #########################################################################################
@@ -143,7 +129,8 @@ end
 func getFacilitiesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (status : BuildingQue):
-    let (que_details) = IFacilities.timelock.read(caller)
+    let (_, facilities, _, _) = getModulesAddresses()
+    let (que_details) = IFacilities.getTimelockStatus(facilities, caller)
     return (que_details)
 end
 

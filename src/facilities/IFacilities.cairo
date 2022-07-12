@@ -1,36 +1,41 @@
 %lang starknet
 
+from facilities.library import FacilitiesQue
+
 @contract_interface
 namespace IFacilities:
-    func _robot_factory_upgrade_start(caller : felt) -> (
+    func robotFactoryUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_unlocked : felt
     ):
     end
 
-    func _robot_factory_upgrade_complete(caller : felt) -> (success : felt):
+    func robotFactoryUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _shipyard_upgrade_start(caller : felt) -> (
+    func shipyardUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_unlocked : felt
     ):
     end
 
-    func _shipyard_upgrade_complete(caller : felt) -> (success : felt):
+    func shipyardUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _research_lab_upgrade_start(caller : felt) -> (
+    func researchLabUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_unlocked : felt
     ):
     end
 
-    func _research_lab_upgrade_complete(caller : felt) -> (success : felt):
+    func researchLabUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _nanite_factory_upgrade_start(caller : felt) -> (
+    func naniteFactoryUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_unlocked : felt
     ):
     end
 
-    func _nanite_factory_upgrade_complete(caller : felt) -> (success : felt):
+    func naniteFactoryUpgradeComplete(caller : felt) -> (success : felt):
+    end
+
+    func getTimelockStatus(caller : felt) -> (cued_details : FacilitiesQue):
     end
 end
