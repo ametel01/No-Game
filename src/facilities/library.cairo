@@ -285,7 +285,7 @@ func _nanite_factory_upgrade_cost{
 end
 
 ##############################################################################################
-#                                   TO BE MOVED TO A GENERALISED LIB                         #
+#                                   INTERNAL FUNCTIONS                                       #
 # ############################################################################################
 
 func _get_available_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
