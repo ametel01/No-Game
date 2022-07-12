@@ -46,10 +46,6 @@ const SHIPYARD_ID = 22
 const RESEARCH_LAB_ID = 23
 const NANITE_FACTORY_ID = 24
 
-# ###################################################################################################
-#                                FACILITIES REQUIREMENTS CHECHS                                     #
-#####################################################################################################
-
 namespace Facilities:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         no_game_address : felt
@@ -191,6 +187,10 @@ namespace Facilities:
         return (res)
     end
 end
+
+# ###################################################################################################
+#                                FACILITIES REQUIREMENTS CHECHS                                     #
+#####################################################################################################
 
 func _shipyard_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
