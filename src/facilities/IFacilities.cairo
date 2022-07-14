@@ -1,6 +1,7 @@
 %lang starknet
 
 from facilities.library import FacilitiesQue
+from main.structs import Cost
 
 @contract_interface
 namespace IFacilities:
@@ -34,6 +35,11 @@ namespace IFacilities:
     end
 
     func naniteFactoryUpgradeComplete(caller : felt) -> (success : felt):
+    end
+
+    func getFacilitiesUpgradeCost(caller : felt) -> (
+        robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost
+    ):
     end
 
     func getTimelockStatus(caller : felt) -> (cued_details : FacilitiesQue):

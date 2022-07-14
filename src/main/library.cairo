@@ -58,7 +58,7 @@ from main.structs import BuildingQue, Planet, Cost
 namespace NoGame:
     func get_number_of_planets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ) -> (res : felt):
-        let (n_planets) = NoGame_number_of_planets.read()
+        let (n_planets) = number_of_planets.read()
         return (n_planets)
     end
 
@@ -69,8 +69,9 @@ namespace NoGame:
         return (planet_id)
     end
 
-    func get_tokens_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        ) -> (erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt):
+    func tokens_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+        erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt
+    ):
         let (erc721) = NoGame_erc721_token_address.read()
         let (metal) = NoGame_metal_address.read()
         let (crystal) = NoGame_crystal_address.read()
@@ -79,8 +80,9 @@ namespace NoGame:
         return (erc721, metal, crystal, deuterium)
     end
 
-    func get_modules_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        ) -> (_resources, _facilities, _shipyard, _research):
+    func modules_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+        _resources, _facilities, _shipyard, _research
+    ):
         let (resources) = NoGame_resources_address.read()
         let (facilities) = NoGame_facilities_address.read()
         let (shipyard) = NoGame_shipyard_address.read()
@@ -130,6 +132,33 @@ namespace NoGame:
             Cost(l_metal, l_crystal, l_deuterium),
             Cost(n_metal, n_crystal, n_deuterium),
         )
+    end
+
+    func player_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (points : felt):
+        let (points) = Formulas.calculate_player_points(caller)
+        return (points)
+    end
+
+    ##########################################################################################
+    #                                      PUBLIC FUNCTIONS                                  #
+    ##########################################################################################
+
+    func set_metal_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        address : felt
+    ):
+        Ownable.assert_only_owner()
+        NoGame_metal_address.write(metal_token)
+        return ()
+    end
+
+    func set_metal_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        address : felt
+    ):
+        Ownable.assert_only_owner()
+        NoGame_metal_address.write(metal_token)
+        return ()
     end
 
     func get_structures_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(

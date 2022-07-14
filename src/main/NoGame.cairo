@@ -11,6 +11,7 @@ from resources.IResources import IResources
 from resources.library import Resources
 from research.IResearchLab import IResearchLab
 from shipyard.IShipyard import IShipyard
+from manager.IModuleManager import IModuleManager
 from facilities.IFacilities import IFacilities
 from utils.formulas import Formulas
 from main.structs import TechLevels, BuildingQue, Cost, Planet, MineLevels, Energy, Fleet
@@ -33,7 +34,7 @@ end
 func numberOfPlanets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     n_planets : felt
 ):
-    let (n) = NoGame.get_number_of_planets()
+    let (n) = NoGame.number_of_planets()
     return (n_planets=n)
 end
 
@@ -49,44 +50,44 @@ end
 func getTokensAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt
 ):
-    let (erc721, metal, crystal, deuterium) = NoGame.get_tokens_addresses()
+    let (erc721, metal, crystal, deuterium) = NoGame.tokens_addresses()
 end
 
 @view
 func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     _resources : felt, _facilities : felt, _shipyard : felt, _research : felt
 ):
-    let (resources, facilities, shipyard, research) = NoGame.get_modules_addresses()
+    let (resources, facilities, shipyard, research) = .modules_addresses()
     return (resources, facilities, shipyard, research)
 end
 
-@view
-func getStructuresLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt
-) -> (
-    metal_mine : felt,
-    crystal_mine : felt,
-    deuterium_mine : felt,
-    solar_plant : felt,
-    robot_factory : felt,
-    research_lab : felt,
-    shipyard : felt,
-    nanite_factory : felt,
-):
-    let (
-        metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite
-    ) = NoGame.get_structures_levels(caller)
-    return (
-        metal_mine=metal,
-        crystal_mine=crystal,
-        deuterium_mine=deuterium,
-        solar_plant=solar_plant,
-        robot_factory=robot_factory,
-        research_lab=research_lab,
-        shipyard=shipyard,
-        nanite_factory=nanite,
-    )
-end
+# @view
+# func getStructuresLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+#     caller : felt
+# ) -> (
+#     metal_mine : felt,
+#     crystal_mine : felt,
+#     deuterium_mine : felt,
+#     solar_plant : felt,
+#     robot_factory : felt,
+#     research_lab : felt,
+#     shipyard : felt,
+#     nanite_factory : felt,
+# ):
+#     let (
+#         metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite
+#     ) = NoGame.get_structures_levels(caller)
+#     return (
+#         metal_mine=metal,
+#         crystal_mine=crystal,
+#         deuterium_mine=deuterium,
+#         solar_plant=solar_plant,
+#         robot_factory=robot_factory,
+#         research_lab=research_lab,
+#         shipyard=shipyard,
+#         nanite_factory=nanite,
+#     )
+# end
 
 @view
 func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -135,18 +136,10 @@ func getFacilitiesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
 end
 
 @view
-func is_building_qued{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt, building_id : felt
-) -> (status : felt):
-    let (que_status) = building_qued.read(caller, building_id)
-    return (que_status)
-end
-
-@view
-func player_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getPlayerPoints{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (points : felt):
-    let (points) = Formulas.calculate_player_points(caller)
+    let (points) = NoGame.player_points(caller)
     return (points)
 end
 

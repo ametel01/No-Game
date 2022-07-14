@@ -4,34 +4,6 @@ from starkware.cairo.common.uint256 import Uint256
 from main.structs import BuildingQue, Planet
 
 ##################################################################################
-#                              TOKENS ADDRESSES                              #
-##################################################################################
-# @dev Returns the address of the game's ERC721 contract.
-@storage_var
-func NoGame_erc721_token_address() -> (address : felt):
-end
-
-# @dev Returns the address of the owner of the ERC721 contract.
-@storage_var
-func NoGame_owner_address() -> (address : felt):
-end
-
-# @dev Returns the address of the ERC20 metal address.
-@storage_var
-func NoGame_metal_address() -> (address : felt):
-end
-
-# @dev Returns the address of the ERC20 crystal address.
-@storage_var
-func NoGame_crystal_address() -> (address : felt):
-end
-
-# @dev Returns the address of the ERC20 deuterium address.
-@storage_var
-func NoGame_deuterium_address() -> (address : felt):
-end
-
-##################################################################################
 #                              GENERAL STORAGE                                   #
 ##################################################################################
 
