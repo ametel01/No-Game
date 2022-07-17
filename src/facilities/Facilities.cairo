@@ -4,6 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import TRUE
 from facilities.library import Facilities, FacilitiesQue
 from main.INoGame import INoGame
+from main.structs import Cost
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -11,6 +12,22 @@ func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
 ):
     Facilities.initializer(no_game_address)
     return ()
+end
+
+@view
+func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (cued_details : FacilitiesQue):
+    let (res) = Facilities.timelock_status(caller)
+    return (res)
+end
+
+@view
+func getFacilitiesUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite : Cost):
+    let (robot, shipyard, research, nanite) = Facilities.upgrades_cost(caller)
+    return (robot, shipyard, research, nanite)
 end
 
 @external
@@ -83,12 +100,4 @@ func naniteFactoryUpgradeComplete{
 }(caller : felt) -> (success : felt):
     Facilities.nanite_factory_upgrade_complete(caller)
     return (TRUE)
-end
-
-@external
-func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt
-) -> (cued_details : FacilitiesQue):
-    let (res) = Facilities.get_timelock_status(caller)
-    return (res)
 end
