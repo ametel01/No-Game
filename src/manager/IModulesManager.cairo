@@ -1,12 +1,12 @@
 %lang starknet
 
 @contract_interface
-namespace IModuleManager:
+namespace IModulesManager:
     func getERC721Address() -> (address : felt):
     end
 
     func getModulesAddresses() -> (
-        robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt
+        resources : felt, facilities : felt, shipyard : felt, research_lab : felt
     ):
     end
 
