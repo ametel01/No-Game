@@ -3,15 +3,15 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.bool import TRUE
-from resources.library import Resources, _ogame_address
+from resources.library import Resources
 from main.INoGame import INoGame
 from utils.formulas import Formulas
 
 @view
-func getBuildingTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ):
-    let (building_id, timelock_end) = Resources.get_buildings_timelock_status(caller)
+    let (building_id, timelock_end) = Resources.timelock_status(caller)
 
     return (building_id, timelock_end)
 end
