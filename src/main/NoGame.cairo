@@ -5,7 +5,6 @@ from starkware.cairo.common.math import assert_not_zero
 from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
 from starkware.cairo.common.uint256 import Uint256
 from starkware.cairo.common.bool import TRUE
-from openzeppelin.access.ownable import Ownable
 from main.library import NoGame
 from resources.IResources import IResources
 from resources.library import Resources
@@ -21,8 +20,10 @@ from main.structs import TechLevels, BuildingQue, Cost, Planet, MineLevels, Ener
 #########################################################################################
 
 @constructor
-func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(owner : felt):
-    Ownable.initializer(owner)
+func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    owner : felt, modules_manager : felt
+):
+    NoGame.initializer(owner, modules_manager)
     return ()
 end
 
@@ -57,7 +58,7 @@ end
 func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     _resources : felt, _facilities : felt, _shipyard : felt, _research : felt
 ):
-    let (resources, facilities, shipyard, research) = .modules_addresses()
+    let (resources, facilities, shipyard, research) = modules_addresses()
     return (resources, facilities, shipyard, research)
 end
 
@@ -114,7 +115,7 @@ func getStructuresUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
 ):
     let (
         metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite
-    ) = NoGame.get_upgrades_cost(caller)
+    ) = NoGame.upgrades_cost(caller)
     return (metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite)
 end
 
