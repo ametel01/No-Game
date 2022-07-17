@@ -8,6 +8,7 @@ from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.math import assert_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from main.INoGame import INoGame
+from main.structs import Cost
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 
@@ -25,7 +26,7 @@ end
 # ############################################################################################
 
 @storage_var
-func Facilities_ogame_address() -> (address : felt):
+func Facilities_no_game_address() -> (address : felt):
 end
 
 @storage_var
@@ -50,8 +51,35 @@ namespace Facilities:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         no_game_address : felt
     ):
-        Facilities_ogame_address.write(no_game_address)
+        Facilities_no_game_address.write(no_game_address)
         return ()
+    end
+
+    func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite : Cost):
+        alloc_locals
+        let (no_game) = Facilities_no_game_address.read()
+        let (
+            _, _, _, _, robot_factory_level, local shipyard_level, research_lab_level, nanite_level
+        ) = INoGame.getStructuresLevels(no_game, caller)
+        let (r_m, r_c, r_d) = _robot_factory_upgrade_cost(robot_factory_level)
+        let (s_m, s_c, s_d) = _shipyard_upgrade_cost(shipyard_level)
+        let (l_m, l_c, l_d) = _research_lab_upgrade_cost(research_lab_level)
+        let (n_m, n_c, n_d) = _nanite_factory_upgrade_cost(nanite_level)
+        return (
+            robot_factory=Cost(r_m, r_c, r_d),
+            shipyard=Cost(s_m, s_c, s_d),
+            research_lab=Cost(l_m, l_c, l_d),
+            nanite=Cost(n_m, n_c, n_d),
+        )
+    end
+
+    func timelock_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (cued_details : FacilitiesQue):
+        let (res) = Facilities_timelock.read(caller)
+        return (res)
     end
 
     func shipyard_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -61,7 +89,7 @@ namespace Facilities:
         assert_not_zero(caller)
         _check_que_not_busy(caller)
         _shipyard_requirements_check(caller)
-        let (no_game) = Facilities_ogame_address.read()
+        let (no_game) = Facilities_no_game_address.read()
         let (_, _, _, _, robot_factory_level, _, shipyard_level, _) = INoGame.getStructuresLevels(
             no_game, caller
         )
@@ -92,7 +120,7 @@ namespace Facilities:
         alloc_locals
         assert_not_zero(caller)
         _check_que_not_busy(caller)
-        let (ogame_address) = Facilities_ogame_address.read()
+        let (ogame_address) = Facilities_no_game_address.read()
         let (_, _, _, _, robot_factory_level, _, _, _) = INoGame.getStructuresLevels(
             ogame_address, caller
         )
@@ -123,7 +151,7 @@ namespace Facilities:
         alloc_locals
         assert_not_zero(caller)
         _check_que_not_busy(caller)
-        let (no_game) = Facilities_ogame_address.read()
+        let (no_game) = Facilities_no_game_address.read()
         let (
             _, _, _, _, robot_factory_level, research_lab_level, _, _
         ) = INoGame.getStructuresLevels(no_game, caller)
@@ -155,7 +183,7 @@ namespace Facilities:
         assert_not_zero(caller)
         _check_que_not_busy(caller)
         _nanite_factory_requirements_check(caller)
-        let (ogame_address) = Facilities_ogame_address.read()
+        let (ogame_address) = Facilities_no_game_address.read()
         let (
             _, _, _, _, robot_factory_level, _, _, nanite_factory_level
         ) = INoGame.getStructuresLevels(ogame_address, caller)
@@ -179,13 +207,6 @@ namespace Facilities:
         _reset_timelock(caller)
         return (TRUE)
     end
-
-    func get_timelock_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt
-    ) -> (cued_details : FacilitiesQue):
-        let (res) = Facilities_timelock.read(caller)
-        return (res)
-    end
 end
 
 # ###################################################################################################
@@ -195,7 +216,7 @@ end
 func _shipyard_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
-    let (ogame_address) = Facilities_ogame_address.read()
+    let (ogame_address) = Facilities_no_game_address.read()
     let (_, _, _, _, robot_factory_level, _, _, _) = INoGame.getStructuresLevels(
         ogame_address, caller
     )
@@ -208,7 +229,7 @@ end
 func _nanite_factory_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
-    let (no_game) = Facilities_ogame_address.read()
+    let (no_game) = Facilities_no_game_address.read()
     let (_, _, _, _, robot_factory_level, _, _, _) = INoGame.getStructuresLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("FACILITIES::ROBOT FACTORY MUST BE AT LEVEL 10"):
@@ -285,13 +306,13 @@ func _nanite_factory_upgrade_cost{
 end
 
 ##############################################################################################
-#                                   PRIVATE FUNCTIONS                                       #
+#                                   PRIVATE FUNCTIONS                                        #
 # ############################################################################################
 
 func _get_available_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (metal : felt, crystal : felt, deuterium : felt):
-    let (ogame_address) = Facilities_ogame_address.read()
+    let (ogame_address) = Facilities_no_game_address.read()
     let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(
         ogame_address
     )
@@ -374,7 +395,7 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     crystal_required : felt,
     deuterium_required : felt,
 ) -> (time_unlocked : felt):
-    let (no_game) = Facilities_ogame_address.read()
+    let (no_game) = Facilities_no_game_address.read()
     let (_, _, _, _, robot_factory_level, _, _, nanite_level) = INoGame.getStructuresLevels(
         no_game, caller
     )
