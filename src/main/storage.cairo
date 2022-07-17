@@ -3,6 +3,10 @@
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import BuildingQue, Planet
 
+@storage_var
+func NoGame_modules_manager() -> (address : felt):
+end
+
 ##################################################################################
 #                              GENERAL STORAGE                                   #
 ##################################################################################
@@ -16,26 +20,9 @@ end
 func NoGame_players_spent_resources(address : felt) -> (spent_resources : felt):
 end
 
-##################################################################################
-#                              MODULES ADDRESSES                                 #
-##################################################################################
-
 @storage_var
-func NoGame_resources_address() -> (address : felt):
+func NoGame_resources_timer(planet_id : Uint256) -> (last_collection_timestamp : felt):
 end
-
-@storage_var
-func NoGame_facilities_address() -> (address : felt):
-end
-
-@storage_var
-func NoGame_shipyard_address() -> (address : felt):
-end
-
-@storage_var
-func NoGame_research_lab_address() -> (address : felt):
-end
-
 ##################################################################################
 #                              RESOURCES STORAGE                                 #
 ##################################################################################
