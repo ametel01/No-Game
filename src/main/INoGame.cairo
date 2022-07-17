@@ -23,8 +23,8 @@ namespace INoGame:
         deuterium_mine : felt,
         solar_plant : felt,
         robot_factory : felt,
-        research_lab : felt,
         shipyard : felt,
+        research_lab : felt,
         nanite_factory : felt,
     ):
     end
