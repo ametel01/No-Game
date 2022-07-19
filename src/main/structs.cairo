@@ -47,7 +47,6 @@ struct BuildingQue:
 end
 
 struct TechLevels:
-    member research_lab : felt
     member armour_tech : felt
     member astrophysics : felt
     member combustion_drive : felt
