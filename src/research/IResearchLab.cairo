@@ -4,115 +4,115 @@ from starkware.cairo.common.uint256 import Uint256
 
 @contract_interface
 namespace IResearchLab:
-    func _energy_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func energyTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _energy_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func energyTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _computer_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func computerTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _computer_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func computerTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _laser_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func laserTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _laser_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func laserTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _armour_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func armourTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _armour_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func armourTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _ion_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func ionTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _ion_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func ionTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _espionage_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func espionageTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _espionage_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func espionageTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _plasma_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func plasmaTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _plasma_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func plasmaTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _weapons_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func weaponsTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _weapons_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func weaponsTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _shielding_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func shieldingTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _shielding_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func ShieldingTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _hyperspace_tech_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func hyperspaceTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _hyperspace_tech_upgrade_complete(caller : felt) -> (success : felt):
+    func hyperspaceTechUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _astrophysics_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func astrophysicsUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _astrophysics_upgrade_complete(caller : felt) -> (success : felt):
+    func astrophysicsUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _combustion_drive_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func combustionDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _combustion_drive_upgrade_complete(caller : felt) -> (success : felt):
+    func combustionDriveUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _hyperspace_drive_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func hyperspaceDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _hyperspace_drive_upgrade_complete(caller : felt) -> (success : felt):
+    func hyperspaceDriveUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func _impulse_drive_upgrade_start(caller : felt, current_tech_level : felt) -> (
+    func impulseDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt
     ):
     end
 
-    func _impulse_drive_upgrade_complete(caller : felt) -> (success : felt):
+    func impulseDriveUpgradeComplete(caller : felt) -> (success : felt):
     end
 end
