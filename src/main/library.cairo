@@ -49,7 +49,7 @@ from main.storage import (
     NoGame_ships_deathstar,
 )
 
-from main.structs import BuildingQue, Planet, Cost
+from main.structs import BuildingQue, Planet, Cost, TechLevels
 
 namespace NoGame:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -60,17 +60,11 @@ namespace NoGame:
         return ()
     end
 
-    func get_number_of_planets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        ) -> (res : felt):
+    func number_of_planets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+        res : felt
+    ):
         let (n_planets) = NoGame_number_of_planets.read()
         return (n_planets)
-    end
-
-    func owner_of{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt
-    ) -> (planet_id : Uint256):
-        let (planet_id) = _get_planet_id(caller)
-        return (planet_id)
     end
 
     func tokens_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
@@ -132,8 +126,33 @@ namespace NoGame:
         let (points) = Formulas.calculate_player_points(caller)
         return (points)
     end
-end
 
+    func tech_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (result : TechLevels):
+        let (manager) = NoGame_modules_manager.read()
+        let (erc721) = IModulesManager.getERC721Address(manager)
+        let (planet_id) = IERC721.ownerToPlanet(erc721, caller)
+        let (armour_tech) = NoGame_armour_tech.read(planet_id)
+        let (astrophysics) = NoGame_astrophysics.read(planet_id)
+        let (combustion_drive) = NoGame_combustion_drive.read(planet_id)
+        let (computer_tech) = NoGame_computer_tech.read(planet_id)
+        let (energy_tech) = NoGame_energy_tech.read(planet_id)
+        let (espionage_tech) = NoGame_espionage_tech.read(planet_id)
+        let (hyperspace_drive) = NoGame_hyperspace_drive.read(planet_id)
+        let (hyperspace_tech) = NoGame_hyperspace_tech.read(planet_id)
+        let (impulse_drive) = NoGame_impulse_drive.read(planet_id)
+        let (ion_tech) = NoGame_ion_tech.read(planet_id)
+        let (laser_tech) = NoGame_laser_tech.read(planet_id)
+        let (plasma_tech) = NoGame_plasma_tech.read(planet_id)
+        let (shielding_tech) = NoGame_shielding_tech.read(planet_id)
+        let (weapons_tech) = NoGame_weapons_tech.read(planet_id)
+
+        return (
+            TechLevels(armour_tech, astrophysics, combustion_drive, computer_tech, energy_tech, espionage_tech, hyperspace_drive, hyperspace_tech, impulse_drive, ion_tech, laser_tech, plasma_tech, shielding_tech, weapons_tech),
+        )
+    end
+end
 ##########################################################################################
 #                                      PUBLIC FUNCTIONS                                  #
 ##########################################################################################
@@ -145,10 +164,6 @@ end
 #         crystal_mine : felt,
 #         deuterium_mine : felt,
 #         solar_plant : felt,
-#         robot_factory : felt,
-#         research_lab : felt,
-#         shipyard : felt,
-#         nanite_factory : felt,
 #     ):
 #         let (planet_id) = _get_planet_id(caller)
 #         let metal = NoGame_metal_mine_level.read(planet_id)

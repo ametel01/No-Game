@@ -10,7 +10,7 @@ from resources.IResources import IResources
 from resources.library import Resources
 from research.IResearchLab import IResearchLab
 from shipyard.IShipyard import IShipyard
-from manager.IModuleManager import IModuleManager
+from manager.IModulesManager import IModulesManager
 from facilities.IFacilities import IFacilities
 from utils.formulas import Formulas
 from main.structs import TechLevels, BuildingQue, Cost, Planet, MineLevels, Energy, Fleet
@@ -40,14 +40,6 @@ func numberOfPlanets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
 end
 
 @view
-func ownerOf{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(caller : felt) -> (
-    planet_id : Uint256
-):
-    let (id) = NoGame.owner_of(caller)
-    return (id)
-end
-
-@view
 func getTokensAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt
 ):
@@ -58,37 +50,21 @@ end
 func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     _resources : felt, _facilities : felt, _shipyard : felt, _research : felt
 ):
-    let (resources, facilities, shipyard, research) = modules_addresses()
+    let (resources, facilities, shipyard, research) = NoGame.modules_addresses()
     return (resources, facilities, shipyard, research)
 end
 
-# @view
-# func getStructuresLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ) -> (
-#     metal_mine : felt,
-#     crystal_mine : felt,
-#     deuterium_mine : felt,
-#     solar_plant : felt,
-#     robot_factory : felt,
-#     research_lab : felt,
-#     shipyard : felt,
-#     nanite_factory : felt,
-# ):
-#     let (
-#         metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite
-#     ) = NoGame.get_structures_levels(caller)
-#     return (
-#         metal_mine=metal,
-#         crystal_mine=crystal,
-#         deuterium_mine=deuterium,
-#         solar_plant=solar_plant,
-#         robot_factory=robot_factory,
-#         research_lab=research_lab,
-#         shipyard=shipyard,
-#         nanite_factory=nanite,
-#     )
-# end
+@view
+func getResourcesBuildingsLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt):
+    let (
+        metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite
+    ) = NoGame.structures_levels(caller)
+    return (
+        metal_mine=metal, crystal_mine=crystal, deuterium_mine=deuterium, solar_plant=solar_plant
+    )
+end
 
 @view
 func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -813,26 +789,8 @@ end
 func getTechLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (result : TechLevels):
-    let (planet_id) = _planet_to_owner.read(caller)
-    let (research_lab) = research_lab_level.read(planet_id)
-    let (armour_tech) = _armour_tech.read(planet_id)
-    let (astrophysics) = _astrophysics.read(planet_id)
-    let (combustion_drive) = _combustion_drive.read(planet_id)
-    let (computer_tech) = _computer_tech.read(planet_id)
-    let (energy_tech) = _energy_tech.read(planet_id)
-    let (espionage_tech) = _espionage_tech.read(planet_id)
-    let (hyperspace_drive) = _hyperspace_drive.read(planet_id)
-    let (hyperspace_tech) = _hyperspace_tech.read(planet_id)
-    let (impulse_drive) = _impulse_drive.read(planet_id)
-    let (ion_tech) = _ion_tech.read(planet_id)
-    let (laser_tech) = _laser_tech.read(planet_id)
-    let (plasma_tech) = _plasma_tech.read(planet_id)
-    let (shielding_tech) = _shielding_tech.read(planet_id)
-    let (weapons_tech) = _weapons_tech.read(planet_id)
-
-    return (
-        TechLevels(research_lab, armour_tech, astrophysics, combustion_drive, computer_tech, energy_tech, espionage_tech, hyperspace_drive, hyperspace_tech, impulse_drive, ion_tech, laser_tech, plasma_tech, shielding_tech, weapons_tech),
-    )
+    let (res) = NoGame.tech_levels(caller)
+    return (res)
 end
 
 #########################################################################################################
