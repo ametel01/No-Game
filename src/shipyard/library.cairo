@@ -283,7 +283,7 @@ namespace Shipyard:
         return (units_produced)
     end
 
-    func build_battleship_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    func battleship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt, number_of_units : felt
     ) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
         alloc_locals
@@ -305,9 +305,10 @@ namespace Shipyard:
         return (metal_required, crystal_required, deuterium_required)
     end
 
-    func build_battleship_complete{
+    func battleship_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (units_produced : felt):
+        alloc_locals
         _check_trying_to_complete_the_right_ship(caller, BATTLESHIP_ID)
         let (units_produced) = _check_waited_enough(caller)
         _reset_timelock(caller)
