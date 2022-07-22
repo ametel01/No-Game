@@ -58,42 +58,21 @@ end
 #########################################################################################
 
 @storage_var
-func _ogame_address() -> (address : felt):
-end
-
-@storage_var
-func metal_address() -> (address : felt):
-end
-
-@storage_var
-func crystal_address() -> (address : felt):
+func Shipyard_no_game_address() -> (address : felt):
 end
 
 # @dev Stores the timestamp of the end of the timelock for buildings upgrades.
 # @params The address of the player.
 @storage_var
-func shipyard_timelock(address : felt) -> (cued_details : ShipyardQue):
+func Shipyard_timelock(address : felt) -> (cued_details : ShipyardQue):
 end
 
 # @dev Stores the que status for a specific ship.
 @storage_var
-func ships_qued(address : felt, id : felt) -> (is_qued : felt):
+func Shipyard_qued(address : felt, id : felt) -> (is_qued : felt):
 end
 
 namespace Shipyard:
-    #########################################################################################
-    #                                           CONSTANTS                                   #
-    #########################################################################################
-
-    const CARGO_SHIP_ID = 31
-    const RECYCLER_SHIP_ID = 32
-    const ESPIONAGE_PROBE_ID = 33
-    const SOLAR_SATELLITE_ID = 34
-    const LIGHT_FIGHTER_ID = 35
-    const CRUISER_ID = 36
-    const BATTLESHIP_ID = 37
-    const DEATHSTAR_ID = 38
-
     # ###################################################################################################
     #                                SHIPS REQUIREMENTS CHECHS                                          #
     #####################################################################################################
@@ -101,11 +80,9 @@ namespace Shipyard:
     func cargo_ship_requirements_check{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
-        let (tech_levels) = ResearchLab.get_tech_levels(caller)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
+        let (tech_levels) = INoGame.getTechLevels(caller)
         with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 2"):
             assert_le(2, shipyard_level)
         end
@@ -118,11 +95,9 @@ namespace Shipyard:
     func recycler_ship_requirements_check{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
-        let (tech_levels) = ResearchLab.get_tech_levels(caller)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
+        let (tech_levels) = INoGame.getTechLevels(caller)
         with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 4"):
             assert_le(4, shipyard_level)
         end
@@ -138,11 +113,9 @@ namespace Shipyard:
     func espionage_probe_requirements_check{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
-        let (tech_levels) = ResearchLab.get_tech_levels(caller)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
+        let (tech_levels) = INoGame.getTechLevels(caller)
         with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 3"):
             assert_le(3, shipyard_level)
         end
@@ -158,11 +131,9 @@ namespace Shipyard:
     func solar_satellite_requirements_check{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
-        let (tech_levels) = ResearchLab.get_tech_levels(caller)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
+        let (tech_levels) = INoGame.getTechLevels(caller)
         with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 1"):
             assert_le(1, shipyard_level)
         end
@@ -172,11 +143,9 @@ namespace Shipyard:
     func light_fighter_requirements_check{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
-        let (tech_levels) = ResearchLab.get_tech_levels(caller)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
+        let (tech_levels) = INoGame.getTechLevels(caller)
         with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 1"):
             assert_le(1, shipyard_level)
         end
@@ -189,11 +158,9 @@ namespace Shipyard:
     func cruiser_requirements_check{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
-        let (tech_levels) = ResearchLab.get_tech_levels(caller)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
+        let (tech_levels) = INoGame.getTechLevels(caller)
         with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 5"):
             assert_le(5, shipyard_level)
         end
@@ -209,11 +176,9 @@ namespace Shipyard:
     func battleship_requirements_check{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
-        let (tech_levels) = ResearchLab.get_tech_levels(caller)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
+        let (tech_levels) = INoGame.getTechLevels(caller)
         with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 7"):
             assert_le(7, shipyard_level)
         end
@@ -226,11 +191,9 @@ namespace Shipyard:
     func deathstar_requirements_check{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (response : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
-        let (tech_levels) = ResearchLab.get_tech_levels(caller)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
+        let (tech_levels) = INoGame.getTechLevels(caller)
         with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 12"):
             assert_le(12, shipyard_level)
         end
@@ -372,10 +335,10 @@ namespace Shipyard:
     func get_available_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt):
-        let (ogame_address) = _ogame_address.read()
-        let (metal_address) = NoGame.get_metal_address(ogame_address)
-        let (crystal_address) = NoGame.get_crystal_address(ogame_address)
-        let (deuterium_address) = NoGame.get_deuterium_address(ogame_address)
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(
+            no_game
+        )
         let (metal_available) = IERC20.balanceOf(metal_address, caller)
         let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
         let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
@@ -403,21 +366,21 @@ namespace Shipyard:
     func reset_timelock{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
-        shipyard_timelock.write(address, ShipyardQue(0, 0, 0))
+        Shipyard_timelock.write(address, ShipyardQue(0, 0, 0))
         return ()
     end
 
     func reset_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt, id : felt
     ):
-        ships_qued.write(address, id, FALSE)
+        Shipyard_qued.write(address, id, FALSE)
         return ()
     end
 
     func check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ):
-        let (que_status) = shipyard_timelock.read(caller)
+        let (que_status) = Shipyard_timelock.read(caller)
         let current_timelock = que_status.lock_end
         with_attr error_message("SHIPYARD::Que is busy"):
             assert current_timelock = 0
@@ -428,7 +391,7 @@ namespace Shipyard:
     func check_trying_to_complete_the_right_ship{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt, SHIP_ID : felt):
-        let (is_qued) = ships_qued.read(caller, SHIP_ID)
+        let (is_qued) = Shipyard_qued.read(caller, SHIP_ID)
         with_attr error_message("Tried to complete the wrong ship"):
             assert is_qued = TRUE
         end
@@ -441,7 +404,7 @@ namespace Shipyard:
         alloc_locals
         tempvar syscall_ptr = syscall_ptr
         let (time_now) = get_block_timestamp()
-        let (que_details) = shipyard_timelock.read(caller)
+        let (que_details) = Shipyard_timelock.read(caller)
         let timelock_end = que_details.lock_end
         let (waited_enough) = is_le(timelock_end, time_now)
         with_attr error_message("Timelock not yet expired"):
@@ -459,16 +422,14 @@ namespace Shipyard:
         crystal_required : felt,
         deuterium_required : felt,
     ):
-        let (ogame_address) = _ogame_address.read()
-        let (_, _, _, _, _, _, shipyard_level, _) = NoGame.getStructuresLevels(
-            ogame_address, caller
-        )
+        let (no_game) = Shipyard_no_game_address.read()
+        let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
         let (build_time) = production_time(metal_required, crystal_required, shipyard_level)
         let (time_now) = get_block_timestamp()
         let time_end = time_now + build_time
         let que_details = ShipyardQue(SHIP_ID, number_of_units, time_end)
-        ships_qued.write(caller, SHIP_ID, TRUE)
-        shipyard_timelock.write(caller, que_details)
+        Shipyard_qued.write(caller, SHIP_ID, TRUE)
+        Shipyard_timelock.write(caller, que_details)
         return ()
     end
 end
