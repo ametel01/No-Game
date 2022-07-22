@@ -1,7 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import assert_le, unsigned_div_rem
+from starkware.cairo.common.math import assert_le, unsigned_div_rem, assert_not_zero
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
@@ -73,6 +73,38 @@ func Shipyard_qued(address : felt, id : felt) -> (is_qued : felt):
 end
 
 namespace Shipyard:
+    func cargo_ship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt, number_of_units : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = cargo_ship_cost(
+            number_of_units
+        )
+        assert_not_zero(caller)
+        check_que_not_busy(caller)
+        cargo_ship_requirements_check(caller)
+        check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        set_timelock_and_que(
+            caller,
+            CARGO_SHIP_ID,
+            number_of_units,
+            metal_required,
+            crystal_required,
+            deuterium_required,
+        )
+        return (metal_required, crystal_required, deuterium_required)
+    end
+
+    func cargo_ship_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (unit_produced : felt):
+        alloc_locals
+        check_trying_to_complete_the_right_ship(caller, CARGO_SHIP_ID)
+        let (units_produced) = check_waited_enough(caller)
+        reset_timelock(caller)
+        reset_que(caller, CARGO_SHIP_ID)
+        return (units_produced)
+    end
     # ###################################################################################################
     #                                SHIPS REQUIREMENTS CHECHS                                          #
     #####################################################################################################
