@@ -10,59 +10,59 @@ namespace IShipyard:
     func cargoShipBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
     end
 
-    func RecyclerShipBuildStart(caller : felt, number_of_units : felt) -> (
+    func recyclerShipBuildStart(caller : felt, number_of_units : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
     ):
     end
 
-    func RecyclerShipBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
+    func recyclerShipBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
     end
 
-    func EspionageProbeBuildStart(caller : felt, number_of_units : felt) -> (
+    func espionageProbeBuildStart(caller : felt, number_of_units : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
     ):
     end
 
-    func EspionageProbeBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
+    func espionageProbeBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
     end
 
-    func SolarSatelliteBuildStart(caller : felt, number_of_units : felt) -> (
+    func solarSatelliteBuildStart(caller : felt, number_of_units : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
     ):
     end
 
-    func SolarSatelliteBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
+    func solarSatelliteBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
     end
 
-    func LightFighterBuildStart(caller : felt, number_of_units : felt) -> (
+    func lightFighterBuildStart(caller : felt, number_of_units : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
     ):
     end
 
-    func LightFighterBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
+    func lightFighterBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
     end
 
-    func CruiserBuildStart(caller : felt, number_of_units : felt) -> (
+    func cruiserBuildStart(caller : felt, number_of_units : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
     ):
     end
 
-    func CruiserBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
+    func cruiserBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
     end
 
-    func BattleshipBuildStart(caller : felt, number_of_units : felt) -> (
+    func battleshipBuildStart(caller : felt, number_of_units : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
     ):
     end
 
-    func BattleshipBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
+    func battleshipBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
     end
 
-    func DeathstarShipBuildStart(caller : felt, number_of_units : felt) -> (
+    func deathstarShipBuildStart(caller : felt, number_of_units : felt) -> (
         metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
     ):
     end
 
-    func DeathstarShipBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
+    func deathstarShipBuildComplete(caller : felt) -> (units_produced : felt, success : felt):
     end
 end
