@@ -1,7 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
+from starkware.starknet.common.syscalls import get_block_timestamp
 from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.pow import pow
 from starkware.cairo.common.math_cmp import is_le
@@ -90,15 +90,15 @@ namespace Facilities:
         _check_que_not_busy(caller)
         _shipyard_requirements_check(caller)
         let (no_game) = Facilities_no_game_address.read()
-        let (_, _, _, _, robot_factory_level, _, shipyard_level, _) = INoGame.getStructuresLevels(
-            no_game, caller
-        )
+        let (
+            _, _, _, _, robot_factory_level, _, shipyard_level, nanite_level
+        ) = INoGame.getStructuresLevels(no_game, caller)
         let (metal_required, crystal_required, deuterium_required) = _shipyard_upgrade_cost(
             shipyard_level
         )
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         let (time_unlocked) = _set_timelock_and_que(
-            caller, SHIPYARD_ID, metal_required, crystal_required, deuterium_required
+            caller, SHIPYARD_ID, metal_required, robot_factory_level, nanite_level, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required, time_unlocked)
     end
@@ -121,7 +121,7 @@ namespace Facilities:
         assert_not_zero(caller)
         _check_que_not_busy(caller)
         let (ogame_address) = Facilities_no_game_address.read()
-        let (_, _, _, _, robot_factory_level, _, _, _) = INoGame.getStructuresLevels(
+        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = INoGame.getStructuresLevels(
             ogame_address, caller
         )
         let (metal_required, crystal_required, deuterium_required) = _robot_factory_upgrade_cost(
@@ -129,7 +129,12 @@ namespace Facilities:
         )
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         let (time_unlocked) = _set_timelock_and_que(
-            caller, ROBOT_FACTORY_ID, metal_required, crystal_required, deuterium_required
+            caller,
+            ROBOT_FACTORY_ID,
+            robot_factory_level,
+            nanite_level,
+            metal_required,
+            crystal_required,
         )
         return (metal_required, crystal_required, deuterium_required, time_unlocked)
     end
@@ -153,14 +158,19 @@ namespace Facilities:
         _check_que_not_busy(caller)
         let (no_game) = Facilities_no_game_address.read()
         let (
-            _, _, _, _, robot_factory_level, research_lab_level, _, _
+            _, _, _, _, robot_factory_level, research_lab_level, _, nanite_level
         ) = INoGame.getStructuresLevels(no_game, caller)
         let (metal_required, crystal_required, deuterium_required) = _research_lab_upgrade_cost(
             research_lab_level
         )
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         let (time_unlocked) = _set_timelock_and_que(
-            caller, RESEARCH_LAB_ID, metal_required, crystal_required, deuterium_required
+            caller,
+            RESEARCH_LAB_ID,
+            robot_factory_level,
+            nanite_level,
+            metal_required,
+            crystal_required,
         )
         return (metal_required, crystal_required, deuterium_required, time_unlocked)
     end
@@ -184,15 +194,20 @@ namespace Facilities:
         _check_que_not_busy(caller)
         _nanite_factory_requirements_check(caller)
         let (ogame_address) = Facilities_no_game_address.read()
-        let (
-            _, _, _, _, robot_factory_level, _, _, nanite_factory_level
-        ) = INoGame.getStructuresLevels(ogame_address, caller)
+        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = INoGame.getStructuresLevels(
+            ogame_address, caller
+        )
         let (metal_required, crystal_required, deuterium_required) = _nanite_factory_upgrade_cost(
-            nanite_factory_level
+            nanite_level
         )
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         let (time_unlocked) = _set_timelock_and_que(
-            caller, NANITE_FACTORY_ID, metal_required, crystal_required, deuterium_required
+            caller,
+            NANITE_FACTORY_ID,
+            robot_factory_level,
+            nanite_level,
+            metal_required,
+            crystal_required,
         )
         return (metal_required, crystal_required, deuterium_required, time_unlocked)
     end
@@ -391,14 +406,11 @@ end
 func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt,
     BUILDING_ID : felt,
+    robot_factory_level : felt,
+    nanite_level : felt,
     metal_required : felt,
     crystal_required : felt,
-    deuterium_required : felt,
 ) -> (time_unlocked : felt):
-    let (no_game) = Facilities_no_game_address.read()
-    let (_, _, _, _, robot_factory_level, _, _, nanite_level) = INoGame.getStructuresLevels(
-        no_game, caller
-    )
     let (build_time) = Formulas.buildings_production_time(
         metal_required, crystal_required, robot_factory_level, nanite_level
     )
