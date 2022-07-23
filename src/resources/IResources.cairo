@@ -5,9 +5,6 @@ from resources.library import ResourcesQue
 
 @contract_interface
 namespace IResources:
-    func getBuildingTimelockStatus(caller) -> (building_id : felt, timelock_end : felt):
-    end
-
     func metalUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, time_unlocked : felt
     ):
@@ -48,12 +45,8 @@ namespace IResources:
     func fusionReactorUpgradeComplete(caller : felt):
     end
 
-    func getResourcesUpgradeCost(caller : felt) -> (
-        metal_mine : Cost,
-        crystal_mine : Cost,
-        deuterium_mine : Cost,
-        solar_plant : Cost,
-        fusion_reactor : Cost,
+    func getUpgradeCost(caller : felt) -> (
+        metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost
     ):
     end
 

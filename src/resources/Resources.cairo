@@ -3,6 +3,7 @@
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from resources.library import Resources
+from main.structs import Cost
 
 # @view
 # func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -79,4 +80,12 @@ func solarPlantUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*,
 ) -> (success : felt):
     Resources.solar_plant_upgrade_complete(caller)
     return (TRUE)
+end
+
+@external
+func getUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost):
+    let (metal, crystal, deuterium, solar_plant) = Resources.upgrades_cost(caller)
+    return (metal, crystal, deuterium, solar_plant)
 end
