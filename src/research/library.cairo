@@ -1,7 +1,6 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.uint256 import Uint256
 from starkware.cairo.common.math import assert_le, assert_not_zero
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
@@ -9,7 +8,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from main.INoGame import INoGame
 from token.erc20.interfaces.IERC20 import IERC20
-from main.structs import TechLevels
+from main.structs import TechLevels, Cost, TechCosts
 from utils.formulas import Formulas
 
 ########################################################################################
@@ -65,6 +64,45 @@ namespace ResearchLab:
         Research_no_game_address.write(no_game_address)
         return ()
     end
+
+    func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (costs : TechCosts):
+        alloc_locals
+        let (no_game) = Research_no_game_address.read()
+        let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+        let (m1, c1, d1) = _energy_tech_upgrade_cost(tech_levels.energy_tech)
+        let (m2, c2, d2) = _computer_tech_upgrade_cost(tech_levels.computer_tech)
+        let (m3, c3, d3) = _laser_tech_upgrade_cost(tech_levels.laser_tech)
+        let (m4, c4, d4) = _armour_tech_upgrade_cost(tech_levels.armour_tech)
+        let (m5, c5, d5) = _espionage_tech_upgrade_cost(tech_levels.espionage_tech)
+        let (m6, c6, d6) = _ion_tech_upgrade_cost(tech_levels.ion_tech)
+        let (m7, c7, d7) = _plasma_tech_upgrade_cost(tech_levels.plasma_tech)
+        let (m8, c8, d8) = _weapons_tech_upgrade_cost(tech_levels.weapons_tech)
+        let (m9, c9, d9) = _shielding_tech_upgrade_cost(tech_levels.shielding_tech)
+        let (m10, c10, d10) = _hyperspace_tech_upgrade_cost(tech_levels.hyperspace_tech)
+        let (m11, c11, d11) = _astrophysics_upgrade_cost(tech_levels.astrophysics)
+        let (m12, c12, d12) = _combustion_drive_upgrade_cost(tech_levels.combustion_drive)
+        let (m13, c13, d13) = _hyperspace_drive_upgrade_cost(tech_levels.hyperspace_drive)
+        let (m14, c14, d14) = _impulse_drive_upgrade_cost(tech_levels.impulse_drive)
+        return (
+            TechCosts(armour_tech=Cost(m4, c4, d4),
+            astrophysics=Cost(m11, c11, d11),
+            combustion_drive=Cost(m12, c12, d12),
+            computer_tech=Cost(m2, c2, d2),
+            energy_tech=Cost(m1, c1, d1),
+            espionage_tech=Cost(m5, c5, d5),
+            hyperspace_drive=Cost(m13, c13, d13),
+            hyperspace_tech=Cost(m10, c10, d10),
+            impulse_drive=Cost(m14, c14, d14),
+            ion_tech=Cost(m6, c6, d6),
+            laser_tech=Cost(m3, c3, d3),
+            plasma_tech=Cost(m7, c7, d7),
+            shielding_tech=Cost(m9, c9, d9),
+            weapons_tech=Cost(m8, c8, d8)),
+        )
+    end
+
     func energy_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
@@ -277,7 +315,7 @@ namespace ResearchLab:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
         alloc_locals
-        let (metal_required, crystal_required, deuterium_required) = _shieldieng_tech_upgrade_cost(
+        let (metal_required, crystal_required, deuterium_required) = _shielding_tech_upgrade_cost(
             current_tech_level
         )
         assert_not_zero(caller)
@@ -569,7 +607,7 @@ func _weapons_tech_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     end
 end
 
-func _shieldieng_tech_upgrade_cost{
+func _shielding_tech_upgrade_cost{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(current_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
     let base_metal = 200
@@ -654,9 +692,7 @@ func _energy_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     with_attr error_message("research lab must be at level 1"):
         assert_le(1, research_lab_level)
     end
@@ -668,9 +704,7 @@ func _computer_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     with_attr error_message("research lab must be at level 1"):
         assert_le(1, research_lab_level)
     end
@@ -683,9 +717,7 @@ func _laser_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
     with_attr error_message("research lab must be at level 1"):
         assert_le(1, research_lab_level)
@@ -701,9 +733,7 @@ func _armour_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     with_attr error_message("research lab must be at level 2"):
         assert_le(2, research_lab_level)
     end
@@ -716,9 +746,7 @@ func _astrophysics_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let impulse_drive_level = tech_levels.impulse_drive
     let espionage_tech_level = tech_levels.espionage_tech
     with_attr error_message("research lab must be at level 3"):
@@ -738,9 +766,7 @@ func _espionage_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     with_attr error_message("research lab must be at level 3"):
         assert_le(3, research_lab_level)
     end
@@ -753,9 +779,7 @@ func _ion_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let laser_tech_level = tech_levels.laser_tech
     let energy_tech_level = tech_levels.energy_tech
     with_attr error_message("research lab must be at level 4"):
@@ -776,9 +800,7 @@ func _plasma_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let laser_tech_level = tech_levels.laser_tech
     let energy_tech_level = tech_levels.energy_tech
     let ion_tech_level = tech_levels.ion_tech
@@ -802,9 +824,7 @@ func _weapons_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     with_attr error_message("research lab must be at level 4"):
         assert_le(4, research_lab_level)
     end
@@ -817,9 +837,7 @@ func _shielding_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
     with_attr error_message("research lab must be at level 6"):
         assert_le(6, research_lab_level)
@@ -836,9 +854,7 @@ func _hyperspace_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
     let shielding_tech_level = tech_levels.shielding_tech
     with_attr error_message("research lab must be at level 7"):
@@ -860,9 +876,7 @@ func _combustion_drive_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
 
     with_attr error_message("research lab must be at level 1"):
@@ -881,9 +895,7 @@ func _impulse_drive_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
     with_attr error_message("research lab must be at level 2"):
         assert_le(2, research_lab_level)
@@ -900,9 +912,7 @@ func _hyperspace_drive_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
     let shielding_tech_level = tech_levels.shielding_tech
     let hyperspace_tech_level = tech_levels.hyperspace_tech
@@ -1024,7 +1034,7 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     caller : felt, TECH_ID : felt, metal_required : felt, crystal_required : felt
 ):
     let (no_game_address) = Research_no_game_address.read()
-    let (_, _, _, _, _, research_lab_level, _, nanite_level) = INoGame.getStructuresLevels(
+    let (_, _, research_lab_level, nanite_level) = INoGame.getFacilitiesLevels(
         no_game_address, caller
     )
     let (research_time) = Formulas.buildings_production_time(

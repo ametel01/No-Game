@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from main.structs import TechCosts
 from research.library import ResearchLab
 
 @constructor
@@ -10,6 +11,15 @@ func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
 ):
     ResearchLab.initializer(no_game_address)
     return ()
+end
+
+@external
+func getUpgradesCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (costs : TechCosts):
+    alloc_locals
+    let (costs) = ResearchLab.upgrades_cost(caller)
+    return (costs)
 end
 
 # ######### UPGRADES FUNCS ############################

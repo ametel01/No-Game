@@ -1,5 +1,7 @@
 %lang starknet
 
+from main.structs import TechCosts
+
 @contract_interface
 namespace IResearchLab:
     func energyTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -112,5 +114,8 @@ namespace IResearchLab:
     end
 
     func impulseDriveUpgradeComplete(caller : felt) -> (success : felt):
+    end
+
+    func getUpgradesCost(caller : felt) -> (cost : TechCosts):
     end
 end
