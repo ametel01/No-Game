@@ -59,35 +59,151 @@ namespace Resources:
         return ()
     end
 
-    func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    func metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
-    ) -> (metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost):
+    ) -> (metal : felt, crystal : felt, time_unlocked : felt):
         alloc_locals
+        assert_not_zero(caller)
+        _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
         let (
-            metal_mine, crystal_mine, deuterium_mine, solar_plant, _, _, _, _
+            metal_level, _, _, _, robot_factory_level, _, _, nanite_level
         ) = INoGame.getStructuresLevels(no_game, caller)
-        let (m_m, m_c) = _metal_building_cost(metal_mine)
-        let (c_m, c_c) = _crystal_building_cost(crystal_mine)
-        let (d_m, d_c) = _deuterium_building_cost(deuterium_mine)
-        let (s_m, s_c) = _solar_plant_building_cost(solar_plant)
-        return (
-            metal_mine=Cost(m_m, m_c, 0),
-            crystal_mine=Cost(c_m, c_c, 0),
-            deuterium_mine=Cost(d_m, d_c, 0),
-            solar_plant=Cost(s_m, s_c, 0),
+        let (metal_required, crystal_required) = _metal_building_cost(metal_level)
+        _check_enough_resources(caller, metal_required, crystal_required, 0)
+        let (time_unlocked) = _set_timelock_and_que(
+            caller, METAL_MINE_ID, metal_required, crystal_required, 0
         )
+        return (metal_required, crystal_required, time_unlocked)
     end
 
-    func timelock_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    func metal_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
-    ) -> (building_id : felt, time_end : felt):
-        let (status) = Resources_timelock.read(caller)
-        let building_id = status.builiding_id
-        let time_end = status.timelock
-
-        return (building_id, time_end)
+    ):
+        alloc_locals
+        _check_trying_to_complete_the_right_resource(caller, METAL_MINE_ID)
+        _check_waited_enough(caller)
+        _reset_que(caller, METAL_MINE_ID)
+        _reset_timelock(caller)
+        return ()
     end
+
+    func crystal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (metal : felt, crystal : felt, time_unlocked : felt):
+        alloc_locals
+        assert_not_zero(caller)
+        _check_que_not_busy(caller)
+        let (no_game) = Resources_no_game_address.read()
+        let (
+            _, crystal_level, _, _, robot_factory_level, _, _, nanite_level
+        ) = INoGame.getStructuresLevels(no_game, caller)
+        let (metal_required, crystal_required) = _crystal_building_cost(crystal_level)
+        _check_enough_resources(caller, metal_required, crystal_required, 0)
+        let (time_unlocked) = _set_timelock_and_que(
+            caller, CRYSTAL_MINE_ID, metal_required, crystal_required, 0
+        )
+        return (metal_required, crystal_required, time_unlocked)
+    end
+
+    func crystal_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_resource(caller, CRYSTAL_MINE_ID)
+        _check_waited_enough(caller)
+        _reset_que(caller, CRYSTAL_MINE_ID)
+        _reset_timelock(caller)
+        return ()
+    end
+
+    func deuterium_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (metal : felt, crystal : felt, time_unlocked : felt):
+        alloc_locals
+        assert_not_zero(caller)
+        _check_que_not_busy(caller)
+        let (no_game) = Resources_no_game_address.read()
+        let (
+            _, _, deuterium_level, _, robot_factory_level, _, _, nanite_level
+        ) = INoGame.getStructuresLevels(no_game, caller)
+        let (metal_required, crystal_required) = _deuterium_building_cost(deuterium_level)
+        _check_enough_resources(caller, metal_required, crystal_required, 0)
+        let (time_unlocked) = _set_timelock_and_que(
+            caller, DEUTERIUM_MINE_ID, metal_required, crystal_required, 0
+        )
+        return (metal_required, crystal_required, time_unlocked)
+    end
+
+    func deuterium_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_resource(caller, DEUTERIUM_MINE_ID)
+        _check_waited_enough(caller)
+        _reset_que(caller, DEUTERIUM_MINE_ID)
+        _reset_timelock(caller)
+        return ()
+    end
+
+    func solar_plant_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (metal : felt, crystal : felt, time_unlocked : felt):
+        alloc_locals
+        assert_not_zero(caller)
+        _check_que_not_busy(caller)
+        let (no_game) = Resources_no_game_address.read()
+        let (
+            _, _, _, solar_level, robot_factory_level, _, _, nanite_level
+        ) = INoGame.getStructuresLevels(no_game, caller)
+        let (metal_required, crystal_required) = _solar_plant_building_cost(solar_level)
+        _check_enough_resources(caller, metal_required, crystal_required, 0)
+        let (time_unlocked) = _set_timelock_and_que(
+            caller, SOLAR_PLANT_ID, metal_required, crystal_required, 0
+        )
+        return (metal_required, crystal_required, time_unlocked)
+    end
+
+    func solar_plant_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_resource(caller, SOLAR_PLANT_ID)
+        _check_waited_enough(caller)
+        _reset_que(caller, SOLAR_PLANT_ID)
+        _reset_timelock(caller)
+        return ()
+    end
+end
+
+func _upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost):
+    alloc_locals
+    let (no_game) = Resources_no_game_address.read()
+    let (
+        metal_mine, crystal_mine, deuterium_mine, solar_plant, _, _, _, _
+    ) = INoGame.getStructuresLevels(no_game, caller)
+    let (m_m, m_c) = _metal_building_cost(metal_mine)
+    let (c_m, c_c) = _crystal_building_cost(crystal_mine)
+    let (d_m, d_c) = _deuterium_building_cost(deuterium_mine)
+    let (s_m, s_c) = _solar_plant_building_cost(solar_plant)
+    return (
+        metal_mine=Cost(m_m, m_c, 0),
+        crystal_mine=Cost(c_m, c_c, 0),
+        deuterium_mine=Cost(d_m, d_c, 0),
+        solar_plant=Cost(s_m, s_c, 0),
+    )
+end
+
+func _timelock_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (building_id : felt, time_end : felt):
+    let (status) = Resources_timelock.read(caller)
+    let building_id = status.building_id
+    let time_end = status.lock_end
+
+    return (building_id, time_end)
 end
 
 # ###################################################################################################
@@ -232,11 +348,11 @@ func _check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     return ()
 end
 
-func check_trying_to_complete_the_right_resource{
+func _check_trying_to_complete_the_right_resource{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt, BUILDING_ID : felt):
     let (is_qued) = Resources_qued.read(caller, BUILDING_ID)
-    with_attr error_message("RESOURCES::TRIED TO COMPLETE THE WRONG FACILITY!!!"):
+    with_attr error_message("RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!"):
         assert is_qued = TRUE
     end
     return ()
