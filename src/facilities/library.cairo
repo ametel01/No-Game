@@ -61,8 +61,8 @@ namespace Facilities:
         alloc_locals
         let (no_game) = Facilities_no_game_address.read()
         let (
-            _, _, _, _, robot_factory_level, local shipyard_level, research_lab_level, nanite_level
-        ) = INoGame.getStructuresLevels(no_game, caller)
+            robot_factory_level, local shipyard_level, research_lab_level, nanite_level
+        ) = INoGame.getFacilitiesLevels(no_game, caller)
         let (r_m, r_c, r_d) = _robot_factory_upgrade_cost(robot_factory_level)
         let (s_m, s_c, s_d) = _shipyard_upgrade_cost(shipyard_level)
         let (l_m, l_c, l_d) = _research_lab_upgrade_cost(research_lab_level)
@@ -90,9 +90,9 @@ namespace Facilities:
         _check_que_not_busy(caller)
         _shipyard_requirements_check(caller)
         let (no_game) = Facilities_no_game_address.read()
-        let (
-            _, _, _, _, robot_factory_level, _, shipyard_level, nanite_level
-        ) = INoGame.getStructuresLevels(no_game, caller)
+        let (robot_factory_level, _, shipyard_level, nanite_level) = INoGame.getFacilitiesLevels(
+            no_game, caller
+        )
         let (metal_required, crystal_required, deuterium_required) = _shipyard_upgrade_cost(
             shipyard_level
         )
@@ -121,7 +121,7 @@ namespace Facilities:
         assert_not_zero(caller)
         _check_que_not_busy(caller)
         let (ogame_address) = Facilities_no_game_address.read()
-        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = INoGame.getStructuresLevels(
+        let (robot_factory_level, _, _, nanite_level) = INoGame.getFacilitiesLevels(
             ogame_address, caller
         )
         let (metal_required, crystal_required, deuterium_required) = _robot_factory_upgrade_cost(
@@ -158,8 +158,8 @@ namespace Facilities:
         _check_que_not_busy(caller)
         let (no_game) = Facilities_no_game_address.read()
         let (
-            _, _, _, _, robot_factory_level, research_lab_level, _, nanite_level
-        ) = INoGame.getStructuresLevels(no_game, caller)
+            robot_factory_level, research_lab_level, _, nanite_level
+        ) = INoGame.getFacilitiesLevels(no_game, caller)
         let (metal_required, crystal_required, deuterium_required) = _research_lab_upgrade_cost(
             research_lab_level
         )
@@ -194,7 +194,7 @@ namespace Facilities:
         _check_que_not_busy(caller)
         _nanite_factory_requirements_check(caller)
         let (ogame_address) = Facilities_no_game_address.read()
-        let (_, _, _, _, robot_factory_level, _, _, nanite_level) = INoGame.getStructuresLevels(
+        let (robot_factory_level, _, _, nanite_level) = INoGame.getFacilitiesLevels(
             ogame_address, caller
         )
         let (metal_required, crystal_required, deuterium_required) = _nanite_factory_upgrade_cost(
@@ -232,9 +232,7 @@ func _shipyard_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (ogame_address) = Facilities_no_game_address.read()
-    let (_, _, _, _, robot_factory_level, _, _, _) = INoGame.getStructuresLevels(
-        ogame_address, caller
-    )
+    let (robot_factory_level, _, _, _) = INoGame.getFacilitiesLevels(ogame_address, caller)
     with_attr error_message("FACILITIES::ROBOT FACTORY MUST BE AT LEVEL 2"):
         assert_le(2, robot_factory_level)
     end
@@ -245,7 +243,7 @@ func _nanite_factory_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (no_game) = Facilities_no_game_address.read()
-    let (_, _, _, _, robot_factory_level, _, _, _) = INoGame.getStructuresLevels(no_game, caller)
+    let (robot_factory_level, _, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("FACILITIES::ROBOT FACTORY MUST BE AT LEVEL 10"):
         assert_le(10, robot_factory_level)

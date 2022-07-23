@@ -37,7 +37,7 @@ namespace IFacilities:
     func naniteFactoryUpgradeComplete(caller : felt) -> (success : felt):
     end
 
-    func getFacilitiesUpgradeCost(caller : felt) -> (
+    func getUpgradeCost(caller : felt) -> (
         robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost
     ):
     end

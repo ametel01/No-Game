@@ -22,7 +22,7 @@ func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
 end
 
 @view
-func getFacilitiesUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite : Cost):
     let (robot, shipyard, research, nanite) = Facilities.upgrades_cost(caller)
