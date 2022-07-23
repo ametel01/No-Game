@@ -1,46 +1,62 @@
 %lang starknet
 
 from main.structs import Cost
+from resources.library import ResourcesQue
 
 @contract_interface
 namespace IResources:
     func getBuildingTimelockStatus(caller) -> (building_id : felt, timelock_end : felt):
     end
 
-    func metal_upgrade_start(caller : felt) -> (
+    func metalUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, time_unlocked : felt
     ):
     end
 
-    func metal_upgrade_complete(caller : felt):
+    func metalUpgradeComplete(caller : felt):
     end
 
-    func crystal_upgrade_start(caller : felt) -> (
+    func crystalUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, time_unlocked : felt
     ):
     end
 
-    func crystal_upgrade_complete(caller : felt):
+    func crystalUpgradeComplete(caller : felt):
     end
 
-    func deuterium_upgrade_start(caller : felt) -> (
+    func deuteriumUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, time_unlocked : felt
     ):
     end
 
-    func deuterium_upgrade_complete(caller : felt):
+    func deuteriumUpgradeComplete(caller : felt):
     end
 
-    func solar_plant_upgrade_start(caller : felt) -> (
+    func solarPlantUpgradeStart(caller : felt) -> (
         metal_spent : felt, crystal_spent : felt, time_unlocked : felt
     ):
     end
 
-    func solar_plant_upgrade_complete(caller : felt):
+    func solarPlantUpgradeComplete(caller : felt):
+    end
+
+    func fusionReactorUpgradeStart(caller : felt) -> (
+        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_unlocked : felt
+    ):
+    end
+
+    func fusionReactorUpgradeComplete(caller : felt):
     end
 
     func getResourcesUpgradeCost(caller : felt) -> (
-        robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost
+        metal_mine : Cost,
+        crystal_mine : Cost,
+        deuterium_mine : Cost,
+        solar_plant : Cost,
+        fusion_reactor : Cost,
     ):
+    end
+
+    func getTimelockStatus(caller : felt) -> (cued_details : ResourcesQue):
     end
 end
