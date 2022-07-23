@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
+from starkware.cairo.common.math import unsigned_div_rem
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.uint256 import Uint256
@@ -20,7 +21,7 @@ from main.storage import (
     NoGame_crystal_mine_level,
     NoGame_deuterium_mine_level,
     NoGame_solar_plant_level,
-    NoGame_players_spent_resources,
+    NoGame_planets_spent_resources,
     NoGame_shipyard_level,
     NoGame_robot_factory_level,
     NoGame_research_lab_level,
@@ -49,7 +50,7 @@ from main.storage import (
     NoGame_ships_deathstar,
 )
 
-from main.structs import BuildingQue, Planet, Cost, TechLevels
+from main.structs import BuildingQue, Planet, Cost, TechLevels, Fleet
 
 namespace NoGame:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -86,53 +87,75 @@ namespace NoGame:
         return (resources, facilities, shipyard, research_lab)
     end
 
-    func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt
-    ) -> (
-        up_metal : Cost,
-        up_crystal : Cost,
-        up_deuturium : Cost,
-        up_solar : Cost,
-        up_robot_factory : Cost,
-        up_shipyard : Cost,
-        up_lab : Cost,
-        up_nanite : Cost,
-    ):
-        alloc_locals
-        let (modules_manager) = NoGame_modules_manager.read()
-        let (erc721) = IModulesManager.getERC721Address(modules_manager)
-        let (resources, facilities, shipyard, research_lab) = IModulesManager.getModulesAddresses()
-        let (
-            metal_mine, crystal_mine, deuterium_mine, solar_plant
-        ) = IResources.getResourcesUpgradeCost(resources, caller)
-        let (
-            robot_factory, shipyard, research_lab, nanite_factory
-        ) = IFacilities.getFacilitiesUpgradeCost(facilities, caller)
-        return (
-            metal_mine,
-            crystal_mine,
-            deuterium_mine,
-            solar_plant,
-            robot_factory,
-            shipyard,
-            research_lab,
-            nanite_factory,
-        )
-    end
+    # func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    #     caller : felt
+    # ) -> (
+    #     up_metal : Cost,
+    #     up_crystal : Cost,
+    #     up_deuturium : Cost,
+    #     up_solar : Cost,
+    #     up_robot_factory : Cost,
+    #     up_shipyard : Cost,
+    #     up_lab : Cost,
+    #     up_nanite : Cost,
+    # ):
+    #     alloc_locals
+    #     let (modules_manager) = NoGame_modules_manager.read()
+    #     let (erc721) = IModulesManager.getERC721Address(modules_manager)
+    #     let (resources, facilities, shipyard, research_lab) = IModulesManager.getModulesAddresses()
+    #     let (
+    #         metal_mine, crystal_mine, deuterium_mine, solar_plant
+    #     ) = IResources.getResourcesUpgradeCost(resources, caller)
+    #     let (
+    #         robot_factory, shipyard, research_lab, nanite_factory
+    #     ) = IFacilities.getFacilitiesUpgradeCost(facilities, caller)
+    #     return (
+    #         metal_mine,
+    #         crystal_mine,
+    #         deuterium_mine,
+    #         solar_plant,
+    #         robot_factory,
+    #         shipyard,
+    #         research_lab,
+    #         nanite_factory,
+    #     )
+    # end
 
     func player_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (points : felt):
-        let (points) = Formulas.calculate_player_points(caller)
+        let (points) = _calculate_player_points(caller)
         return (points)
+    end
+
+    func resources_buildings_levels{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (
+        metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt
+    ):
+        let (planet_id) = _get_planet_id(caller)
+        let (metal) = NoGame_metal_mine_level.read(planet_id)
+        let (crystal) = NoGame_crystal_mine_level.read(planet_id)
+        let (deuterium) = NoGame_deuterium_mine_level.read(planet_id)
+        let (solar_plant) = NoGame_solar_plant_level.read(planet_id)
+        return (metal, crystal, deuterium, solar_plant)
+    end
+
+    func facilities_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt):
+        let (planet_id) = _get_planet_id(caller)
+        let (robot_factory) = NoGame_robot_factory_level.read(planet_id)
+        let (research_lab) = NoGame_research_lab_level.read(planet_id)
+        let (shipyard) = NoGame_shipyard_level.read(planet_id)
+        let (nanite) = NoGame_nanite_factory_level.read(planet_id)
+        return (robot_factory, research_lab, shipyard, nanite)
     end
 
     func tech_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (result : TechLevels):
-        let (manager) = NoGame_modules_manager.read()
-        let (erc721) = IModulesManager.getERC721Address(manager)
-        let (planet_id) = IERC721.ownerToPlanet(erc721, caller)
+        let (planet_id) = _get_planet_id(caller)
         let (armour_tech) = NoGame_armour_tech.read(planet_id)
         let (astrophysics) = NoGame_astrophysics.read(planet_id)
         let (combustion_drive) = NoGame_combustion_drive.read(planet_id)
@@ -152,55 +175,44 @@ namespace NoGame:
             TechLevels(armour_tech, astrophysics, combustion_drive, computer_tech, energy_tech, espionage_tech, hyperspace_drive, hyperspace_tech, impulse_drive, ion_tech, laser_tech, plasma_tech, shielding_tech, weapons_tech),
         )
     end
+
+    func fleet_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (result : TechLevels):
+        let (planet_id) = _get_planet_id(caller)
+        let (cargo) = NoGame_ships_cargo.read(planet_id)
+        let (recycler) = NoGame_ships_recycler.read(planet_id)
+        let (espionage_probe) = NoGame_ships_espionage_probe.read(planet_id)
+        let (satellite) = NoGame_ships_solar_satellite.read(planet_id)
+        let (light_fighter) = NoGame_ships_light_fighter.read(planet_id)
+        let (cruiser) = NoGame_ships_cruiser.read(planet_id)
+        let (battleship) = NoGame_ships_battleship.read(planet_id)
+        let (deathstar) = NoGame_ships_deathstar.read(planet_id)
+        return (
+            Fleet(cargo, recycler, espionage_probe, satellite, light_fighter, cruiser, battleship, deathstar),
+        )
+    end
+
+    # func get_resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    #         caller : felt
+    #     ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
+    #         alloc_locals
+    #         let (planet_id) = _get_planet_id(caller)
+    #         let (
+    #             metal_available, crystal_available, deuterium_available
+    #         ) = Resources.get_available_resources(caller)
+    #         let (metal) = NoGame_metal_mine_level.read(planet_id)
+    #         let (crystal) = NoGame_crystal_mine_level.read(planet_id)
+    #         let (deuterium) = NoGame_deuterium_mine_level.read(planet_id)
+    #         let (solar_plant) = NoGame_solar_plant_level.read(planet_id)
+    #         let (energy_available) = Resources.get_net_energy(metal, crystal, deuterium, solar_plant)
+    #         return (metal_available, crystal_available, deuterium_available, energy_available)
+    #     end
 end
+
 ##########################################################################################
 #                                      PUBLIC FUNCTIONS                                  #
-##########################################################################################
-
-# func get_structures_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#         caller : felt
-#     ) -> (
-#         metal_mine : felt,
-#         crystal_mine : felt,
-#         deuterium_mine : felt,
-#         solar_plant : felt,
-#     ):
-#         let (planet_id) = _get_planet_id(caller)
-#         let metal = NoGame_metal_mine_level.read(planet_id)
-#         let crystal = NoGame_crystal_mine_level.read(planet_id)
-#         let deuterium = NoGame_deuterium_mine_level.read(planet_id)
-#         let solar_plant = NoGame_solar_plant_level.read(planet_id)
-#         let (robot_factory) = NoGame_robot_factory_level.read(planet_id)
-#         let (research_lab) = NoGame_research_lab_level.read(planet_id)
-#         let (shipyard) = NoGame_shipyard_level.read(planet_id)
-#         let (nanite) = NoGame_nanite_factory_level.read(planet_id)
-#         return (
-#             metal_mine=metal,
-#             crystal_mine=crystal,
-#             deuterium_mine=deuterium,
-#             solar_plant=solar_plant,
-#             robot_factory=robot_factory,
-#             research_lab=research_lab,
-#             shipyard=shipyard,
-#             nanite_factory=nanite,
-#         )
-#     end
-
-# func get_resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#         caller : felt
-#     ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
-#         alloc_locals
-#         let (planet_id) = _get_planet_id(caller)
-#         let (
-#             metal_available, crystal_available, deuterium_available
-#         ) = Resources.get_available_resources(caller)
-#         let (metal) = NoGame_metal_mine_level.read(planet_id)
-#         let (crystal) = NoGame_crystal_mine_level.read(planet_id)
-#         let (deuterium) = NoGame_deuterium_mine_level.read(planet_id)
-#         let (solar_plant) = NoGame_solar_plant_level.read(planet_id)
-#         let (energy_available) = Resources.get_net_energy(metal, crystal, deuterium, solar_plant)
-#         return (metal_available, crystal_available, deuterium_available, energy_available)
-#     end
+#########################################################################################
 
 # func get_resources_que_status{
 #         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
@@ -211,14 +223,24 @@ end
 #     end
 # end
 
-# func _get_planet_id{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ) -> (planet_id : Uint256):
-#     let (erc721) = NoGame_erc721_token_address.read()
-#     let (planet_id) = IERC721.ownerToPlanet(erc721, caller)
+func _get_planet_id{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (planet_id : Uint256):
+    let (modules_manager) = NoGame_modules_manager.read()
+    let (erc721) = IModulesManager.getERC721Address(modules_manager)
+    let (planet_id) = IERC721.ownerToPlanet(erc721, caller)
 
-# return (planet_id)
-# end
+    return (planet_id)
+end
+
+func _calculate_player_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (points : felt):
+    let (planet_id) = _get_planet_id(caller)
+    let (total_spent) = NoGame_planets_spent_resources.read(planet_id)
+    let (points, _) = unsigned_div_rem(total_spent, 1000)
+    return (points)
+end
 
 # func _calculate_production{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
 #     caller : felt
