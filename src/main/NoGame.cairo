@@ -2,6 +2,9 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from main.library import NoGame
+from main.structs import Cost, TechLevels, TechCosts
+from resources.IResources import IResources
+from research.IResearchLab import IResearchLab
 
 #########################################################################################
 #                                   Constructor                                         #
@@ -20,14 +23,6 @@ end
 #########################################################################################
 
 @view
-func numberOfPlanets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    n_planets : felt
-):
-    let (n) = NoGame.number_of_planets()
-    return (n_planets=n)
-end
-
-@view
 func getTokensAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt
 ):
@@ -44,6 +39,22 @@ func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 end
 
 @view
+func numberOfPlanets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    n_planets : felt
+):
+    let (n) = NoGame.number_of_planets()
+    return (n_planets=n)
+end
+
+@view
+func getPlayerPoints{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (points : felt):
+    let (points) = NoGame.player_points(caller)
+    return (points)
+end
+
+@view
 func getResourcesBuildingsLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt):
@@ -51,6 +62,47 @@ func getResourcesBuildingsLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     return (metal, crystal, deuterium, solar_plant)
 end
 
+@view
+func getResourcesUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost):
+    let (resources, _, _, _) = NoGame.modules_addresses()
+    let (metal, crystal, deuterium, solar_plant) = IResources.getUpgradeCost(resources, caller)
+    return (metal, crystal, deuterium, solar_plant)
+end
+
+func getFacilitiesLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt):
+    let (robot, shipyard, lab, nanite) = NoGame.facilities_levels(caller)
+    return (robot, shipyard, lab, nanite)
+end
+
+@view
+func getFacilitiesUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost):
+    let (_, facilities, _, _) = NoGame.modules_addresses()
+    let (robot, shipyard, research, nanite) = IResources.getUpgradeCost(facilities, caller)
+    return (robot, shipyard, research, nanite)
+end
+
+@view
+func getTechLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (result : TechLevels):
+    let (res) = NoGame.tech_levels(caller)
+    return (res)
+end
+
+@view
+func getTechUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (costs : TechCosts):
+    let (_, _, lab, _) = NoGame.modules_addresses()
+    let (costs) = IResearchLab.getUpgradesCost(lab, caller)
+    return (costs)
+end
 # @view
 # func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
 #     caller : felt
@@ -59,25 +111,6 @@ end
 #         metal_available, crystal_available, deuterium_available, energy_available
 #     ) = NoGame.get_resources_available()
 #     return (metal_available, crystal_available, deuterium_available, energy_available)
-# end
-
-# @view
-# func getStructuresUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ) -> (
-#     metal_mine : Cost,
-#     crystal_mine : Cost,
-#     deuterium_mine : Cost,
-#     solar_plant : Cost,
-#     robot_factory : Cost,
-#     shipyard : Cost,
-#     research_lab : Cost,
-#     nanite : Cost,
-# ):
-#     let (
-#         metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite
-#     ) = NoGame.upgrades_cost(caller)
-#     return (metal, crystal, deuterium, solar_plant, robot_factory, shipyard, research_lab, nanite)
 # end
 
 # @view
@@ -96,14 +129,6 @@ end
 #     let (que_details) = IFacilities.getTimelockStatus(facilities, caller)
 #     return (que_details)
 # end
-
-@view
-func getPlayerPoints{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt
-) -> (points : felt):
-    let (points) = NoGame.player_points(caller)
-    return (points)
-end
 
 # ##########################################################################################
 # #                                      Externals                                         #

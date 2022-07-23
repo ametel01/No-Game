@@ -17,15 +17,13 @@ namespace INoGame:
     ):
     end
 
-    func getStructuresLevels(caller : felt) -> (
-        metal_mine : felt,
-        crystal_mine : felt,
-        deuterium_mine : felt,
-        solar_plant : felt,
-        robot_factory : felt,
-        shipyard : felt,
-        research_lab : felt,
-        nanite_factory : felt,
+    func getResourcesBuildingsLevels(caller : felt) -> (
+        metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt
+    ):
+    end
+
+    func getFacilitiesLevels(caller : felt) -> (
+        robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt
     ):
     end
 

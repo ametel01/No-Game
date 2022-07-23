@@ -62,3 +62,20 @@ struct TechLevels:
     member shielding_tech : felt
     member weapons_tech : felt
 end
+
+struct TechCosts:
+    member armour_tech : Cost
+    member astrophysics : Cost
+    member combustion_drive : Cost
+    member computer_tech : Cost
+    member energy_tech : Cost
+    member espionage_tech : Cost
+    member hyperspace_drive : Cost
+    member hyperspace_tech : Cost
+    member impulse_drive : Cost
+    member ion_tech : Cost
+    member laser_tech : Cost
+    member plasma_tech : Cost
+    member shielding_tech : Cost
+    member weapons_tech : Cost
+end

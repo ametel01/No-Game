@@ -40,8 +40,11 @@ from main.storage import (
     NoGame_ships_battleship,
     NoGame_ships_deathstar,
 )
-from main.structs import TechLevels, Fleet
+from main.structs import TechLevels, Fleet, Cost
+from facilities.IFacilities import IFacilities
 from manager.IModulesManager import IModulesManager
+from resources.IResources import IResources
+from research.IResearchLab import IResearchLab
 
 namespace NoGame:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -78,40 +81,6 @@ namespace NoGame:
         return (resources, facilities, shipyard, research_lab)
     end
 
-    # func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    #     caller : felt
-    # ) -> (
-    #     up_metal : Cost,
-    #     up_crystal : Cost,
-    #     up_deuturium : Cost,
-    #     up_solar : Cost,
-    #     up_robot_factory : Cost,
-    #     up_shipyard : Cost,
-    #     up_lab : Cost,
-    #     up_nanite : Cost,
-    # ):
-    #     alloc_locals
-    #     let (modules_manager) = NoGame_modules_manager.read()
-    #     let (erc721) = IModulesManager.getERC721Address(modules_manager)
-    #     let (resources, facilities, shipyard, research_lab) = IModulesManager.getModulesAddresses()
-    #     let (
-    #         metal_mine, crystal_mine, deuterium_mine, solar_plant
-    #     ) = IResources.getResourcesUpgradeCost(resources, caller)
-    #     let (
-    #         robot_factory, shipyard, research_lab, nanite_factory
-    #     ) = IFacilities.getFacilitiesUpgradeCost(facilities, caller)
-    #     return (
-    #         metal_mine,
-    #         crystal_mine,
-    #         deuterium_mine,
-    #         solar_plant,
-    #         robot_factory,
-    #         shipyard,
-    #         research_lab,
-    #         nanite_factory,
-    #     )
-    # end
-
     func player_points{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (points : felt):
@@ -132,6 +101,18 @@ namespace NoGame:
         return (metal, crystal, deuterium, solar_plant)
     end
 
+    func resources_upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (up_metal : Cost, up_crystal : Cost, up_deuturium : Cost, up_solar : Cost):
+        alloc_locals
+        let (modules_manager) = NoGame_modules_manager.read()
+        let (resources, _, _, _) = IModulesManager.getModulesAddresses(modules_manager)
+        let (metal_mine, crystal_mine, deuterium_mine, solar_plant) = IResources.getUpgradeCost(
+            resources, caller
+        )
+        return (metal_mine, crystal_mine, deuterium_mine, solar_plant)
+    end
+
     func facilities_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt):
@@ -141,6 +122,18 @@ namespace NoGame:
         let (shipyard) = NoGame_shipyard_level.read(planet_id)
         let (nanite) = NoGame_nanite_factory_level.read(planet_id)
         return (robot_factory, research_lab, shipyard, nanite)
+    end
+
+    func facilities_upgrades_cost{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (up_metal : Cost, up_crystal : Cost, up_deuturium : Cost, up_solar : Cost):
+        alloc_locals
+        let (modules_manager) = NoGame_modules_manager.read(modules_manager)
+        let (_, facilities, _, _) = IModulesManager.getModulesAddresses()
+        let (metal_mine, crystal_mine, deuterium_mine, solar_plant) = IFacilities.getUpgradeCost(
+            facilities, caller
+        )
+        return (metal_mine, crystal_mine, deuterium_mine, solar_plant)
     end
 
     func tech_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -164,6 +157,58 @@ namespace NoGame:
 
         return (
             TechLevels(armour_tech, astrophysics, combustion_drive, computer_tech, energy_tech, espionage_tech, hyperspace_drive, hyperspace_tech, impulse_drive, ion_tech, laser_tech, plasma_tech, shielding_tech, weapons_tech),
+        )
+    end
+
+    func tech_upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (
+        energy_tech : Cost,
+        computer_tech : Cost,
+        laser_tech : Cost,
+        armour_tech : Cost,
+        espionage_tech : Cost,
+        ion_tech : Cost,
+        plasma_tech : Cost,
+        weapons_tech : Cost,
+        shielding_tech : Cost,
+        hyperspace_tech : Cost,
+        astrophysics_tech : Cost,
+        comubustion_drive : Cost,
+        hyperspace_drive : Cost,
+        impulse_drive : Cost,
+    ):
+        let (
+            energy_tech,
+            computer_tech,
+            laser_tech,
+            armour_tech,
+            espionage_tech,
+            ion_tech,
+            plasma_tech,
+            weapons_tech,
+            shielding_tech,
+            hyperspace_tech,
+            astrophysics_tech,
+            comubustion_drive,
+            hyperspace_drive,
+            impulse_drive,
+        ) = IResearchLab.getUpgradesCost(caller)
+        return (
+            energy_tech,
+            computer_tech,
+            laser_tech,
+            armour_tech,
+            espionage_tech,
+            ion_tech,
+            plasma_tech,
+            weapons_tech,
+            shielding_tech,
+            hyperspace_tech,
+            astrophysics_tech,
+            comubustion_drive,
+            hyperspace_drive,
+            impulse_drive,
         )
     end
 
