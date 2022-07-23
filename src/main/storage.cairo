@@ -1,7 +1,6 @@
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
-from main.structs import BuildingQue, Planet
 
 @storage_var
 func NoGame_modules_manager() -> (address : felt):

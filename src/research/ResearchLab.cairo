@@ -1,12 +1,8 @@
 %lang starknet
 
-from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.bool import TRUE
-from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
-from research.library import Research_no_game_address, ResearchLab
-from main.INoGame import INoGame
-from utils.formulas import Formulas
+from starkware.cairo.common.cairo_builtins import HashBuiltin
+from research.library import ResearchLab
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(

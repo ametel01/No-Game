@@ -7,9 +7,6 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from main.INoGame import INoGame
 from token.erc20.interfaces.IERC20 import IERC20
-from starkware.cairo.common.pow import pow
-from research.library import ResearchLab
-from main.structs import TechLevels
 
 #########################################################################################
 #                                           CONSTANTS                                   #
@@ -377,7 +374,6 @@ func _solar_satellite_requirements_check{
 }(caller : felt) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
     let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)
-    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 1"):
         assert_le(1, shipyard_level)
     end
@@ -660,7 +656,6 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     number_of_units : felt,
     metal_required : felt,
     crystal_required : felt,
-    deuterium_required : felt,
 ):
     let (no_game) = Shipyard_no_game_address.read()
     let (_, _, _, _, _, _, shipyard_level, _) = INoGame.getStructuresLevels(no_game, caller)

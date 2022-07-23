@@ -1,11 +1,8 @@
 %lang starknet
 
-from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.bool import TRUE
+from starkware.cairo.common.cairo_builtins import HashBuiltin
 from resources.library import Resources
-from main.INoGame import INoGame
-from utils.formulas import Formulas
 
 # @view
 # func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(

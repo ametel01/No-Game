@@ -1,12 +1,12 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from openzeppelin.access.ownable import Ownable
+from openzeppelin.access.ownable import Ownable_initializer
 from manager.library import ModulesManager
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(owner : felt):
-    Ownable.initializer(owner)
+    Ownable_initializer(owner)
     return ()
 end
 
@@ -22,7 +22,7 @@ end
 func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt
 ):
-    let (res) = ModulesManager.modules_addresses()
+    let (resources, facilities, shipyard, research) = ModulesManager.modules_addresses()
     return (resources, facilities, shipyard, research)
 end
 
@@ -30,7 +30,7 @@ end
 func getResourcesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     metal : felt, crystal : felt, deuterium : felt
 ):
-    let (res) = ModulesManager.modules_addresses()
+    let (metal, crystal, deuterium) = ModulesManager.resources_addresses()
     return (metal, crystal, deuterium)
 end
 

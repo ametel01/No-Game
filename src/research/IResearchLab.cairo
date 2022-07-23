@@ -1,7 +1,5 @@
 %lang starknet
 
-from starkware.cairo.common.uint256 import Uint256
-
 @contract_interface
 namespace IResearchLab:
     func energyTechUpgradeStart(caller : felt, current_tech_level : felt) -> (

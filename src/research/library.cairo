@@ -76,9 +76,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _energy_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, ENERGY_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, ENERGY_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -104,9 +102,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _computer_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, COMPUTER_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, COMPUTER_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -132,9 +128,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _laser_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, LASER_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, LASER_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -160,9 +154,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _armour_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, ARMOUR_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, ARMOUR_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -188,9 +180,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _ion_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, ION_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, ION_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -216,9 +206,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _espionage_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, ESPIONAGE_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, ESPIONAGE_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -244,9 +232,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _plasma_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, PLASMA_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, PLASMA_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -272,9 +258,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _weapons_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, WEAPONS_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, WEAPONS_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -300,9 +284,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _shielding_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, SHIELDING_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, SHIELDING_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -328,9 +310,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _hyperspace_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, HYPERSPACE_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, HYPERSPACE_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -356,9 +336,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _astrophysics_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, ASTROPHYSICS_TECH_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, ASTROPHYSICS_TECH_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -384,9 +362,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _combustion_drive_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, COMBUSTION_DRIVE_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, COMBUSTION_DRIVE_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -412,9 +388,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _hyperspace_drive_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, HYPERSPACE_DRIVE_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, HYPERSPACE_DRIVE_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -440,9 +414,7 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _impulse_drive_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller, IMPULSE_DRIVE_ID, metal_required, crystal_required, deuterium_required
-        )
+        _set_timelock_and_que(caller, IMPULSE_DRIVE_ID, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -682,10 +654,6 @@ func _energy_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (tech_levels) = _get_tech_levels(caller)
-    let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
-        no_game_address, caller
-    )
     let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
         no_game_address, caller
     )
@@ -700,7 +668,6 @@ func _computer_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (tech_levels) = _get_tech_levels(caller)
     let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
         no_game_address, caller
     )
@@ -734,7 +701,6 @@ func _armour_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (tech_levels) = _get_tech_levels(caller)
     let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
         no_game_address, caller
     )
@@ -772,7 +738,6 @@ func _espionage_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (tech_levels) = _get_tech_levels(caller)
     let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
         no_game_address, caller
     )
@@ -837,7 +802,6 @@ func _weapons_tech_requirements_check{
 }(caller : felt) -> ():
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
-    let (tech_levels) = _get_tech_levels(caller)
     let (_, _, _, _, _, _, research_lab_level, _) = INoGame.getStructuresLevels(
         no_game_address, caller
     )
@@ -1057,11 +1021,7 @@ func _check_waited_enough{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
 end
 
 func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt,
-    TECH_ID : felt,
-    metal_required : felt,
-    crystal_required : felt,
-    deuterium_required : felt,
+    caller : felt, TECH_ID : felt, metal_required : felt, crystal_required : felt
 ):
     let (no_game_address) = Research_no_game_address.read()
     let (_, _, _, _, _, research_lab_level, _, nanite_level) = INoGame.getStructuresLevels(

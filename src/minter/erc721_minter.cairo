@@ -1,6 +1,6 @@
 %lang starknet
 
-from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
+from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256, uint256_add
 
 from starkware.starknet.common.syscalls import get_caller_address, get_contract_address
@@ -11,7 +11,7 @@ func erc721_address() -> (address : felt):
 end
 
 @storage_var
-func erc721_owner() -> (address : felt):
+func minte_owner() -> (address : felt):
 end
 
 @storage_var
@@ -23,7 +23,7 @@ end
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     admin_address : felt
 ):
-    erc721_owner.write(admin_address)
+    minte_owner.write(admin_address)
     admim.write(admin_address)
     return ()
 end
@@ -34,7 +34,9 @@ func setNFTaddress{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check
 ):
     let (caller) = get_caller_address()
     let (admin) = admim.read()
-    assert caller = admin
+    with_attr error_msg("Minter::only owner can set NFT addresses"):
+        assert caller = admin
+    end
     erc721_address.write(address)
     return ()
 end
@@ -45,7 +47,9 @@ func setNFTapproval{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 ):
     let (caller) = get_caller_address()
     let (admin) = admim.read()
-    assert caller = admin
+    with_attr error_msg("Minter::only owner can set NFT approval"):
+        assert caller = admin
+    end
     let (erc721) = erc721_address.read()
     IERC721.setApprovalForAll(erc721, operator, approved)
     return ()
@@ -56,13 +60,18 @@ func mintAll{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     n : felt, token_id : Uint256
 ):
     alloc_locals
-    let (owner) = erc721_owner.read()
+    let (admin) = minte_owner.read()
+    let (caller) = get_caller_address()
+    with_attr error_msg("Minter::only owner can mint"):
+        assert caller = admin
+    end
     let (erc721) = erc721_address.read()
     if n == 0:
         return ()
     end
     let (minter_address) = get_contract_address()
-    let (next_id, _) = uint256_add(token_id, Uint256(1, 0))
+    let (next_id, overflow) = uint256_add(token_id, Uint256(1, 0))
+    assert overflow = 0
     mintAll(n - 1, next_id)
     IERC721.mint(erc721, minter_address, token_id)
     return ()

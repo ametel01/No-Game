@@ -7,7 +7,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.cairo.common.uint256 import Uint256
 from token.erc721.library import ERC721
 from openzeppelin.introspection.ERC165 import ERC165
-from openzeppelin.access.ownable import Ownable
+from openzeppelin.access.ownable import Ownable_initializer
 
 #
 # Constructor

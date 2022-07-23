@@ -1,19 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import assert_not_zero
-from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
-from starkware.cairo.common.uint256 import Uint256
-from starkware.cairo.common.bool import TRUE
 from main.library import NoGame
-from resources.IResources import IResources
-from resources.library import Resources
-from research.IResearchLab import IResearchLab
-from shipyard.IShipyard import IShipyard
-from manager.IModulesManager import IModulesManager
-from facilities.IFacilities import IFacilities
-from utils.formulas import Formulas
-from main.structs import TechLevels, BuildingQue, Cost, Planet, MineLevels, Energy, Fleet
 
 #########################################################################################
 #                                   Constructor                                         #

@@ -1,19 +1,10 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.starknet.common.syscalls import get_caller_address
 from starkware.cairo.common.math import unsigned_div_rem
-from starkware.cairo.common.math_cmp import is_le
-from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.uint256 import Uint256
-from openzeppelin.access.ownable import Ownable
+from openzeppelin.access.ownable import Ownable_initializer
 from token.erc721.interfaces.IERC721 import IERC721
-from utils.formulas import Formulas
-from facilities.library import Facilities
-from facilities.IFacilities import IFacilities
-from resources.library import Resources
-from resources.IResources import IResources
-from manager.IModulesManager import IModulesManager
 from main.storage import (
     NoGame_modules_manager,
     NoGame_number_of_planets,
@@ -49,14 +40,14 @@ from main.storage import (
     NoGame_ships_battleship,
     NoGame_ships_deathstar,
 )
-
-from main.structs import BuildingQue, Planet, Cost, TechLevels, Fleet
+from main.structs import TechLevels, Fleet
+from manager.IModulesManager import IModulesManager
 
 namespace NoGame:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         owner : felt, modules_manager : felt
     ):
-        Ownable.initializer(owner)
+        Ownable_initializer(owner)
         NoGame_modules_manager.write(modules_manager)
         return ()
     end
