@@ -88,12 +88,7 @@ namespace Shipyard:
         _cargo_ship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         _set_timelock_and_que(
-            caller,
-            CARGO_SHIP_ID,
-            number_of_units,
-            metal_required,
-            crystal_required,
-            deuterium_required,
+            caller, CARGO_SHIP_ID, number_of_units, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required)
     end
@@ -123,12 +118,7 @@ namespace Shipyard:
         _recycler_ship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         _set_timelock_and_que(
-            caller,
-            RECYCLER_SHIP_ID,
-            number_of_units,
-            metal_required,
-            crystal_required,
-            deuterium_required,
+            caller, RECYCLER_SHIP_ID, number_of_units, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required)
     end
@@ -158,12 +148,7 @@ namespace Shipyard:
         _espionage_probe_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         _set_timelock_and_que(
-            caller,
-            ESPIONAGE_PROBE_ID,
-            number_of_units,
-            metal_required,
-            crystal_required,
-            deuterium_required,
+            caller, ESPIONAGE_PROBE_ID, number_of_units, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required)
     end
@@ -193,12 +178,7 @@ namespace Shipyard:
         _solar_satellite_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         _set_timelock_and_que(
-            caller,
-            SOLAR_SATELLITE_ID,
-            number_of_units,
-            metal_required,
-            crystal_required,
-            deuterium_required,
+            caller, SOLAR_SATELLITE_ID, number_of_units, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required)
     end
@@ -228,12 +208,7 @@ namespace Shipyard:
         _light_fighter_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         _set_timelock_and_que(
-            caller,
-            LIGHT_FIGHTER_ID,
-            number_of_units,
-            metal_required,
-            crystal_required,
-            deuterium_required,
+            caller, LIGHT_FIGHTER_ID, number_of_units, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required)
     end
@@ -258,14 +233,7 @@ namespace Shipyard:
         _check_que_not_busy(caller)
         _cruiser_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
-            caller,
-            CRUISER_ID,
-            number_of_units,
-            metal_required,
-            crystal_required,
-            deuterium_required,
-        )
+        _set_timelock_and_que(caller, CRUISER_ID, number_of_units, metal_required, crystal_required)
         return (metal_required, crystal_required, deuterium_required)
     end
 
@@ -292,12 +260,7 @@ namespace Shipyard:
         _battleship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         _set_timelock_and_que(
-            caller,
-            BATTLESHIP_ID,
-            number_of_units,
-            metal_required,
-            crystal_required,
-            deuterium_required,
+            caller, BATTLESHIP_ID, number_of_units, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required)
     end

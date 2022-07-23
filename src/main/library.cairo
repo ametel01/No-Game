@@ -3,7 +3,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import unsigned_div_rem
 from starkware.cairo.common.uint256 import Uint256
-from openzeppelin.access.ownable import Ownable_initializer
+from openzeppelin.access.ownable import Ownable
 from token.erc721.interfaces.IERC721 import IERC721
 from main.storage import (
     NoGame_modules_manager,
@@ -47,7 +47,7 @@ namespace NoGame:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         owner : felt, modules_manager : felt
     ):
-        Ownable_initializer(owner)
+        Ownable.initializer(owner)
         NoGame_modules_manager.write(modules_manager)
         return ()
     end
