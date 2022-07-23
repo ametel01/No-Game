@@ -17,7 +17,7 @@ func NoGame_number_of_planets() -> (n : felt):
 end
 
 @storage_var
-func NoGame_players_spent_resources(address : felt) -> (spent_resources : felt):
+func NoGame_planets_spent_resources(planet_id : Uint256) -> (spent_resources : felt):
 end
 
 @storage_var
