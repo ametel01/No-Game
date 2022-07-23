@@ -7,44 +7,79 @@ from resources.library import Resources
 from main.INoGame import INoGame
 from utils.formulas import Formulas
 
-@view
-func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt
-):
-    let (building_id, timelock_end) = Resources.timelock_status(caller)
+# @view
+# func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+#     caller : felt
+# ):
+#     let (building_id, timelock_end) = Resources.timelock_status(caller)
 
-    return (building_id, timelock_end)
+# return (building_id, timelock_end)
+# end
+
+@external
+func metalUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal : felt, crystal : felt, time_unlocked : felt):
+    let (metal_required, crystal_required, time_unlocked) = Resources.metal_upgrade_start(caller)
+    return (metal_required, crystal_required, time_unlocked)
 end
 
 @external
-func _metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt
-) -> (metal : felt, crystal : felt, deuterium : felt, time_unlocked : felt):
-    alloc_locals
-    assert_not_zero(caller)
-    Resources.check_que_not_busy(caller)
-    let (ogame_address) = _ogame_address.read()
-    let (
-        metal_level, _, _, _, robot_factory_level, _, _, nanite_level
-    ) = NoGame.getStructuresLevels(ogame_address, caller)
-    let (metal_required, crystal_required, deuterium_required) = Formulas.metal_building_cost(
-        metal_level
-    )
-    Resources.check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-    let (time_unlocked) = Resources.set_timelock_and_que(
-        caller, Resources.METAL_MINE_ID, metal_required, crystal_required, deuterium_required
-    )
-    return (metal_required, crystal_required, deuterium_required, time_unlocked)
-end
-
-@external
-func _metal_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func metalUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (success : felt):
-    alloc_locals
-    Resources.check_trying_to_complete_the_right_resource(caller, Resources.METAL_MINE_ID)
-    Resources.check_waited_enough(caller)
-    Resources.reset_que(caller, Resources.METAL_MINE_ID)
-    Resources.reset_timelock(caller)
+    Resources.metal_upgrade_complete(caller)
+    return (TRUE)
+end
+
+@external
+func crystalUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal : felt, crystal : felt, time_unlocked : felt):
+    let (metal_required, crystal_required, time_unlocked) = Resources.crystal_upgrade_start(caller)
+    return (metal_required, crystal_required, time_unlocked)
+end
+
+@external
+func crystalUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (success : felt):
+    Resources.crystal_upgrade_complete(caller)
+    return (TRUE)
+end
+
+@external
+func deuteriumUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal : felt, crystal : felt, time_unlocked : felt):
+    let (metal_required, crystal_required, time_unlocked) = Resources.deuterium_upgrade_start(
+        caller
+    )
+    return (metal_required, crystal_required, time_unlocked)
+end
+
+@external
+func deuteriumUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (success : felt):
+    Resources.deuterium_upgrade_complete(caller)
+    return (TRUE)
+end
+
+@external
+func solarPlantUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal : felt, crystal : felt, time_unlocked : felt):
+    let (metal_required, crystal_required, time_unlocked) = Resources.solar_plant_upgrade_start(
+        caller
+    )
+    return (metal_required, crystal_required, time_unlocked)
+end
+
+@external
+func solarPlantUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (success : felt):
+    Resources.solar_plant_upgrade_complete(caller)
     return (TRUE)
 end
