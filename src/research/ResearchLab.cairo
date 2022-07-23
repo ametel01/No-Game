@@ -5,7 +5,6 @@ from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.bool import TRUE
 from starkware.starknet.common.syscalls import get_caller_address, get_block_timestamp
 from research.library import Research_no_game_address, ResearchLab
-from contracts.ResourcesManager import _pay_resources_erc20
 from main.INoGame import INoGame
 from utils.formulas import Formulas
 
