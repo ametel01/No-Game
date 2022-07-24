@@ -167,7 +167,7 @@ namespace ERC721:
     end
 
     func owner_to_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-        token_id : felt
+        token_id : Uint256
     ):
         let (owner) = get_caller_address()
         let (token_id) = ERC721_owner_to_id.read(owner)
