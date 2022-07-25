@@ -1,8 +1,9 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.starknet.common.syscalls import get_caller_address
 from main.library import NoGame
-from main.structs import Cost, TechLevels, TechCosts
+from main.structs import Cost, TechLevels, TechCosts, Fleet
 from resources.IResources import IResources
 from research.IResearchLab import IResearchLab
 
@@ -103,15 +104,24 @@ func getTechUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     let (costs) = IResearchLab.getUpgradesCost(lab, caller)
     return (costs)
 end
-# @view
-# func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
-#     let (
-#         metal_available, crystal_available, deuterium_available, energy_available
-#     ) = NoGame.get_resources_available()
-#     return (metal_available, crystal_available, deuterium_available, energy_available)
-# end
+
+@view
+func getFleetLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (result : Fleet):
+    let (res) = NoGame.fleet_levels(caller)
+    return (res)
+end
+
+@view
+func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
+    let (
+        metal_available, crystal_available, deuterium_available, energy_available
+    ) = NoGame.get_resources_available(caller)
+    return (metal_available, crystal_available, deuterium_available, energy_available)
+end
 
 # @view
 # func getResourcesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -134,45 +144,19 @@ end
 # #                                      Externals                                         #
 # ##########################################################################################
 
-# @external
-# func set_erc20_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     metal_token : felt, crystal_token : felt, deuterium_token : felt
-# ):
-#     Ownable.assert_only_owner()
-#     erc20_metal_address.write(metal_token)
-#     erc20_crystal_address.write(crystal_token)
-#     erc20_deuterium_address.write(deuterium_token)
-#     return ()
-# end
+@external
+func generate_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    let (caller) = get_caller_address()
+    NoGame.generate_planet(caller)
+    return ()
+end
 
-# @external
-# func set_modules_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     _resources_address, _facilities_address : felt, _lab_address : felt, _shipyard_address : felt
-# ):
-#     Ownable.assert_only_owner()
-
-# resources_address.write(_resources_address)
-#     facilities_address.write(_facilities_address)
-#     research_lab_address.write(_lab_address)
-#     shipyard_address.write(_shipyard_address)
-#     return ()
-# end
-
-# @external
-# func generate_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     let (caller) = get_caller_address()
-#     _generate_planet(caller)
-#     return ()
-# end
-
-# @external
-# func collect_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     let (address) = get_caller_address()
-#     assert_not_zero(address)
-#     let (id) = _planet_to_owner.read(address)
-#     _collect_resources(address)
-#     return ()
-# end
+@external
+func collect_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    let (caller) = get_caller_address()
+    NoGame.collect_resources(caller)
+    return ()
+end
 
 # ##############################################################################################
 # #                               RESOURCES EXTERNALS FUNCS                                    #
