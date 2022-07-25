@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.bool import FALSE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import unsigned_div_rem
+from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_block_timestamp
@@ -58,31 +58,6 @@ namespace NoGame:
     ):
         Ownable.initializer(owner)
         NoGame_modules_manager.write(modules_manager)
-        return ()
-    end
-
-    func generate_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt
-    ):
-        alloc_locals
-        let (time_now) = get_block_timestamp()
-        let (modules_manager) = NoGame_modules_manager.read()
-        let (erc721) = IModulesManager.getERC721Address(modules_manager)
-        let (has_already_planet) = IERC721.balanceOf(erc721, caller)
-        with_attr error_message("NoGame::Only one planet for address is allowed"):
-            assert has_already_planet = Uint256(0, 0)
-        end
-        let (last_id) = NoGame_number_of_planets.read()
-        let new_id = last_id + 1
-        let new_planet_id = Uint256(new_id, 0)
-        NoGame_resources_timer.write(new_planet_id, time_now)
-        let (erc721_owner) = IERC721.ownerOf(erc721, new_planet_id)
-        IERC721.transferFrom(erc721, erc721_owner, caller, new_planet_id)
-        NoGame_number_of_planets.write(new_id)
-        # Transfer resources ERC20 tokens to caller.
-        _receive_resources_erc20(
-            to=caller, metal_amount=500, crystal_amount=300, deuterium_amount=100
-        )
         return ()
     end
 
@@ -200,7 +175,7 @@ namespace NoGame:
 
     func fleet_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
-    ) -> (result : TechLevels):
+    ) -> (result : Fleet):
         let (planet_id) = _get_planet_id(caller)
         let (cargo) = NoGame_ships_cargo.read(planet_id)
         let (recycler) = NoGame_ships_recycler.read(planet_id)
@@ -215,21 +190,70 @@ namespace NoGame:
         )
     end
 
-    # func get_resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    #         caller : felt
-    #     ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
-    #         alloc_locals
-    #         let (planet_id) = _get_planet_id(caller)
-    #         let (
-    #             metal_available, crystal_available, deuterium_available
-    #         ) = Resources.get_available_resources(caller)
-    #         let (metal) = NoGame_metal_mine_level.read(planet_id)
-    #         let (crystal) = NoGame_crystal_mine_level.read(planet_id)
-    #         let (deuterium) = NoGame_deuterium_mine_level.read(planet_id)
-    #         let (solar_plant) = NoGame_solar_plant_level.read(planet_id)
-    #         let (energy_available) = Resources.get_net_energy(metal, crystal, deuterium, solar_plant)
-    #         return (metal_available, crystal_available, deuterium_available, energy_available)
-    #     end
+    func generate_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ):
+        alloc_locals
+        assert_not_zero(caller)
+        let (time_now) = get_block_timestamp()
+        let (modules_manager) = NoGame_modules_manager.read()
+        let (erc721) = IModulesManager.getERC721Address(modules_manager)
+        let (has_already_planet) = IERC721.balanceOf(erc721, caller)
+        with_attr error_message("NoGame::Only one planet for address is allowed"):
+            assert has_already_planet = Uint256(0, 0)
+        end
+        let (last_id) = NoGame_number_of_planets.read()
+        let new_id = last_id + 1
+        let new_planet_id = Uint256(new_id, 0)
+        NoGame_resources_timer.write(new_planet_id, time_now)
+        let (erc721_owner) = IERC721.ownerOf(erc721, new_planet_id)
+        IERC721.transferFrom(erc721, erc721_owner, caller, new_planet_id)
+        NoGame_number_of_planets.write(new_id)
+        # Transfer resources ERC20 tokens to caller.
+        _receive_resources_erc20(
+            to=caller, metal_amount=500, crystal_amount=300, deuterium_amount=100
+        )
+        return ()
+    end
+
+    func get_resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
+        alloc_locals
+        let (metal_available, crystal_available, deuterium_available) = _get_available_erc20s(
+            caller
+        )
+        let (
+            metal_produced, crystal_produced, deuterium_produced, energy_available
+        ) = _calculate_production(caller)
+        return (
+            metal_available + metal_produced,
+            crystal_available + crystal_produced,
+            deuterium_available + deuterium_produced,
+            energy_available,
+        )
+    end
+
+    func collect_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ):
+        assert_not_zero(caller)
+        let (metal_produced, crystal_produced, deuterium_produced, _) = _calculate_production(
+            caller
+        )
+        _receive_resources_erc20(
+            to=caller,
+            metal_amount=metal_produced,
+            crystal_amount=crystal_produced,
+            deuterium_amount=deuterium_produced,
+        )
+        let (manager) = NoGame_modules_manager.read()
+        let (erc721_address) = IModulesManager.getERC721Address(manager)
+        let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
+        let (time_now) = get_block_timestamp()
+        NoGame_resources_timer.write(planet_id, time_now)
+        return ()
+    end
 end
 
 ##########################################################################################
@@ -266,7 +290,7 @@ end
 
 func _calculate_production{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, energy_available : felt):
     alloc_locals
     let (manager) = NoGame_modules_manager.read()
     let (erc721) = IModulesManager.getERC721Address(manager)
@@ -276,12 +300,10 @@ func _calculate_production{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     let (energy_available, total_energy_required) = _get_net_energy(
         metal, crystal, deuterium, solar_plant, satellites
     )
-    # Calculate amount of resources produced.
     let (time_start) = NoGame_resources_timer.read(planet_id)
     let (metal_produced) = Formulas.metal_mine_production(time_start, metal)
     let (crystal_produced) = Formulas.crystal_mine_production(time_start, crystal)
     let (deuterium_produced) = Formulas.deuterium_mine_production(time_start, deuterium)
-    # If energy available < than energy required scale down amount produced.
     if energy_available == 0:
         let (actual_metal, actual_crystal, actual_deuterium) = Formulas.energy_production_scaler(
             metal_produced,
@@ -293,12 +315,12 @@ func _calculate_production{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
         let metal = actual_metal
         let crystal = actual_crystal
         let deuterium = actual_deuterium
-        return (metal, crystal, deuterium)
+        return (metal, crystal, deuterium, energy_available)
     else:
         let metal = metal_produced
         let crystal = crystal_produced
         let deuterium = deuterium_produced
-        return (metal, crystal, deuterium)
+        return (metal, crystal, deuterium, energy_available)
     end
 end
 
@@ -325,24 +347,6 @@ func _get_net_energy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
         return (net_energy, total_energy_required)
     end
 end
-
-# func _collect_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ):
-#     let (metal_produced, crystal_produced, deuterium_produced) = _calculate_production(caller)
-#     _receive_resources_erc20(
-#         to=caller,
-#         metal_amount=metal_produced,
-#         crystal_amount=crystal_produced,
-#         deuterium_amount=deuterium_produced,
-#     )
-#     let (no_game) = Resources_no_game_address.read()
-#     let (erc721_address, _, _, _) = INoGame.getTokensAddresses(no_game)
-#     let (planet_id) = IERC721.ownerToPlanet(erc721_address, caller)
-#     let (time_now) = get_block_timestamp()
-#     Resources_timer.write(planet_id, time_now)
-#     return ()
-# end
 
 func _receive_resources_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     to : felt, metal_amount : felt, crystal_amount : felt, deuterium_amount : felt
@@ -375,13 +379,15 @@ end
 #     return ()
 # end
 
-# func get_available_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ) -> (metal : felt, crystal : felt, deuterium : felt):
-#     let (no_game) = Resources_no_game_address.read()
-#     let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(no_game)
-#     let (metal_available) = IERC20.balanceOf(metal_address, caller)
-#     let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
-#     let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
-#     return (metal_available.low, crystal_available.low, deuterium_available.low)
-# end
+func _get_available_erc20s{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let (manager) = NoGame_modules_manager.read()
+    let (metal_address, crystal_address, deuterium_address) = IModulesManager.getResourcesAddresses(
+        manager
+    )
+    let (metal_available) = IERC20.balanceOf(metal_address, caller)
+    let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
+    let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
+    return (metal_available.low, crystal_available.low, deuterium_available.low)
+end
