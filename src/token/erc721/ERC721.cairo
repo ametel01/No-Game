@@ -1,11 +1,18 @@
 # SPDX-License-Identifier: MIT
 # OpenZeppelin Contracts for Cairo v0.2.0 (token/erc721/ERC721_Mintable_Burnable.cairo)
+#
+# NOTICE: This is a custom version if OZ standard implementation adapted to handle long token's URIs.
 
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.cairo.common.uint256 import Uint256
 from token.erc721.library import ERC721
+from token.erc721.ERC721_Metadata_base import (
+    ERC721_Metadata_initializer,
+    ERC721_Metadata_tokenURI,
+    ERC721_Metadata_setBaseTokenURI,
+)
 from openzeppelin.introspection.ERC165 import ERC165
 from openzeppelin.access.ownable import Ownable
 
@@ -15,9 +22,11 @@ from openzeppelin.access.ownable import Ownable
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    name : felt, symbol : felt, owner : felt
+    name : felt, symbol : felt, owner : felt, base_token_uri_len : felt, base_token_uri : felt*
 ):
     ERC721.initializer(name, symbol)
+    ERC721_Metadata_initializer()
+    ERC721_Metadata_setBaseTokenURI(base_token_uri_len, base_token_uri)
     Ownable.initializer(owner)
     return ()
 end
@@ -80,10 +89,10 @@ end
 
 @view
 func tokenURI{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    tokenId : Uint256
-) -> (tokenURI : felt):
-    let (tokenURI : felt) = ERC721.token_uri(tokenId)
-    return (tokenURI)
+    token_id : Uint256
+) -> (token_uri_len : felt, token_uri : felt*):
+    let (token_uri_len, token_uri) = ERC721_Metadata_tokenURI(token_id)
+    return (token_uri_len=token_uri_len, token_uri=token_uri)
 end
 
 @view
