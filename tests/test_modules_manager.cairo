@@ -1,9 +1,6 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.alloc import alloc
-from starkware.cairo.common.bool import TRUE
-from starkware.cairo.common.uint256 import Uint256
 from manager.IModulesManager import IModulesManager as Manager
 
 const ERC721_NAME = 0x4e6f47616d6520
@@ -43,10 +40,8 @@ end
 
 @external
 func test_manager{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-    tempvar owner : felt
     tempvar manager : felt
     tempvar erc721 : felt
-    tempvar game : felt
     tempvar metal : felt
     tempvar crystal : felt
     tempvar deuterium : felt
@@ -55,10 +50,8 @@ func test_manager{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_
     tempvar facilities : felt
     tempvar research : felt
     %{
-        ids.owner = context.owner_address
         ids.manager = context.manager_address
         ids.erc721 = context.erc721_address
-        ids.game = context.game_address
         ids.metal = context.metal_address
         ids.crystal = context.crystal_address
         ids.deuterium = context.deuterium_address
