@@ -1,12 +1,12 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from openzeppelin.access.ownable import Ownable_initializer
+from openzeppelin.access.ownable import Ownable
 from manager.library import ModulesManager
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(owner : felt):
-    Ownable_initializer(owner)
+    Ownable.initializer(owner)
     return ()
 end
 
@@ -32,6 +32,12 @@ func getResourcesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 ):
     let (metal, crystal, deuterium) = ModulesManager.resources_addresses()
     return (metal, crystal, deuterium)
+end
+
+@external
+func setERC721{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(address : felt):
+    ModulesManager.set_erc721(address)
+    return ()
 end
 
 @external

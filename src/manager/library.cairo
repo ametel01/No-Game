@@ -72,6 +72,13 @@ namespace ModulesManager:
     #                                      PUBLIC FUNCTIONS                                  #
     ##########################################################################################
 
+    func set_erc721{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        address : felt
+    ):
+        ModulesManager_erc721_token_address.write(address)
+        return ()
+    end
+
     func set_metal{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
