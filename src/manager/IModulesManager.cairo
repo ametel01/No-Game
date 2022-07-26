@@ -31,6 +31,9 @@ namespace IModulesManager:
     func setFacilities(address : felt):
     end
 
+    func setShipyard(address : felt):
+    end
+
     func setResearch(address : felt):
     end
 end
