@@ -166,11 +166,10 @@ namespace ERC721:
         return (token_uri)
     end
 
-    func owner_to_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-        token_id : Uint256
-    ):
-        let (owner) = get_caller_address()
-        let (token_id) = ERC721_owner_to_id.read(owner)
+    func owner_to_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (token_id : Uint256):
+        let (token_id) = ERC721_owner_to_id.read(caller)
         return (token_id)
     end
 
@@ -379,6 +378,9 @@ namespace ERC721:
         # Update token_id owner
         ERC721_owners.write(token_id, to)
         Transfer.emit(from_, to, token_id)
+
+        # Update owner
+        ERC721_owner_to_id.write(to, token_id)
         return ()
     end
 
