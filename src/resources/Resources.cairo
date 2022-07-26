@@ -14,6 +14,14 @@ from main.structs import Cost
 # return (building_id, timelock_end)
 # end
 
+@constructor
+func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    no_game_address : felt
+):
+    Resources.initializer(no_game_address)
+    return ()
+end
+
 @external
 func metalUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
