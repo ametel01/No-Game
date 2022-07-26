@@ -20,8 +20,10 @@ const DEUTERIUM_SYMBOL = 0x4f6744455576302e31
 
 struct Contracts:
     member owner : felt
+    member minter : felt
     member manager : felt
     member erc721 : felt
+    member game : felt
     member metal : felt
     member crystal : felt
     member deuterium : felt
@@ -35,17 +37,25 @@ end
 func __setup__{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
     %{
-        context.owner_address = deploy_contract("lib/cairo_contracts_git/cairo_contracts/src/openzeppelin/account/Account.cairo", [ids.PK]).contract_address
-        context.erc721_address = deploy_contract("src/token/erc721/ERC721.cairo",[ids.ERC721_NAME, ids.ERC721_SYMBOL, context.owner_address, ids.URI_LEN, ids.URI]).contract_address
+        context.owner_address = deploy_contract("lib/cairo_contracts_git/cairo_contracts/src/openzeppelin/account/Account.cairo", [ids.PK]).contract_address 
+        context.minter_address = deploy_contract("src/minter/erc721_minter.cairo", [context.owner_address]).contract_address
+        context.erc721_address = deploy_contract("src/token/erc721/ERC721.cairo",[ids.ERC721_NAME, ids.ERC721_SYMBOL, context.minter_address, ids.URI_LEN, ids.URI]).contract_address
+        print("erc721_address: ", context.erc721_address)
         context.manager_address = deploy_contract("src/manager/ModulesManager.cairo", [context.owner_address]).contract_address
+        print("manager_address: ", context.manager_address)
         context.game_address = deploy_contract("src/main/NoGame.cairo", [context.owner_address, context.manager_address]).contract_address
+        print("game_address: ", context.game_address)
         context.metal_address = deploy_contract("src/token/erc20/ERC20_Mintable_Burnable.cairo", [ids.METAL_NAME, ids.METAL_SYMBOL, 18, 0, 0, context.game_address, context.game_address]).contract_address
         context.crystal_address = deploy_contract("src/token/erc20/ERC20_Mintable_Burnable.cairo", [ids.CRYSTAL_NAME, ids.CRYSTAL_SYMBOL,18,  0, 0, context.game_address, context.game_address]).contract_address
         context.deuterium_address = deploy_contract("src/token/erc20/ERC20_Mintable_Burnable.cairo", [ids.DEUTERIUM_NAME, ids.DEUTERIUM_SYMBOL,18, 0, 0,context.game_address, context.game_address]).contract_address
         context.resources_address = deploy_contract("src/resources/Resources.cairo", [context.game_address]).contract_address
+        print("resources_address: ", context.resources_address)
         context.facilities_address = deploy_contract("src/facilities/Facilities.cairo", [context.game_address]).contract_address
+        print("facilities_address: ", context.facilities_address)
         context.shipyard_address = deploy_contract("src/shipyard/Shipyard.cairo", [context.game_address]).contract_address
+        print("shipyard_address: ", context.shipyard_address)
         context.research_address = deploy_contract("src/research/ResearchLab.cairo", [context.game_address]).contract_address
+        print("research_address: ", context.research_address)
     %}
     return ()
 end
@@ -67,6 +77,7 @@ func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (addresses :
     tempvar _addresses : Contracts
     %{
         ids._addresses.owner = context.owner_address
+        ids._addresses.minter = context.minter_address
         ids._addresses.manager = context.manager_address
         ids._addresses.erc721 = context.erc721_address
         ids._addresses.game = context.game_address
@@ -78,7 +89,7 @@ func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (addresses :
         ids._addresses.facilities = context.facilities_address
         ids._addresses.research = context.research_address
 
-        stop_prank_callable = start_prank(ids.owner, target_contract_address=ids.manager)
+        stop_prank_callable = start_prank(ids._addresses.owner, target_contract_address=ids._addresses.manager)
     %}
     return (_addresses)
 end
