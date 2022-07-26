@@ -1,11 +1,6 @@
 %lang starknet
 
-from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.alloc import alloc
-from starkware.cairo.common.bool import TRUE
-from starkware.cairo.common.uint256 import Uint256
 from tests.conftest import _get_test_addresses, _run_modules_manager
-from manager.IModulesManager import IModulesManager as Manager
 
 @contract_interface
 namespace NoGame:
@@ -27,7 +22,7 @@ end
 func test_game_setup{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
     let (
-        owner,
+        _,
         manager,
         erc721,
         game,
