@@ -1,6 +1,6 @@
 %lang starknet
 
-from tests.conftest import _get_test_addresses, _run_modules_manager
+from tests.conftest import Contracts, _get_test_addresses, _run_modules_manager
 
 @contract_interface
 namespace NoGame:
@@ -21,22 +21,8 @@ end
 @external
 func test_game_setup{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
-    let (
-        _,
-        manager,
-        erc721,
-        game,
-        metal,
-        crystal,
-        deuterium,
-        resources,
-        facilities,
-        shipyard,
-        research,
-    ) = _get_test_addresses()
-    _run_modules_manager(
-        manager, erc721, metal, crystal, deuterium, resources, facilities, shipyard, research
-    )
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
 
     let (_erc721, _metal, _crystal, _deuterium) = NoGame.getTokensAddresses(game)
     assert _erc721 = erc721

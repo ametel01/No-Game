@@ -18,6 +18,19 @@ const CRYSTAL_SYMBOL = 0x4f6743525976302e31
 const DEUTERIUM_NAME = 0x6f67616d652064657574657269756d2076302e31
 const DEUTERIUM_SYMBOL = 0x4f6744455576302e31
 
+struct Contracts:
+    member owner : felt
+    member manager : felt
+    member erc721 : felt
+    member metal : felt
+    member crystal : felt
+    member deuterium : felt
+    member resources : felt
+    member facilities : felt
+    member shipyard : felt
+    member research : felt
+end
+
 @external
 func __setup__{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
@@ -37,79 +50,35 @@ func __setup__{syscall_ptr : felt*, range_check_ptr}():
     return ()
 end
 
-func _run_modules_manager{syscall_ptr : felt*, range_check_ptr}(
-    _manager : felt,
-    _erc721 : felt,
-    _metal : felt,
-    _crystal : felt,
-    _deuterium : felt,
-    _resources : felt,
-    _facilities : felt,
-    _shipyard : felt,
-    _research : felt,
-):
-    Manager.setERC721(_manager, _erc721)
-    Manager.setMetal(_manager, _metal)
-    Manager.setCrystal(_manager, _crystal)
-    Manager.setDeuterium(_manager, _deuterium)
+func _run_modules_manager{syscall_ptr : felt*, range_check_ptr}(addresses : Contracts):
+    Manager.setERC721(addresses.manager, addresses.erc721)
+    Manager.setMetal(addresses.manager, addresses.metal)
+    Manager.setCrystal(addresses.manager, addresses.crystal)
+    Manager.setDeuterium(addresses.manager, addresses.deuterium)
 
-    Manager.setResources(_manager, _resources)
-    Manager.setFacilities(_manager, _facilities)
-    Manager.setShipyard(_manager, _shipyard)
-    Manager.setResearch(_manager, _research)
+    Manager.setResources(addresses.manager, addresses.resources)
+    Manager.setFacilities(addresses.manager, addresses.facilities)
+    Manager.setShipyard(addresses.manager, addresses.shipyard)
+    Manager.setResearch(addresses.manager, addresses.research)
     return ()
 end
 
-func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (
-    owner : felt,
-    manager : felt,
-    erc721 : felt,
-    game : felt,
-    metal : felt,
-    crystal : felt,
-    deuterium : felt,
-    resources : felt,
-    facilities : felt,
-    shipyard : felt,
-    research : felt,
-):
-    tempvar owner : felt
-    tempvar manager : felt
-    tempvar erc721 : felt
-    tempvar game : felt
-    tempvar metal : felt
-    tempvar crystal : felt
-    tempvar deuterium : felt
-    tempvar resources : felt
-    tempvar shipyard : felt
-    tempvar facilities : felt
-    tempvar research : felt
+func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (addresses : Contracts):
+    tempvar _addresses : Contracts
     %{
-        ids.owner = context.owner_address
-        ids.manager = context.manager_address
-        ids.erc721 = context.erc721_address
-        ids.game = context.game_address
-        ids.metal = context.metal_address
-        ids.crystal = context.crystal_address
-        ids.deuterium = context.deuterium_address
-        ids.resources = context.resources_address
-        ids.shipyard = context.shipyard_address
-        ids.facilities = context.facilities_address
-        ids.research = context.research_address
+        ids._addresses.owner = context.owner_address
+        ids._addresses.manager = context.manager_address
+        ids._addresses.erc721 = context.erc721_address
+        ids._addresses.game = context.game_address
+        ids._addresses.metal = context.metal_address
+        ids._addresses.crystal = context.crystal_address
+        ids._addresses.deuterium = context.deuterium_address
+        ids._addresses.resources = context.resources_address
+        ids._addresses.shipyard = context.shipyard_address
+        ids._addresses.facilities = context.facilities_address
+        ids._addresses.research = context.research_address
 
         stop_prank_callable = start_prank(ids.owner, target_contract_address=ids.manager)
     %}
-    return (
-        owner,
-        manager,
-        erc721,
-        game,
-        metal,
-        crystal,
-        deuterium,
-        resources,
-        shipyard,
-        facilities,
-        research,
-    )
+    return (_addresses)
 end
