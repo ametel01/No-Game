@@ -100,5 +100,12 @@ func test_minter{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     let (is_approved) = ERC721.isApprovedForAll(erc721, minter, owner)
     assert is_approved = TRUE
 
+    let exp_balance = Uint256(10, 0)
+    let (actual_balance) = ERC721.balanceOf(erc721, minter)
+    assert actual_balance = exp_balance
+
+    let (owner_of) = ERC721.ownerOf(erc721, Uint256(1, 0))
+    assert owner_of = minter
+
     return ()
 end
