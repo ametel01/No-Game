@@ -13,6 +13,9 @@ namespace IModulesManager:
     func getResourcesAddresses() -> (metal : felt, crystal : felt, deuterium : felt):
     end
 
+    func setERC721(address : felt):
+    end
+
     func setMetal(address : felt):
     end
 
