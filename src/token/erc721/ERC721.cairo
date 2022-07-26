@@ -102,10 +102,10 @@ func owner{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() 
 end
 
 @view
-func ownerToPlanet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    token_id : Uint256
-):
-    let (token_id) = ERC721.owner_to_planet()
+func ownerToPlanet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (token_id : Uint256):
+    let (token_id) = ERC721.owner_to_planet(caller)
     return (token_id)
 end
 
