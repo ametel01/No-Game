@@ -1,11 +1,11 @@
 %lang starknet
 
-from starkware.cairo.common.bool import FALSE
+from starkware.cairo.common.bool import FALSE, TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.uint256 import Uint256
-from starkware.starknet.common.syscalls import get_block_timestamp
+from starkware.starknet.common.syscalls import get_block_timestamp, get_caller_address
 from openzeppelin.access.ownable import Ownable
 from token.erc721.interfaces.IERC721 import IERC721
 from main.storage import (
@@ -60,6 +60,10 @@ namespace NoGame:
         NoGame_modules_manager.write(modules_manager)
         return ()
     end
+
+    ##########################################################################################
+    #                                      VIEW FUNCTIONS                                    #
+    ##########################################################################################
 
     func number_of_planets{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
         res : felt
@@ -190,6 +194,28 @@ namespace NoGame:
         )
     end
 
+    func get_resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
+        alloc_locals
+        let (metal_available, crystal_available, deuterium_available) = _get_available_erc20s(
+            caller
+        )
+        let (
+            metal_produced, crystal_produced, deuterium_produced, energy_available
+        ) = _calculate_production(caller)
+        return (
+            metal_available + metal_produced,
+            crystal_available + crystal_produced,
+            deuterium_available + deuterium_produced,
+            energy_available,
+        )
+    end
+
+    ##########################################################################################
+    #                                      PUBLIC FUNCTIONS                                  #
+    ##########################################################################################
+
     func generate_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ):
@@ -216,24 +242,6 @@ namespace NoGame:
         return ()
     end
 
-    func get_resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt
-    ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
-        alloc_locals
-        let (metal_available, crystal_available, deuterium_available) = _get_available_erc20s(
-            caller
-        )
-        let (
-            metal_produced, crystal_produced, deuterium_produced, energy_available
-        ) = _calculate_production(caller)
-        return (
-            metal_available + metal_produced,
-            crystal_available + crystal_produced,
-            deuterium_available + deuterium_produced,
-            energy_available,
-        )
-    end
-
     func collect_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ):
@@ -254,21 +262,126 @@ namespace NoGame:
         NoGame_resources_timer.write(planet_id, time_now)
         return ()
     end
+
+    func metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal_spent, crystal_spent, time_unlocked) = IResources.metalUpgradeStart(
+            resources_address, caller
+        )
+        _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
+        let (planet_id) = _get_planet_id(caller)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal_spent + crystal_spent
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        return ()
+    end
+
+    func metal_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
+        IResources.metalUpgradeComplete(resources_address, caller)
+        let (planet_id) = _get_planet_id(caller)
+        let (current_metal_level) = NoGame_metal_mine_level.read(planet_id)
+        NoGame_metal_mine_level.write(planet_id, current_metal_level + 1)
+        return ()
+    end
+
+    func crystal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal_spent, crystal_spent, time_unlocked) = IResources.crystalUpgradeStart(
+            resources_address, caller
+        )
+        _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
+        let (planet_id) = _get_planet_id(caller)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal_spent + crystal_spent
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        return ()
+    end
+
+    func crystal_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
+        IResources.crystalUpgradeComplete(resources_address, caller)
+        let (planet_id) = _get_planet_id(caller)
+        let (current_metal_level) = NoGame_crystal_mine_level.read(planet_id)
+        NoGame_crystal_mine_level.write(planet_id, current_metal_level + 1)
+        return ()
+    end
+
+    func deuterium_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal_spent, crystal_spent, time_unlocked) = IResources.deuteriumUpgradeStart(
+            resources_address, caller
+        )
+        _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
+        let (planet_id) = _get_planet_id(caller)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal_spent + crystal_spent
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        return ()
+    end
+
+    func deuterium_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
+        IResources.deuteriumUpgradeComplete(resources_address, caller)
+        let (planet_id) = _get_planet_id(caller)
+        let (current_metal_level) = NoGame_deuterium_mine_level.read(planet_id)
+        NoGame_deuterium_mine_level.write(planet_id, current_metal_level + 1)
+        return ()
+    end
+
+    func solar_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal_spent, crystal_spent, time_unlocked) = IResources.solarPlantUpgradeStart(
+            resources_address, caller
+        )
+        _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
+        let (planet_id) = _get_planet_id(caller)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal_spent + crystal_spent
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        return ()
+    end
+
+    func solar_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
+        IResources.solarPlantUpgradeComplete(resources_address, caller)
+        let (planet_id) = _get_planet_id(caller)
+        let (current_metal_level) = NoGame_solar_plant_level.read(planet_id)
+        NoGame_solar_plant_level.write(planet_id, current_metal_level + 1)
+        return ()
+    end
 end
 
 ##########################################################################################
-#                                      PUBLIC FUNCTIONS                                  #
-#########################################################################################
-
-# func get_resources_que_status{
-#         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-#     }(caller : felt) -> (building_id : felt, timelock_end : felt):
-#         let (resources_addr) = NoGame_resources_address.read()
-#         let (building_id, time_end) = IResources.getBuildingTimelockStatus(resources_addr, caller)
-#         return (building_id, time_end)
-#     end
-# end
-
+#                                      PRIVATE FUNCTIONS                                  #
+##########################################################################################
 func _get_planet_id{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (planet_id : Uint256):
@@ -364,20 +477,21 @@ func _receive_resources_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
     return ()
 end
 
-# func _pay_resources_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     address : felt, metal_amount : felt, crystal_amount : felt, deuterium_amount : felt
-# ):
-#     assert_not_zero(address)
-#     let (no_game) = Resources_no_game_address.read()
-#     let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(no_game)
-#     let metal = Uint256(metal_amount * E18, 0)
-#     let crystal = Uint256(crystal_amount * E18, 0)
-#     let deuterium = Uint256(deuterium_amount * E18, 0)
-#     IERC20.burn(metal_address, address, metal)
-#     IERC20.burn(crystal_address, address, crystal)
-#     IERC20.burn(deuterium_address, address, deuterium)
-#     return ()
-# end
+func _pay_resources_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    address : felt, metal_amount : felt, crystal_amount : felt, deuterium_amount : felt
+):
+    let (manager) = NoGame_modules_manager.read()
+    let (metal_address, crystal_address, deuterium_address) = IModulesManager.getResourcesAddresses(
+        manager
+    )
+    let metal = Uint256(metal_amount * E18, 0)
+    let crystal = Uint256(crystal_amount * E18, 0)
+    let deuterium = Uint256(deuterium_amount * E18, 0)
+    IERC20.burn(metal_address, address, metal)
+    IERC20.burn(crystal_address, address, crystal)
+    IERC20.burn(deuterium_address, address, deuterium)
+    return ()
+end
 
 func _get_available_erc20s{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt

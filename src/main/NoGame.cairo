@@ -153,7 +153,7 @@ func generatePlanet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 end
 
 @external
-func collect_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func collectResources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     let (caller) = get_caller_address()
     NoGame.collect_resources(caller)
     return ()
@@ -163,70 +163,53 @@ end
 # #                               RESOURCES EXTERNALS FUNCS                                    #
 # ##############################################################################################
 
-# @external
-# func metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     let (caller) = get_caller_address()
-#     let (_resources_address) = resources_address.read()
-#     let (
-#         metal_spent, crystal_spent, deuterium_spent, time_unlocked
-#     ) = IResources.metal_upgrade_start(resources_address, caller)
-#     Resources._pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
-#     let (spent_so_far) = _players_spent_resources.read(caller)
-#     let new_total_spent = spent_so_far + metal_spent + crystal_spent
-#     _players_spent_resources.write(caller, new_total_spent)
-#     return ()
-# end
+@external
+func metalUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.metal_upgrade_start()
+    return ()
+end
 
-# @external
-# func metal_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     let (caller) = get_caller_address()
-#     let (planet_id) = _planet_to_owner.read(caller)
-#     let (_facilities_address) = facilities_address.read()
-#     let (success) = IFacilities._robot_factory_upgrade_complete(_facilities_address, caller)
-#     assert success = TRUE
-#     let (current_robot_factory_level) = robot_factory_level.read(planet_id)
-#     robot_factory_level.write(planet_id, current_robot_factory_level + 1)
-#     return ()
-# end
+@external
+func metalUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.metal_upgrade_complete()
+    return ()
+end
 
-# @external
-# func crystal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     _start_crystal_upgrade()
-#     return ()
-# end
+@external
+func crystalUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.crystal_upgrade_start()
+    return ()
+end
 
-# @external
-# func crystal_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     _end_crystal_upgrade()
-#     return ()
-# end
+@external
+func crystalUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.crystal_upgrade_complete()
+    return ()
+end
 
-# @external
-# func deuterium_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     _start_deuterium_upgrade()
-#     return ()
-# end
+@external
+func deuteriumUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.deuterium_upgrade_start()
+    return ()
+end
 
-# @external
-# func deuterium_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     ):
-#     _end_deuterium_upgrade()
-#     return ()
-# end
+@external
+func deuteriumUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.deuterium_upgrade_complete()
+    return ()
+end
 
-# @external
-# func solar_plant_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     _start_solar_plant_upgrade()
-#     return ()
-# end
+@external
+func solarUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.solar_upgrade_start()
+    return ()
+end
 
-# @external
-# func solar_plant_upgrade_complete{
-#     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-# }():
-#     _end_solar_plant_upgrade()
-#     return ()
-# end
+@external
+func solarUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.solar_upgrade_complete()
+    return ()
+end
 
 # ##############################################################################################
 # #                              FACILITIES EXTERNALS FUNCS                                    #
@@ -1076,5 +1059,16 @@ end
 #     _ships_cruiser.write(planet_id, preset_fleet.cruiser)
 #     _ships_battleship.write(planet_id, preset_fleet.battle_ship)
 #     _ships_deathstar.write(planet_id, preset_fleet.death_star)
+#     return ()
+# end
+
+# @external
+# func upgradeStartDelegate{syscall_ptr : felt*}(class_hash : felt, function_selector : felt):
+#     alloc_locals
+#     let fp_and_pc = get_fp_and_pc()
+#     tempvar __fp__ = fp_and_pc.fp_val
+#     let (size : felt, ptr : felt*) = library_call(
+#         class_hash, function_selector, calldata_size=0, calldata=0
+#     )
 #     return ()
 # end
