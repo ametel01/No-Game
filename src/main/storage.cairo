@@ -19,9 +19,6 @@ end
 func NoGame_planets_spent_resources(planet_id : Uint256) -> (spent_resources : felt):
 end
 
-@storage_var
-func NoGame_resources_timer(planet_id : Uint256) -> (last_collection_timestamp : felt):
-end
 ##################################################################################
 #                              RESOURCES STORAGE                                 #
 ##################################################################################
@@ -56,6 +53,10 @@ end
 
 @storage_var
 func NoGame_solar_plant_level(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func NoGame_resources_que_status(planet_id : Uint256) -> (time_end : felt, building_id : felt):
 end
 
 ##################################################################################
