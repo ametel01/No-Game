@@ -86,3 +86,39 @@ namespace Minter:
     func mintAll(n : felt, token_id : Uint256):
     end
 end
+
+@contract_interface
+namespace ERC20:
+    func name() -> (name : felt):
+    end
+
+    func symbol() -> (symbol : felt):
+    end
+
+    func decimals() -> (decimals : felt):
+    end
+
+    func totalSupply() -> (totalSupply : Uint256):
+    end
+
+    func balanceOf(account : felt) -> (balance : Uint256):
+    end
+
+    func allowance(owner : felt, spender : felt) -> (remaining : Uint256):
+    end
+
+    func transfer(recipient : felt, amount : Uint256) -> (success : felt):
+    end
+
+    func transferFrom(sender : felt, recipient : felt, amount : Uint256) -> (success : felt):
+    end
+
+    func approve(spender : felt, amount : Uint256) -> (success : felt):
+    end
+
+    func mint(recipient : felt, amount : Uint256):
+    end
+
+    func burn(account : felt, amount : Uint256):
+    end
+end
