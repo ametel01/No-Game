@@ -3,8 +3,8 @@
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
-from tests.conftest import Contracts, _get_test_addresses, _run_modules_manager, _run_minter
-from tests.interfaces import NoGame, Minter, ERC721
+from tests.conftest import E18, Contracts, _get_test_addresses, _run_modules_manager, _run_minter
+from tests.interfaces import NoGame, Minter, ERC721, ERC20
 
 @external
 func test_game_setup{syscall_ptr : felt*, range_check_ptr}():
@@ -48,6 +48,13 @@ func test_generate_planet{syscall_ptr : felt*, range_check_ptr}():
     let (new_minter_balance) = ERC721.balanceOf(addresses.erc721, addresses.minter)
     assert new_minter_balance = Uint256(9, 0)
 
+    # Testing the ERC20 resources balances
+    let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner)
+    let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
+    let (deuterium_balance) = ERC20.balanceOf(addresses.deuterium, addresses.owner)
+    assert metal_balance = Uint256(500 * E18, 0)
+    assert crystal_balance = Uint256(300 * E18, 0)
+    assert deuterium_balance = Uint256(100 * E18, 0)
     return ()
 end
 
