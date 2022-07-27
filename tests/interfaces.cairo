@@ -46,6 +46,30 @@ namespace NoGame:
 
     func generatePlanet():
     end
+
+    func metalUpgradeStart():
+    end
+
+    func metalUpgradeComplete():
+    end
+
+    func crystalUpgradeStart():
+    end
+
+    func crystalUpgradeComplete():
+    end
+
+    func deuteriumUpgradeStart():
+    end
+
+    func deuteriumUpgradeComplete():
+    end
+
+    func solarUpgradeStart():
+    end
+
+    func solarUpgradeComplete():
+    end
 end
 
 @contract_interface
