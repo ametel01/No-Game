@@ -37,6 +37,13 @@ struct Contracts:
     member research : felt
 end
 
+struct ClassHashes:
+    member resources : felt
+    member facilities : felt
+    member shipyard : felt
+    member research : felt
+end
+
 @external
 func __setup__{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
@@ -103,5 +110,31 @@ func _run_minter{syscall_ptr : felt*, range_check_ptr}(addresses : Contracts, n_
     Minter.setNFTaddress(addresses.minter, addresses.erc721)
     Minter.setNFTapproval(addresses.minter, addresses.game, TRUE)
     Minter.mintAll(addresses.minter, n_planets, Uint256(1, 0))
+    return ()
+end
+
+func _get_class_hashes{syscall_ptr : felt*, range_check_ptr}() -> (class_hashes : ClassHashes):
+    tempvar resources : felt
+    tempvar facilities : felt
+    tempvar shipyard : felt
+    tempvar research : felt
+    %{
+        declared_resources = declare("src/resources/library.cairo")
+               ids.resources = declared_resources
+
+               declared_facilities = declare("src/facilities/library.cairo")
+               ids.facilities = declared_facilities
+
+               declared_shipyard = declare("src/shipyard/library.cairo")
+               ids.shipyard = declared_shipyard
+
+               declared_research = declare("src/research/library.cairo")
+               ids.research = declared_facilities
+    %}
+    return (ClassHashes(resources, facilities, shipyard, research))
+end
+
+func _time_warp{syscall_ptr : felt*, range_check_ptr}(new_timestamp : felt, target : felt):
+    %{ stop_warp = warp(ids.new_timestamp, target_contract_address=ids.target) %}
     return ()
 end
