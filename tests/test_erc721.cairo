@@ -7,12 +7,6 @@ from tests.interfaces import ERC721, Minter, NoGame
 from token.erc721.interfaces.IERC721 import IERC721
 from tests.conftest import Contracts, _get_test_addresses, _run_modules_manager
 
-const ERC721_NAME = 0x4e6f47616d6520
-const ERC721_SYMBOL = 0x4f474d302e31
-const URI_LEN = 1
-const URI = 10101010
-const PK = 11111
-
 @external
 func test_erc721_constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     alloc_locals
