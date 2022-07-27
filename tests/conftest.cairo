@@ -5,6 +5,7 @@ from starkware.cairo.common.uint256 import Uint256
 from manager.IModulesManager import IModulesManager as Manager
 from tests.interfaces import Minter
 
+const E18 = 10 ** 18
 const ERC721_NAME = 0x4e6f47616d6520
 const ERC721_SYMBOL = 0x4f474d302e31
 const URI_LEN = 1
