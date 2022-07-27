@@ -1,6 +1,6 @@
 %lang starknet
 
-from starkware.cairo.common.bool import FALSE, TRUE
+from starkware.cairo.common.bool import FALSE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
 from starkware.cairo.common.math_cmp import is_le
@@ -16,6 +16,7 @@ from main.storage import (
     NoGame_crystal_mine_level,
     NoGame_deuterium_mine_level,
     NoGame_solar_plant_level,
+    NoGame_resources_que_status,
     NoGame_planets_spent_resources,
     NoGame_shipyard_level,
     NoGame_robot_factory_level,
@@ -48,6 +49,7 @@ from main.structs import TechLevels, Fleet, Cost, TechCosts, E18
 from facilities.IFacilities import IFacilities
 from manager.IModulesManager import IModulesManager
 from resources.IResources import IResources
+from resources.library import METAL_MINE_ID, CRYSTAL_MINE_ID, DEUTERIUM_MINE_ID, SOLAR_PLANT_ID
 from research.IResearchLab import IResearchLab
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
@@ -273,6 +275,7 @@ namespace NoGame:
         )
         _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
         let (planet_id) = _get_planet_id(caller)
+        NoGame_resources_que_status.write(planet_id, time_unlocked, METAL_MINE_ID)
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -288,6 +291,7 @@ namespace NoGame:
         let (planet_id) = _get_planet_id(caller)
         let (current_metal_level) = NoGame_metal_mine_level.read(planet_id)
         NoGame_metal_mine_level.write(planet_id, current_metal_level + 1)
+        NoGame_resources_que_status.write(planet_id, 0, 0)
         return ()
     end
 
@@ -301,6 +305,7 @@ namespace NoGame:
         )
         _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
         let (planet_id) = _get_planet_id(caller)
+        NoGame_resources_que_status.write(planet_id, time_unlocked, CRYSTAL_MINE_ID)
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -317,6 +322,7 @@ namespace NoGame:
         let (planet_id) = _get_planet_id(caller)
         let (current_metal_level) = NoGame_crystal_mine_level.read(planet_id)
         NoGame_crystal_mine_level.write(planet_id, current_metal_level + 1)
+        NoGame_resources_que_status.write(planet_id, 0, 0)
         return ()
     end
 
@@ -331,6 +337,7 @@ namespace NoGame:
         )
         _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
         let (planet_id) = _get_planet_id(caller)
+        NoGame_resources_que_status.write(planet_id, time_unlocked, DEUTERIUM_MINE_ID)
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -347,6 +354,7 @@ namespace NoGame:
         let (planet_id) = _get_planet_id(caller)
         let (current_metal_level) = NoGame_deuterium_mine_level.read(planet_id)
         NoGame_deuterium_mine_level.write(planet_id, current_metal_level + 1)
+        NoGame_resources_que_status.write(planet_id, 0, 0)
         return ()
     end
 
@@ -360,9 +368,11 @@ namespace NoGame:
         )
         _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
         let (planet_id) = _get_planet_id(caller)
+        NoGame_resources_que_status.write(planet_id, time_unlocked, SOLAR_PLANT_ID)
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_resources_que_status.write(planet_id, 0, 0)
         return ()
     end
 
