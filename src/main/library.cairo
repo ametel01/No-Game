@@ -121,13 +121,13 @@ namespace NoGame:
 
     func facilities_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
-    ) -> (metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt):
+    ) -> (robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt):
         let (planet_id) = _get_planet_id(caller)
         let (robot_factory) = NoGame_robot_factory_level.read(planet_id)
         let (research_lab) = NoGame_research_lab_level.read(planet_id)
         let (shipyard) = NoGame_shipyard_level.read(planet_id)
         let (nanite) = NoGame_nanite_factory_level.read(planet_id)
-        return (robot_factory, research_lab, shipyard, nanite)
+        return (robot_factory, shipyard, research_lab, nanite)
     end
 
     func facilities_upgrades_cost{
