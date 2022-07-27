@@ -1,13 +1,6 @@
 %lang starknet
 
-from tests.conftest import (
-    E18,
-    Contracts,
-    _get_test_addresses,
-    _run_modules_manager,
-    _run_minter,
-    _time_warp,
-)
+from tests.conftest import E18, _get_test_addresses, _run_modules_manager, _run_minter, _time_warp
 from tests.interfaces import NoGame
 
 @external

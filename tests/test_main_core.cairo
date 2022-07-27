@@ -1,10 +1,9 @@
 %lang starknet
 
-from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
 from tests.conftest import E18, Contracts, _get_test_addresses, _run_modules_manager, _run_minter
-from tests.interfaces import NoGame, Minter, ERC721, ERC20
+from tests.interfaces import NoGame, ERC721, ERC20
 
 @external
 func test_game_setup{syscall_ptr : felt*, range_check_ptr}():
