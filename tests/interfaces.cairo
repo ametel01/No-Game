@@ -1,7 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
-from main.structs import Cost
+from main.structs import Cost, TechLevels, TechCosts
 
 @contract_interface
 namespace NoGame:
@@ -33,6 +33,12 @@ namespace NoGame:
     func getFacilitiesUpgradeCost(caller : felt) -> (
         robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost
     ):
+    end
+
+    func getTechLevels(caller : felt) -> (tech_levels : TechLevels):
+    end
+
+    func getTechUpgradeCost(caller : felt) -> (tech_costs : TechCosts):
     end
 
     func numberOfPlanets() -> (n_planets : felt):
