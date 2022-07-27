@@ -72,6 +72,7 @@ func getResourcesUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     return (metal, crystal, deuterium, solar_plant)
 end
 
+@view
 func getFacilitiesLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt):
