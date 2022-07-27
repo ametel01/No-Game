@@ -1,6 +1,6 @@
 # No-Game
 
-## Current Functionality Roadmap
+## Current Functionalities Roadmap
 
 ### v0.1
 
@@ -28,14 +28,14 @@
   - [x] Nanite Factory upgrades. :heavy_check_mark:
   - [ ] Testing
 - [ ] Implement Shipyard
-  - [x] ships constraints. :heavy_check_mark:
-  - [x] ships costs. :heavy_check_mark:
-  - [x] ships upgrades. :heavy_check_mark:
+  - [x] Ships constraints. :heavy_check_mark:
+  - [x] Ships costs. :heavy_check_mark:
+  - [x] Ships upgrades. :heavy_check_mark:
   - [ ] Testing
 - [ ] Implement Research
-  - [x] research contsraints. :heavy_check_mark:
-  - [x] research cost. :heavy_check_mark:
-  - [x] research upgrades. :heavy_check_mark:
+  - [x] Research contsraints. :heavy_check_mark:
+  - [x] Research cost. :heavy_check_mark:
+  - [x] Research upgrades. :heavy_check_mark:
   - [ ] Testing
 
 ### v0.3
