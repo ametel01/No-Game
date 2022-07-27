@@ -1,6 +1,9 @@
 %lang starknet
 
+from starkware.cairo.common.bool import TRUE
+from starkware.cairo.common.uint256 import Uint256
 from manager.IModulesManager import IModulesManager as Manager
+from tests.interfaces import Minter
 
 const ERC721_NAME = 0x4e6f47616d6520
 const ERC721_SYMBOL = 0x4f474d302e31
@@ -92,4 +95,12 @@ func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (addresses :
         stop_prank_callable = start_prank(ids._addresses.owner, target_contract_address=ids._addresses.manager)
     %}
     return (_addresses)
+end
+
+func _run_minter{syscall_ptr : felt*, range_check_ptr}(addresses : Contracts, n_planets : felt):
+    %{ stop_prank_callable2 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.minter) %}
+    Minter.setNFTaddress(addresses.minter, addresses.erc721)
+    Minter.setNFTapproval(addresses.minter, addresses.game, TRUE)
+    Minter.mintAll(addresses.minter, n_planets, Uint256(1, 0))
+    return ()
 end
