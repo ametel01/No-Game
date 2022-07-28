@@ -80,7 +80,6 @@ namespace Resources:
         caller : felt
     ) -> (metal : felt, crystal : felt, time_unlocked : felt):
         alloc_locals
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
         let (metal_level, _, _, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
@@ -108,7 +107,6 @@ namespace Resources:
         caller : felt
     ) -> (metal : felt, crystal : felt, time_unlocked : felt):
         alloc_locals
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
         let (_, crystal_level, _, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
@@ -136,7 +134,6 @@ namespace Resources:
         caller : felt
     ) -> (metal : felt, crystal : felt, time_unlocked : felt):
         alloc_locals
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
         let (_, _, deuterium_level, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
@@ -164,7 +161,6 @@ namespace Resources:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (metal : felt, crystal : felt, time_unlocked : felt):
         alloc_locals
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
         let (_, _, _, solar_level) = INoGame.getResourcesBuildingsLevels(no_game, caller)
