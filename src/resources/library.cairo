@@ -203,82 +203,130 @@ end
 #                                RESOURCES COST CALCULATION                                         #
 #####################################################################################################
 
-func _metal_building_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    metal_mine_level : felt
-) -> (metal_cost : felt, crystal_cost : felt):
+func _metal_building_cost{syscall_ptr : felt*, range_check_ptr}(mine_level : felt) -> (
+    metal_cost : felt, crystal_cost : felt
+):
     alloc_locals
     let base_metal = 60
     let base_crystal = 15
-    let exponent = metal_mine_level
+    let exponent = mine_level
     if exponent == 0:
         return (metal_cost=base_metal, crystal_cost=base_crystal)
+    end
+
+    let (local max_level) = is_le(25, mine_level)
+    if max_level == TRUE:
+        let (second_fact) = pow(15, exponent)
+        let (local metal_cost, _) = unsigned_div_rem(base_metal * second_fact, E18)
+        let (local crystal_cost, _) = unsigned_div_rem(base_crystal * second_fact, E18)
+        let (local exp2) = pow(10, mine_level)
+        let (exp2, _) = unsigned_div_rem(exp2, E18)
+        let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
+        let (crystal_scaled, _) = unsigned_div_rem(crystal_cost, exp2)
+        return (metal_cost=metal_scaled, crystal_cost=crystal_scaled)
     else:
         let (second_fact) = pow(15, exponent)
         local metal_cost = base_metal * second_fact
         local crystal_cost = base_crystal * second_fact
-        let (local exp2) = pow(10, metal_mine_level)
+        let (local exp2) = pow(10, mine_level)
         let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
         let (crystal_scaled, _) = unsigned_div_rem(crystal_cost, exp2)
         return (metal_cost=metal_scaled, crystal_cost=crystal_scaled)
     end
 end
 
-func _crystal_building_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    crystal_mine_level : felt
-) -> (metal_cost : felt, crystal_cost : felt):
+func _crystal_building_cost{syscall_ptr : felt*, range_check_ptr}(mine_level : felt) -> (
+    metal_cost : felt, crystal_cost : felt
+):
     alloc_locals
     let base_metal = 48
     let base_crystal = 24
-    let exponent = crystal_mine_level
+    let exponent = mine_level
     if exponent == 0:
         return (metal_cost=base_metal, crystal_cost=base_crystal)
+    end
+
+    let (local max_level) = is_le(25, mine_level)
+    if max_level == TRUE:
+        let (second_fact) = pow(16, exponent)
+        let (local metal_cost, _) = unsigned_div_rem(base_metal * second_fact, E18)
+        let (local crystal_cost, _) = unsigned_div_rem(base_crystal * second_fact, E18)
+        let (local exp2) = pow(10, mine_level)
+        let (exp2, _) = unsigned_div_rem(exp2, E18)
+        let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
+        let (crystal_scaled, _) = unsigned_div_rem(crystal_cost, exp2)
+        return (metal_cost=metal_scaled, crystal_cost=crystal_scaled)
     else:
         let (second_fact) = pow(16, exponent)
         local metal_cost = base_metal * second_fact
         local crystal_cost = base_crystal * second_fact
-        let (local exp2) = pow(10, crystal_mine_level)
+        let (local exp2) = pow(10, mine_level)
         let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
         let (crystal_scaled, _) = unsigned_div_rem(crystal_cost, exp2)
         return (metal_cost=metal_scaled, crystal_cost=crystal_scaled)
     end
 end
 
-func _deuterium_building_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    deuterium_mine_level : felt
-) -> (metal_cost : felt, crystal_cost : felt):
+func _deuterium_building_cost{syscall_ptr : felt*, range_check_ptr}(mine_level : felt) -> (
+    metal_cost : felt, crystal_cost : felt
+):
     alloc_locals
     let base_metal = 225
     let base_crystal = 75
-    let exponent = deuterium_mine_level
+    let exponent = mine_level
     if exponent == 0:
         return (metal_cost=base_metal, crystal_cost=base_crystal)
+    end
+
+    let (local max_level) = is_le(25, mine_level)
+    if max_level == TRUE:
+        let (second_fact) = pow(15, exponent)
+        let (local metal_cost, _) = unsigned_div_rem(base_metal * second_fact, E18)
+        let (local crystal_cost, _) = unsigned_div_rem(base_crystal * second_fact, E18)
+        let (local exp2) = pow(10, mine_level)
+        let (exp2, _) = unsigned_div_rem(exp2, E18)
+        let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
+        let (crystal_scaled, _) = unsigned_div_rem(crystal_cost, exp2)
+        return (metal_cost=metal_scaled, crystal_cost=crystal_scaled)
     else:
         let (second_fact) = pow(15, exponent)
         local metal_cost = base_metal * second_fact
         local crystal_cost = base_crystal * second_fact
-        let (local exp2) = pow(10, deuterium_mine_level)
+        let (local exp2) = pow(10, mine_level)
         let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
         let (crystal_scaled, _) = unsigned_div_rem(crystal_cost, exp2)
         return (metal_cost=metal_scaled, crystal_cost=crystal_scaled)
     end
 end
 
-func _solar_plant_building_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    solar_plant_level : felt
-) -> (metal_cost : felt, crystal_cost : felt):
+func _solar_plant_building_cost{syscall_ptr : felt*, range_check_ptr}(plant_level : felt) -> (
+    metal_cost : felt, crystal_cost : felt
+):
     alloc_locals
     let base_metal = 75
     let base_crystal = 30
-    let exponent = solar_plant_level
-    if exponent == 1:
+    let exponent = plant_level
+    if exponent == 0:
         return (metal_cost=base_metal, crystal_cost=base_crystal)
+    end
+
+    let (local max_level) = is_le(25, plant_level)
+    if max_level == TRUE:
+        let (second_fact) = pow(15, exponent)
+        let (local metal_cost, _) = unsigned_div_rem(base_metal * second_fact, E18)
+        let (local crystal_cost, _) = unsigned_div_rem(base_crystal * second_fact, E18)
+        let (local exp2) = pow(10, plant_level)
+        let (exp2, _) = unsigned_div_rem(exp2, E18)
+        let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
+        let (crystal_scaled, _) = unsigned_div_rem(crystal_cost, exp2)
+        return (metal_cost=metal_scaled, crystal_cost=crystal_scaled)
     else:
-        let (fact0) = pow(15, exponent)
-        local factM = base_metal * fact0
-        local factC = base_crystal * fact0
-        let (fact1) = pow(10, exponent)
-        let (metal_scaled, _) = unsigned_div_rem(factM, fact1)
-        let (crystal_scaled, _) = unsigned_div_rem(factC, fact1)
+        let (second_fact) = pow(15, exponent)
+        local metal_cost = base_metal * second_fact
+        local crystal_cost = base_crystal * second_fact
+        let (local exp2) = pow(10, plant_level)
+        let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
+        let (crystal_scaled, _) = unsigned_div_rem(crystal_cost, exp2)
         return (metal_cost=metal_scaled, crystal_cost=crystal_scaled)
     end
 end
