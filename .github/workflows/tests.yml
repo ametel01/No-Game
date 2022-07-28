@@ -1,0 +1,13 @@
+name: Tests
+
+on: push
+
+jobs:
+  protostar:
+    name: Protostar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Protostar
+        uses: sambarnes/protostar-toolchain@main
+      - name: Runs all the tests
+        runs: protostar test
