@@ -10,12 +10,10 @@ jobs:
     name: Protostar
     runs-on: ubuntu-latest
     steps:
-      - name: Print working dir
-        run: cd ..
-      - name: Print working dir
-        run: pwd
-      - name: list files
-        run: ls
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
       - name: Install Protostar
         uses: sambarnes/protostar-toolchain@main
       - name: Runs all the tests
