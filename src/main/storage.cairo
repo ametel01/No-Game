@@ -1,6 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
+from resources.library import ResourcesQue
 
 @storage_var
 func NoGame_modules_manager() -> (address : felt):
@@ -17,6 +18,10 @@ end
 
 @storage_var
 func NoGame_planets_spent_resources(planet_id : Uint256) -> (spent_resources : felt):
+end
+
+@storage_var
+func NoGame_resources_timer(planet_id : Uint256) -> (time_las : felt):
 end
 
 ##################################################################################
@@ -56,7 +61,7 @@ func NoGame_solar_plant_level(planet_id : Uint256) -> (res : felt):
 end
 
 @storage_var
-func NoGame_resources_que_status(planet_id : Uint256) -> (time_end : felt, building_id : felt):
+func NoGame_resources_que_status(planet_id : Uint256) -> (que_details : ResourcesQue):
 end
 
 ##################################################################################
