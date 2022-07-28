@@ -138,3 +138,42 @@ func _time_warp{syscall_ptr : felt*, range_check_ptr}(new_timestamp : felt, targ
     %{ stop_warp = warp(ids.new_timestamp, target_contract_address=ids.target) %}
     return ()
 end
+
+func _set_resource_levels{syscall_ptr : felt*, range_check_ptr}(
+    resource : felt, wallet : felt, amount : felt
+):
+    %{
+        store(ids.resource, "ERC20_total_supply", [ids.amount*2*ids.E18, 0])
+        store(ids.resource, "ERC20_balances", [ids.amount*ids.E18, 0], key=[ids.wallet])
+    %}
+    return ()
+end
+
+func _set_mines_levels{syscall_ptr : felt*, range_check_ptr}(
+    game : felt, id : felt, m : felt, c : felt, d : felt, s : felt
+):
+    %{
+        store(ids.game, "NoGame_metal_mine_level", [ids.m], key=[ids.id,0])
+        store(ids.game, "NoGame_crystal_mine_level", [ids.c], key=[ids.id,0])
+        store(ids.game, "NoGame_deuterium_mine_level", [ids.d], key=[ids.id,0])
+        store(ids.game, "NoGame_solar_mine_level", [ids.s], key=[ids.id,0])
+    %}
+    return ()
+end
+
+func _reset_timelock{syscall_ptr : felt*, range_check_ptr}(resources : felt, player : felt):
+    %{ store(ids.resources, "Resources_timelock", [0,0], key=[ids.player]) %}
+    return ()
+end
+
+func _get_expected_cost{syscall_ptr : felt*, range_check_ptr}(
+    base_m : felt, base_c : felt, multiplier : felt, level : felt
+) -> (metal : felt, crystal : felt):
+    tempvar metal : felt
+    tempvar crystal : felt
+    %{
+        ids.metal = (ids.base_m * (ids.multiplier)**(ids.level)) // 10**ids.level
+        ids.crystal = (ids.base_c * (ids.multiplier)**(ids.level)) // 10**ids.level
+    %}
+    return (metal, crystal)
+end
