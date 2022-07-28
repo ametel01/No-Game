@@ -1,5 +1,7 @@
 # No-Game
 
+![CI](https://github.com/ametel01/No-Game/blob/main/.github/workflows/tests.yml/badge.svg)
+
 ## Current Functionalities Roadmap
 
 ### v0.1
