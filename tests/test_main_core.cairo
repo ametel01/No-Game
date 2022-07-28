@@ -104,7 +104,7 @@ func test_views_base_costs{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
     let (addresses : Contracts) = _get_test_addresses()
     _run_modules_manager(addresses)
-    _run_minter(addresses, 10)
+    _run_minter(addresses, 1)
     # Testing the base buildings costs.
     let (metal_1, crystal_1, deuterium_1, solar_plant_1) = NoGame.getResourcesUpgradeCost(
         addresses.game, addresses.owner

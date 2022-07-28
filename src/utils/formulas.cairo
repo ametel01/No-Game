@@ -6,7 +6,6 @@ from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
 from starkware.cairo.common.bool import TRUE, FALSE
-from main.storage import NoGame_planets_spent_resources
 
 ##############
 # Production #
