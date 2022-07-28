@@ -2,7 +2,7 @@
 protostar_version = "0.2.6"
 
 ["protostar.project"]
-libs_path = "./lib/cairo_contracts_git/cairo_contracts/src"
+libs_path = "./lib/cairo_contracts_git/cairo_contracts/src/"
 
 ["protostar.shared_command_configs"]
 cairo_path = ["./src"]
