@@ -63,6 +63,7 @@ end
 @external
 func test_metal_upgrades_cost{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
+    %{ print("test_metal_upgrades_cost:\n" ) %}
     let (addresses : Contracts) = _get_test_addresses()
     _run_modules_manager(addresses)
     _run_minter(addresses, 1)
@@ -153,6 +154,7 @@ end
 @external
 func test_crystal_upgrades_cost{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
+    %{ print("test_crystal_upgrades_cost:\n" ) %}
     let (addresses : Contracts) = _get_test_addresses()
     _run_modules_manager(addresses)
     _run_minter(addresses, 1)
@@ -243,6 +245,7 @@ end
 @external
 func test_deuterium_upgrades_cost{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
+    %{ print("test_deuterium_upgrades_cost:\n" ) %}
     let (addresses : Contracts) = _get_test_addresses()
     _run_modules_manager(addresses)
     _run_minter(addresses, 1)
@@ -333,6 +336,7 @@ end
 @external
 func test_solar_upgrades_cost{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
+    %{ print("test_solar_upgrades_cost:\n" ) %}
     let (addresses : Contracts) = _get_test_addresses()
     _run_modules_manager(addresses)
     _run_minter(addresses, 1)
