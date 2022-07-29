@@ -5,6 +5,7 @@ from starkware.starknet.common.syscalls import get_caller_address
 from main.library import NoGame
 from main.structs import Cost, TechLevels, TechCosts, Fleet
 from resources.IResources import IResources
+from resources.library import ResourcesQue
 from research.IResearchLab import IResearchLab
 
 #########################################################################################
@@ -120,14 +121,14 @@ func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
     let (
         metal_available, crystal_available, deuterium_available, energy_available
-    ) = NoGame.get_resources_available(caller)
+    ) = NoGame.resources_available(caller)
     return (metal_available, crystal_available, deuterium_available, energy_available)
 end
 
 @view
 func getResourcesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (building_id : felt, time_end : felt):
+) -> (status : ResourcesQue):
     let (status) = NoGame.resources_que(caller)
     return (status)
 end
