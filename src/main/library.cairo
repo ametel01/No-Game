@@ -220,9 +220,9 @@ namespace NoGame:
         )
     end
 
-    func resources_que{syscall_ptr : felt*, range_check_ptr}(caller : felt) -> (
-        que_status : ResourcesQue
-    ):
+    func resources_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (que_status : ResourcesQue):
         let (planet_id) = _get_planet_id(caller)
         let (status) = NoGame_resources_que_status.read(planet_id)
         return (status)
@@ -289,7 +289,7 @@ namespace NoGame:
         )
         _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
         let (planet_id) = _get_planet_id(caller)
-        NoGame_resources_que_status.write(planet_id, ResourcesQue(time_unlocked, METAL_MINE_ID))
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(METAL_MINE_ID, time_unlocked))
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -298,6 +298,7 @@ namespace NoGame:
 
     func metal_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ):
+        alloc_locals
         let (caller) = get_caller_address()
         let (manager) = NoGame_modules_manager.read()
         let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
@@ -319,7 +320,7 @@ namespace NoGame:
         )
         _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
         let (planet_id) = _get_planet_id(caller)
-        NoGame_resources_que_status.write(planet_id, ResourcesQue(time_unlocked, CRYSTAL_MINE_ID))
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(CRYSTAL_MINE_ID, time_unlocked))
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -329,6 +330,7 @@ namespace NoGame:
     func crystal_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
+        alloc_locals
         let (caller) = get_caller_address()
         let (manager) = NoGame_modules_manager.read()
         let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
@@ -351,7 +353,7 @@ namespace NoGame:
         )
         _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
         let (planet_id) = _get_planet_id(caller)
-        NoGame_resources_que_status.write(planet_id, ResourcesQue(time_unlocked, DEUTERIUM_MINE_ID))
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(DEUTERIUM_MINE_ID, time_unlocked))
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -361,6 +363,7 @@ namespace NoGame:
     func deuterium_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
+        alloc_locals
         let (caller) = get_caller_address()
         let (manager) = NoGame_modules_manager.read()
         let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
@@ -382,7 +385,7 @@ namespace NoGame:
         )
         _pay_resources_erc20(caller, metal_spent, crystal_spent, 0)
         let (planet_id) = _get_planet_id(caller)
-        NoGame_resources_que_status.write(planet_id, ResourcesQue(time_unlocked, SOLAR_PLANT_ID))
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -391,6 +394,7 @@ namespace NoGame:
 
     func solar_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ):
+        alloc_locals
         let (caller) = get_caller_address()
         let (manager) = NoGame_modules_manager.read()
         let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
