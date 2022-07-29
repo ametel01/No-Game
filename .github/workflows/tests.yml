@@ -1,20 +1,20 @@
 name: Tests
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
+
+name: test
 
 jobs:
-  protostar:
-    name: Protostar
+  check:
+    name: Protostar project
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v2
         with:
-          python-version: 3.9
+          submodules: recursive
+
       - name: Install Protostar
         uses: sambarnes/protostar-toolchain@main
-      - name: Runs all the tests
+
+      - name: Run tests
         run: protostar test
