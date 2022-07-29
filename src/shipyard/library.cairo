@@ -7,6 +7,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from main.INoGame import INoGame
 from token.erc20.interfaces.IERC20 import IERC20
+from utils.formulas import Formulas
 
 #########################################################################################
 #                                           CONSTANTS                                   #
@@ -83,7 +84,6 @@ namespace Shipyard:
         let (metal_required, crystal_required, deuterium_required) = _cargo_ship_cost(
             number_of_units
         )
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         _cargo_ship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -113,7 +113,6 @@ namespace Shipyard:
         let (metal_required, crystal_required, deuterium_required) = _recycler_ship_cost(
             number_of_units
         )
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         _recycler_ship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -143,7 +142,6 @@ namespace Shipyard:
         let (metal_required, crystal_required, deuterium_required) = _espionage_probe_cost(
             number_of_units
         )
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         _espionage_probe_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -173,7 +171,6 @@ namespace Shipyard:
         let (metal_required, crystal_required, deuterium_required) = _solar_satellite_cost(
             number_of_units
         )
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         _solar_satellite_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -203,7 +200,6 @@ namespace Shipyard:
         let (metal_required, crystal_required, deuterium_required) = _light_fighter_cost(
             number_of_units
         )
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         _light_fighter_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -229,7 +225,6 @@ namespace Shipyard:
     ) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _cruiser_cost(number_of_units)
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         _cruiser_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -255,7 +250,6 @@ namespace Shipyard:
         let (metal_required, crystal_required, deuterium_required) = _battleship_cost(
             number_of_units
         )
-        assert_not_zero(caller)
         _check_que_not_busy(caller)
         _battleship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -522,18 +516,8 @@ func _deathstar_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
 end
 
 #######################################################################################################
-#                                           INTERNAL FUNC                                             #
+#                                           PRIVATE FUNC                                              #
 #######################################################################################################
-
-func _production_time{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    metal_required : felt, crystal_required : felt, shipyard_level : felt
-) -> (_production_time : felt):
-    let fact1 = metal_required + crystal_required
-    let fact2 = 1 + shipyard_level
-    let fact3 = fact2 * 250
-    let (res, _) = unsigned_div_rem(fact1, fact3)
-    return (res)
-end
 
 func _get_available_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
@@ -621,8 +605,10 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     crystal_required : felt,
 ):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
-    let (build_time) = _production_time(metal_required, crystal_required, shipyard_level)
+    let (_, shipyard_level, _, nanite_level) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (build_time) = Formulas.buildings_production_time(
+        metal_required, crystal_required, shipyard_level, nanite_level
+    )
     let (time_now) = get_block_timestamp()
     let time_end = time_now + build_time
     let que_details = ShipyardQue(SHIP_ID, number_of_units, time_end)
