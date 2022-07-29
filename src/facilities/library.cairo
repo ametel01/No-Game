@@ -98,7 +98,7 @@ namespace Facilities:
         )
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         let (time_unlocked) = _set_timelock_and_que(
-            caller, SHIPYARD_ID, metal_required, robot_factory_level, nanite_level, crystal_required
+            caller, SHIPYARD_ID, robot_factory_level, nanite_level, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required, time_unlocked)
     end
