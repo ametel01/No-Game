@@ -10,15 +10,15 @@ from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.uint256 import Uint256, uint256_check
 
-from openzeppelin.security.safemath import SafeUint256
+from openzeppelin.security.safemath.library import SafeUint256
 
-from openzeppelin.introspection.ERC165 import ERC165
+from openzeppelin.introspection.erc165.library import ERC165
 
-from openzeppelin.token.erc721.interfaces.IERC721_Receiver import IERC721_Receiver
+from openzeppelin.token.erc721.IERC721Receiver import IERC721Receiver
 
-from openzeppelin.introspection.IERC165 import IERC165
+from openzeppelin.introspection.erc165.IERC165 import IERC165
 
-from openzeppelin.utils.constants import (
+from openzeppelin.utils.constants.library import (
     IERC721_ID,
     IERC721_METADATA_ID,
     IERC721_RECEIVER_ID,
@@ -482,7 +482,7 @@ func _check_onERC721Received{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
     let (caller) = get_caller_address()
     let (is_supported) = IERC165.supportsInterface(to, IERC721_RECEIVER_ID)
     if is_supported == TRUE:
-        let (selector) = IERC721_Receiver.onERC721Received(
+        let (selector) = IERC721Receiver.onERC721Received(
             to, caller, from_, token_id, data_len, data
         )
 

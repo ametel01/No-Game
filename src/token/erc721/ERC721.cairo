@@ -13,8 +13,8 @@ from token.erc721.ERC721_Metadata_base import (
     ERC721_Metadata_tokenURI,
     ERC721_Metadata_setBaseTokenURI,
 )
-from openzeppelin.introspection.ERC165 import ERC165
-from openzeppelin.access.ownable import Ownable
+from openzeppelin.introspection.erc165.library import ERC165
+from openzeppelin.access.ownable.library import Ownable
 
 #
 # Constructor

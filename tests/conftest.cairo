@@ -48,7 +48,7 @@ end
 func __setup__{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
     %{
-        context.owner_address = deploy_contract("lib/cairo_contracts_git/cairo_contracts/src/openzeppelin/account/Account.cairo", [ids.PK]).contract_address 
+        context.owner_address = deploy_contract("lib/openzeppelin/account/presets/Account.cairo", [ids.PK]).contract_address 
         context.minter_address = deploy_contract("src/minter/erc721_minter.cairo", [context.owner_address]).contract_address
         context.erc721_address = deploy_contract("src/token/erc721/ERC721.cairo",[ids.ERC721_NAME, ids.ERC721_SYMBOL, context.minter_address, ids.URI_LEN, ids.URI]).contract_address
         #print("erc721_address: ", context.erc721_address)
