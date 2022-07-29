@@ -5,15 +5,6 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from resources.library import Resources
 from main.structs import Cost
 
-# @view
-# func getTimelockStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ):
-#     let (building_id, timelock_end) = Resources.timelock_status(caller)
-
-# return (building_id, timelock_end)
-# end
-
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     no_game_address : felt

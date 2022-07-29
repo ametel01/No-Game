@@ -185,16 +185,6 @@ namespace Resources:
     end
 end
 
-func _timelock_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt
-) -> (building_id : felt, time_end : felt):
-    let (status) = Resources_timelock.read(caller)
-    let building_id = status.building_id
-    let time_end = status.lock_end
-
-    return (building_id, time_end)
-end
-
 # ###################################################################################################
 #                                RESOURCES COST CALCULATION                                         #
 #####################################################################################################
