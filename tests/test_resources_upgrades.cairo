@@ -17,10 +17,17 @@ from tests.conftest import (
     _set_mines_levels,
     _set_resource_levels,
     _reset_timelock,
+    _reset_que,
 )
 from tests.interfaces import NoGame, ERC20
 from utils.formulas import Formulas
-from resources.library import ResourcesQue
+from resources.library import (
+    ResourcesQue,
+    METAL_MINE_ID,
+    CRYSTAL_MINE_ID,
+    DEUTERIUM_MINE_ID,
+    SOLAR_PLANT_ID,
+)
 
 @external
 func test_upgrade_mines_base{syscall_ptr : felt*, range_check_ptr}():
@@ -106,6 +113,136 @@ func test_upgrades_time{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     _test_deuterium_time_recursive(inputs_len, inputs, addresses)
     %{ print("\n***test_solar_upgrades_time***" ) %}
     _test_solar_time_recursive(inputs_len, inputs, addresses)
+
+    return ()
+end
+
+@external
+func test_busy_que_reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    NoGame.metalUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
+    NoGame.crystalUpgradeStart(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    NoGame.crystalUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
+    NoGame.metalUpgradeStart(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    NoGame.deuteriumUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
+    NoGame.solarUpgradeStart(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    NoGame.solarUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
+    NoGame.deuteriumUpgradeStart(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    return ()
+end
+
+@external
+func test_wrong_resource_reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    NoGame.metalUpgradeStart(addresses.game)
+    %{ stop_warp = warp(1000) %}
+    %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
+    NoGame.crystalUpgradeComplete(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    NoGame.crystalUpgradeStart(addresses.game)
+    %{ stop_warp = warp(2000) %}
+    %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
+    NoGame.metalUpgradeComplete(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    NoGame.deuteriumUpgradeStart(addresses.game)
+    %{ stop_warp = warp(3000) %}
+    %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
+    NoGame.solarUpgradeComplete(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    NoGame.solarUpgradeStart(addresses.game)
+    %{ stop_warp = warp(4000) %}
+    %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
+    NoGame.deuteriumUpgradeComplete(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    return ()
+end
+
+@external
+func test_enough_resources_reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    %{ store(ids.addresses.metal, "ERC20_balances", [0,0], key=[ids.addresses.owner]) %}
+
+    %{ expect_revert(error_message="RESOURCES::NOT ENOUGH RESOURCES!!!") %}
+    NoGame.metalUpgradeStart(addresses.game)
+
+    %{ expect_revert(error_message="RESOURCES::NOT ENOUGH RESOURCES!!!") %}
+    NoGame.crystalUpgradeStart(addresses.game)
+
+    %{ expect_revert(error_message="RESOURCES::NOT ENOUGH RESOURCES!!!") %}
+    NoGame.deuteriumUpgradeStart(addresses.game)
+
+    %{ expect_revert(error_message="RESOURCES::NOT ENOUGH RESOURCES!!!") %}
+    NoGame.solarUpgradeStart(addresses.game)
+
+    return ()
+end
+
+@external
+func test_timelock_expired_reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    NoGame.metalUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
+    NoGame.metalUpgradeComplete(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+    _reset_que(addresses.resources, addresses.owner, METAL_MINE_ID)
+
+    NoGame.crystalUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
+    NoGame.crystalUpgradeComplete(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+    _reset_que(addresses.resources, addresses.owner, CRYSTAL_MINE_ID)
+
+    NoGame.deuteriumUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
+    NoGame.deuteriumUpgradeComplete(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+    _reset_que(addresses.resources, addresses.owner, DEUTERIUM_MINE_ID)
+
+    NoGame.solarUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
+    NoGame.solarUpgradeComplete(addresses.game)
+    _reset_timelock(addresses.resources, addresses.owner)
+    _reset_que(addresses.resources, addresses.owner, SOLAR_PLANT_ID)
 
     return ()
 end
