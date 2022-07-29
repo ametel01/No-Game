@@ -40,8 +40,8 @@ func test_metal{syscall_ptr : felt*, range_check_ptr}():
     assert metal = exp_metal
     assert crystal = exp_crystal
 
-    let (metal, crystal) = _metal_building_cost(40)
-    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 40)
+    let (metal, crystal) = _metal_building_cost(45)
+    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 45)
     assert metal = exp_metal
     assert crystal = exp_crystal
 
@@ -80,8 +80,8 @@ func test_crystal{syscall_ptr : felt*, range_check_ptr}():
     assert metal = exp_metal
     assert crystal = exp_crystal
 
-    let (metal, crystal) = _crystal_building_cost(40)
-    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 40)
+    let (metal, crystal) = _crystal_building_cost(45)
+    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 45)
     assert metal = exp_metal
     assert crystal = exp_crystal
 
@@ -120,8 +120,8 @@ func test_deuterium{syscall_ptr : felt*, range_check_ptr}():
     assert metal = exp_metal
     assert crystal = exp_crystal
 
-    let (metal, crystal) = _deuterium_building_cost(40)
-    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 40)
+    let (metal, crystal) = _deuterium_building_cost(45)
+    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 45)
     assert metal = exp_metal
     assert crystal = exp_crystal
 
@@ -160,8 +160,8 @@ func test_solar{syscall_ptr : felt*, range_check_ptr}():
     assert metal = exp_metal
     assert crystal = exp_crystal
 
-    let (metal, crystal) = _solar_plant_building_cost(40)
-    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 40)
+    let (metal, crystal) = _solar_plant_building_cost(46)
+    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 46)
     assert metal = exp_metal
     assert crystal = exp_crystal
 
