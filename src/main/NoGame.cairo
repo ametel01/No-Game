@@ -124,13 +124,13 @@ func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     return (metal_available, crystal_available, deuterium_available, energy_available)
 end
 
-# @view
-# func getResourcesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ) -> (building_id : felt, time_end : felt):
-#     let (building_id, time_end) = NoGame.get_resources_que_status(caller)
-#     return (building_id, time_end)
-# end
+@view
+func getResourcesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (building_id : felt, time_end : felt):
+    let (status) = NoGame.resources_que(caller)
+    return (status)
+end
 
 # @view
 # func getFacilitiesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(

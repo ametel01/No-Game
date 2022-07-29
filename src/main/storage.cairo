@@ -21,7 +21,7 @@ func NoGame_planets_spent_resources(planet_id : Uint256) -> (spent_resources : f
 end
 
 @storage_var
-func NoGame_resources_timer(planet_id : Uint256) -> (time_las : felt):
+func NoGame_resources_timer(planet_id : Uint256) -> (time_last : felt):
 end
 
 ##################################################################################

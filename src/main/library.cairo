@@ -202,7 +202,7 @@ namespace NoGame:
         )
     end
 
-    func get_resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    func resources_available{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
         alloc_locals
@@ -218,6 +218,14 @@ namespace NoGame:
             deuterium_available + deuterium_produced,
             energy_available,
         )
+    end
+
+    func resources_que{syscall_ptr : felt*, range_check_ptr}(caller : felt) -> (
+        que_status : ResourcesQue
+    ):
+        let (planet_id) = _get_planet_id(caller)
+        let (status) = NoGame_resources_que_status.read(planet_id)
+        return (status)
     end
 
     ##########################################################################################
