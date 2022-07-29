@@ -942,7 +942,9 @@ func _graviton_tech_requirements_check{
     return ()
 end
 
-# ############################ INTERNAL FUNCS ######################################
+#######################################################################################################
+#                                           PRIVATE FUNC                                              #
+#######################################################################################################
 func _get_available_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (metal : felt, crystal : felt, deuterium : felt):
@@ -1034,11 +1036,9 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     caller : felt, TECH_ID : felt, metal_required : felt, crystal_required : felt
 ):
     let (no_game_address) = Research_no_game_address.read()
-    let (_, _, research_lab_level, nanite_level) = INoGame.getFacilitiesLevels(
-        no_game_address, caller
-    )
+    let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let (research_time) = Formulas.buildings_production_time(
-        metal_required, crystal_required, research_lab_level, nanite_level
+        metal_required, crystal_required, research_lab_level, 0
     )
     let (time_now) = get_block_timestamp()
     let time_end = time_now + research_time
