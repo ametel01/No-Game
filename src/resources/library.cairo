@@ -199,6 +199,8 @@ end
 #                                RESOURCES COST CALCULATION                                         #
 #####################################################################################################
 
+# TODO: Max buildings level is 45 due to unsigned_div_rem overflow.
+#       Need to consider if tweak formula for levels > 45
 func _metal_building_cost{syscall_ptr : felt*, range_check_ptr}(mine_level : felt) -> (
     metal_cost : felt, crystal_cost : felt
 ):
