@@ -163,6 +163,13 @@ end
 
 func _reset_timelock{syscall_ptr : felt*, range_check_ptr}(resources : felt, player : felt):
     %{ store(ids.resources, "Resources_timelock", [0,0], key=[ids.player]) %}
+
+    return ()
+end
+
+func _reset_que{syscall_ptr : felt*, range_check_ptr}(resources : felt, player : felt, id : felt):
+    %{ store(ids.resources, "Resources_timelock", [0], key=[ids.player, ids.id]) %}
+
     return ()
 end
 
