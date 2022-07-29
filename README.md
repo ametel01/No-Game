@@ -16,26 +16,29 @@
 - [x] Implement Modules Manager. :heavy_check_mark:
 - [x] Implement upgradable modules. :heavy_check_mark:
 - [ ] Implement game’s modules.
-  - [x] Shipyard module. :heavy_check_mark:
-  - [x] Resources module. :heavy_check_mark:
-  - [x] Facilities module. :heavy_check_mark:
-  - [x] Research module. :heavy_check_mark:
+  - [x] Shipyard module.
+  - [x] Resources module.
+  - [x] Facilities module.
+  - [x] Research module.
   - [ ] Testing
-- [ ] Implement of Facilities
-  - [x] Robot Factory upgrades. :heavy_check_mark:
-  - [x] Shipyard upgrades. :heavy_check_mark:
-  - [x] Research Lab upgrades. :heavy_check_mark:
-  - [x] Nanite Factory upgrades. :heavy_check_mark:
+- [ ] Implement Resources
+  - [x] Mines upgrades
+  - [x] Mines costs
+  - [x] Mines constraints
+- [ ] Implement Facilities
+  - [x] Facilities upgrades.
+  - [x] Facilities costs.
+  - [x] Facilities constraints.
   - [ ] Testing
 - [ ] Implement Shipyard
-  - [x] Ships constraints. :heavy_check_mark:
-  - [x] Ships costs. :heavy_check_mark:
-  - [x] Ships upgrades. :heavy_check_mark:
+  - [x] Ships upgrades.
+  - [x] Ships costs.
+  - [x] Ships constraints.
   - [ ] Testing
 - [ ] Implement Research
-  - [x] Research contsraints. :heavy_check_mark:
-  - [x] Research cost. :heavy_check_mark:
-  - [x] Research upgrades. :heavy_check_mark:
+  - [x] Research upgrades.
+  - [x] Research cost.
+  - [x] Research contsraints.
   - [ ] Testing
 
 ### v0.3
