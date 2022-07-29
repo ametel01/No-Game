@@ -18,6 +18,7 @@ from tests.conftest import (
     _reset_timelock,
 )
 from tests.interfaces import NoGame, ERC20
+from utils.formulas import Formulas
 
 @external
 func test_upgrade_mines_base{syscall_ptr : felt*, range_check_ptr}():
@@ -71,22 +72,27 @@ func test_upgrades_costs{syscall_ptr : felt*, range_check_ptr}():
     tempvar inputs = new (1, 5, 10, 20, 30, 45)
     let inputs_len = 6
 
+    %{ print("\n***test_metal_upgrades_cost***" ) %}
     _test_metal_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_crystal_upgrades_cost***" ) %}
     _test_crystal_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_deuterium_upgrades_cost***" ) %}
     _test_deuterium_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_solar_upgrades_cost***" ) %}
     _test_solar_recursive(inputs_len, inputs, addresses)
 
     return ()
 end
 
+# @external
+# func test_upgrades_time{syscall_ptr : felt*, range_check_ptr}():
+
 func _test_metal_recursive{syscall_ptr : felt*, range_check_ptr}(
     inputs_len : felt, inputs : felt*, addresses : Contracts
 ):
-    %{ print("\ntest_metal_upgrades_cost:\n" ) %}
     if inputs_len == 0:
         return ()
     end
-
     let input = [inputs]
     let (cost_metal, cost_crystal) = _metal_building_cost(input)
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
@@ -107,11 +113,9 @@ end
 func _test_crystal_recursive{syscall_ptr : felt*, range_check_ptr}(
     inputs_len : felt, inputs : felt*, addresses : Contracts
 ):
-    %{ print("\ntest_crystal_upgrades_cost:\n" ) %}
     if inputs_len == 0:
         return ()
     end
-
     let input = [inputs]
     let (cost_metal, cost_crystal) = _crystal_building_cost(input)
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
@@ -132,11 +136,9 @@ end
 func _test_deuterium_recursive{syscall_ptr : felt*, range_check_ptr}(
     inputs_len : felt, inputs : felt*, addresses : Contracts
 ):
-    %{ print("\ntest_deuterium_upgrades_cost:\n" ) %}
     if inputs_len == 0:
         return ()
     end
-
     let input = [inputs]
     let (cost_metal, cost_crystal) = _deuterium_building_cost(input)
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
@@ -157,11 +159,9 @@ end
 func _test_solar_recursive{syscall_ptr : felt*, range_check_ptr}(
     inputs_len : felt, inputs : felt*, addresses : Contracts
 ):
-    %{ print("\ntest_solar_upgrades_cost:\n" ) %}
     if inputs_len == 0:
         return ()
     end
-
     let input = [inputs]
     let (cost_metal, cost_crystal) = _solar_plant_building_cost(input)
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
