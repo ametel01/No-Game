@@ -1,5 +1,6 @@
 %lang starknet
 
+from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
 from resources.library import (
     _metal_building_cost,
@@ -19,6 +20,7 @@ from tests.conftest import (
 )
 from tests.interfaces import NoGame, ERC20
 from utils.formulas import Formulas
+from resources.library import ResourcesQue
 
 @external
 func test_upgrade_mines_base{syscall_ptr : felt*, range_check_ptr}():
@@ -84,8 +86,129 @@ func test_upgrades_costs{syscall_ptr : felt*, range_check_ptr}():
     return ()
 end
 
-# @external
-# func test_upgrades_time{syscall_ptr : felt*, range_check_ptr}():
+@external
+func test_upgrades_time{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    tempvar inputs = new (1, 5, 10, 20, 30, 45)
+    let inputs_len = 6
+
+    %{ print("\n***test_metal_upgrades_time***" ) %}
+    _test_metal_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_crystal_upgrades_time***" ) %}
+    _test_crystal_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_deuterium_upgrades_time***" ) %}
+    _test_deuterium_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_solar_upgrades_time***" ) %}
+    _test_solar_time_recursive(inputs_len, inputs, addresses)
+
+    return ()
+end
+
+#######################################################################################################
+#                                           PRIVATE FUNC                                              #
+#######################################################################################################
+
+func _test_metal_time_recursive{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    inputs_len : felt, inputs : felt*, addresses : Contracts
+):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal) = _metal_building_cost(input)
+    %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_mines_levels(addresses.game, id=1, m=input, c=0, d=0, s=0)
+    NoGame.metalUpgradeStart(addresses.game)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0)
+    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
+    assert expected_time = que_details.lock_end
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_crystal_time_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal) = _crystal_building_cost(input)
+    %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_mines_levels(addresses.game, id=1, m=0, c=input, d=0, s=0)
+    NoGame.crystalUpgradeStart(addresses.game)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0)
+    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
+    assert expected_time = que_details.lock_end
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_deuterium_time_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal) = _deuterium_building_cost(input)
+    %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_mines_levels(addresses.game, id=1, m=0, c=0, d=input, s=0)
+    NoGame.deuteriumUpgradeStart(addresses.game)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0)
+    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
+    assert expected_time = que_details.lock_end
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_solar_time_recursive{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    inputs_len : felt, inputs : felt*, addresses : Contracts
+):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal) = _solar_plant_building_cost(input)
+    %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_mines_levels(addresses.game, id=1, m=0, c=0, d=0, s=input)
+    NoGame.solarUpgradeStart(addresses.game)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0)
+    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
+    assert expected_time = que_details.lock_end
+    _reset_timelock(addresses.resources, addresses.owner)
+
+    _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
 
 func _test_metal_recursive{syscall_ptr : felt*, range_check_ptr}(
     inputs_len : felt, inputs : felt*, addresses : Contracts

@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
+from resources.library import ResourcesQue
 
 @contract_interface
 namespace NoGame:
@@ -39,6 +40,9 @@ namespace NoGame:
     end
 
     func getTechUpgradeCost(caller : felt) -> (tech_costs : TechCosts):
+    end
+
+    func getResourcesQueStatus(caller : felt) -> (status : ResourcesQue):
     end
 
     func numberOfPlanets() -> (n_planets : felt):
