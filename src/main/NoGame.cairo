@@ -260,7 +260,7 @@ func naniteUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
 end
 
 @external
-func naniteComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+func naniteUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     NoGame.nanite_upgrade_complete()
     return ()
 end
