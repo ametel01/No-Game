@@ -74,6 +74,30 @@ namespace NoGame:
 
     func solarUpgradeComplete():
     end
+
+    func robotUpgradeStart():
+    end
+
+    func robotUpgradeComplete():
+    end
+
+    func shipyardUpgradeStart():
+    end
+
+    func shipyardUpgradeComplete():
+    end
+
+    func researchUpgradeStart():
+    end
+
+    func researchUpgradeComplete():
+    end
+
+    func naniteUpgradeStart():
+    end
+
+    func naniteUpgradeComplete():
+    end
 end
 
 @contract_interface

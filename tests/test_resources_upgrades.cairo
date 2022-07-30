@@ -37,7 +37,7 @@ func test_upgrade_mines_base{syscall_ptr : felt*, range_check_ptr}():
     _run_minter(addresses, 10)
     %{
         stop_prank_callable1 = start_prank(
-                   ids.addresses.owner, target_contract_address=ids.addresses.game)
+                ids.addresses.owner, target_contract_address=ids.addresses.game)
     %}
     NoGame.generatePlanet(addresses.game)
     let (prev_metal, prev_crystal, prev_deuterium, prev_solar) = NoGame.getResourcesBuildingsLevels(
