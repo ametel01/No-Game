@@ -29,8 +29,11 @@ from facilities.library import (
     NANITE_FACTORY_ID,
 )
 
+from facilities.IFacilities import IFacilities
 @external
-func test_upgrade_facilities_base{syscall_ptr : felt*, range_check_ptr}():
+func test_upgrade_facilities_base{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}():
     alloc_locals
     let (addresses : Contracts) = _get_test_addresses()
     _run_modules_manager(addresses)
@@ -49,23 +52,28 @@ func test_upgrade_facilities_base{syscall_ptr : felt*, range_check_ptr}():
     _set_resource_levels(addresses.metal, addresses.owner, robot.metal)
     _set_resource_levels(addresses.crystal, addresses.owner, robot.crystal)
     _set_resource_levels(addresses.deuterium, addresses.owner, robot.deuterium)
+    let (robot_time) = Formulas.buildings_production_time(robot.metal, robot.crystal, 0, 0)
     NoGame.robotUpgradeStart(addresses.game)
-    _time_warp(1000, addresses.facilities)
+    _time_warp(robot_time, addresses.facilities)
     NoGame.robotUpgradeComplete(addresses.game)
 
     _set_resource_levels(addresses.metal, addresses.owner, shipyard.metal)
     _set_resource_levels(addresses.crystal, addresses.owner, shipyard.crystal)
     _set_resource_levels(addresses.deuterium, addresses.owner, shipyard.deuterium)
     %{ store(ids.addresses.game, "NoGame_robot_factory_level", [2], [1,0]) %}
+    _time_warp(0, addresses.facilities)
+    let (shipyard_time) = Formulas.buildings_production_time(nanite.metal, nanite.crystal, 2, 0)
     NoGame.shipyardUpgradeStart(addresses.game)
-    _time_warp(3000, addresses.facilities)
+    _time_warp(shipyard_time, addresses.facilities)
     NoGame.shipyardUpgradeComplete(addresses.game)
 
     _set_resource_levels(addresses.metal, addresses.owner, lab.metal)
     _set_resource_levels(addresses.crystal, addresses.owner, lab.crystal)
     _set_resource_levels(addresses.deuterium, addresses.owner, lab.deuterium)
+    _time_warp(0, addresses.facilities)
+    let (lab_time) = Formulas.buildings_production_time(nanite.metal, nanite.crystal, 2, 0)
     NoGame.researchUpgradeStart(addresses.game)
-    _time_warp(4000, addresses.facilities)
+    _time_warp(lab_time, addresses.facilities)
     NoGame.researchUpgradeComplete(addresses.game)
 
     _set_resource_levels(addresses.metal, addresses.owner, nanite.metal)
@@ -73,15 +81,17 @@ func test_upgrade_facilities_base{syscall_ptr : felt*, range_check_ptr}():
     _set_resource_levels(addresses.deuterium, addresses.owner, nanite.deuterium)
     %{ store(ids.addresses.game, "NoGame_computer_tech", [10], [1,0]) %}
     %{ store(ids.addresses.game, "NoGame_robot_factory_level", [10], [1,0]) %}
+    _time_warp(0, addresses.facilities)
+    let (nanite_time) = Formulas.buildings_production_time(nanite.metal, nanite.crystal, 10, 0)
     NoGame.naniteUpgradeStart(addresses.game)
-    _time_warp(10000, addresses.facilities)
+    _time_warp(nanite_time, addresses.facilities)
     NoGame.naniteUpgradeComplete(addresses.game)
 
     let (new_robot, new_shipyard, new_lab, new_nanite) = NoGame.getFacilitiesLevels(
         addresses.game, addresses.owner
     )
 
-    assert new_robot = prev_robot + 1
+    assert new_robot = prev_robot + 10
     assert new_shipyard = prev_shipyard + 1
     assert new_lab = prev_lab + 1
     assert new_nanite = prev_nanite + 1
