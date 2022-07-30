@@ -158,7 +158,7 @@ namespace Facilities:
         _check_que_not_busy(caller)
         let (no_game) = Facilities_no_game_address.read()
         let (
-            robot_factory_level, research_lab_level, _, nanite_level
+            robot_factory_level, _, research_lab_level, nanite_level
         ) = INoGame.getFacilitiesLevels(no_game, caller)
         let (metal_required, crystal_required, deuterium_required) = _research_lab_upgrade_cost(
             research_lab_level
