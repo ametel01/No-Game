@@ -229,7 +229,7 @@ namespace NoGame:
     end
 
     ##########################################################################################
-    #                                      PUBLIC FUNCTIONS                                  #
+    #                                      GENERAL PUBLIC FUNCTIONS                          #
     ##########################################################################################
 
     func generate_planet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -278,6 +278,10 @@ namespace NoGame:
         NoGame_resources_timer.write(planet_id, time_now)
         return ()
     end
+
+    ##########################################################################################
+    #                               RESOURCES PUBLIC FUNCTIONS                               #
+    ##########################################################################################
 
     func metal_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
         alloc_locals
@@ -405,10 +409,142 @@ namespace NoGame:
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
     end
+
+    ##########################################################################################
+    #                               FACILITIES PUBLIC FUNCTIONS                              #
+    ##########################################################################################
+
+    func robot_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (_, facilities_address, _, _) = IModulesManager.getModulesAddresses(manager)
+        let (
+            metal_spent, crystal_spent, deuterium_spent, time_unlocked
+        ) = IFacilities.robotFactoryUpgradeStart(facilities_address, caller)
+        _pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
+        let (planet_id) = _get_planet_id(caller)
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal_spent + crystal_spent
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        return ()
+    end
+
+    func robot_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (_, facilities_address, _, _) = IModulesManager.getModulesAddresses(manager)
+        IFacilities.robotFactoryUpgradeComplete(facilities_address, caller)
+        let (planet_id) = _get_planet_id(caller)
+        let (current_robot_level) = NoGame_robot_factory_level.read(planet_id)
+        NoGame_robot_factory_level.write(planet_id, current_robot_level + 1)
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
+        return ()
+    end
+
+    func shipyard_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (_, facilities_address, _, _) = IModulesManager.getModulesAddresses(manager)
+        let (
+            metal_spent, crystal_spent, deuterium_spent, time_unlocked
+        ) = IFacilities.shipyardUpgradeStart(facilities_address, caller)
+        _pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
+        let (planet_id) = _get_planet_id(caller)
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal_spent + crystal_spent
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        return ()
+    end
+
+    func shipyard_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (_, facilities_address, _, _) = IModulesManager.getModulesAddresses(manager)
+        IFacilities.shipyardUpgradeComplete(facilities_address, caller)
+        let (planet_id) = _get_planet_id(caller)
+        let (current_shipyard_level) = NoGame_shipyard_level.read(planet_id)
+        NoGame_shipyard_level.write(planet_id, current_shipyard_level + 1)
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
+        return ()
+    end
+
+    func research_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (_, facilities_address, _, _) = IModulesManager.getModulesAddresses(manager)
+        let (
+            metal_spent, crystal_spent, deuterium_spent, time_unlocked
+        ) = IFacilities.researchLabUpgradeStart(facilities_address, caller)
+        _pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
+        let (planet_id) = _get_planet_id(caller)
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal_spent + crystal_spent
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        return ()
+    end
+
+    func research_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (_, facilities_address, _, _) = IModulesManager.getModulesAddresses(manager)
+        IFacilities.researchLabUpgradeComplete(facilities_address, caller)
+        let (planet_id) = _get_planet_id(caller)
+        let (current_lab_level) = NoGame_research_lab_level.read(planet_id)
+        NoGame_research_lab_level.write(planet_id, current_lab_level + 1)
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
+        return ()
+    end
+
+    func nanite_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (_, facilities_address, _, _) = IModulesManager.getModulesAddresses(manager)
+        let (
+            metal_spent, crystal_spent, deuterium_spent, time_unlocked
+        ) = IFacilities.naniteFactoryUpgradeStart(facilities_address, caller)
+        _pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
+        let (planet_id) = _get_planet_id(caller)
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal_spent + crystal_spent
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        return ()
+    end
+
+    func nanite_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (manager) = NoGame_modules_manager.read()
+        let (_, facilities_address, _, _) = IModulesManager.getModulesAddresses(manager)
+        IFacilities.naniteFactoryUpgradeComplete(facilities_address, caller)
+        let (planet_id) = _get_planet_id(caller)
+        let (current_nanite_level) = NoGame_nanite_factory_level.read(planet_id)
+        NoGame_nanite_factory_level.write(planet_id, current_nanite_level + 1)
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
+        return ()
+    end
 end
 
 ##########################################################################################
-#                                      PRIVATE FUNCTIONS                                  #
+#                                      PRIVATE FUNCTIONS                                 #
 ##########################################################################################
 func _get_planet_id{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt

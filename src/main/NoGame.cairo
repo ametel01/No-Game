@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
+from facilities.IFacilities import IFacilities
 from main.library import NoGame
 from main.structs import Cost, TechLevels, TechCosts, Fleet
 from resources.IResources import IResources
@@ -86,7 +87,7 @@ func getFacilitiesUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
     caller : felt
 ) -> (robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost):
     let (_, facilities, _, _) = NoGame.modules_addresses()
-    let (robot, shipyard, research, nanite) = IResources.getUpgradeCost(facilities, caller)
+    let (robot, shipyard, research, nanite) = IFacilities.getUpgradeCost(facilities, caller)
     return (robot, shipyard, research, nanite)
 end
 
@@ -212,124 +213,57 @@ func solarUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     return ()
 end
 
-# ##############################################################################################
-# #                              FACILITIES EXTERNALS FUNCS                                    #
-# ##############################################################################################
+##############################################################################################
+#                              FACILITIES UPGRADES FUNCS                                     #
+##############################################################################################
 
-# @external
-# func robot_factory_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     ):
-#     let (caller) = get_caller_address()
-#     let (_facilities_address) = facilities_address.read()
-#     let (
-#         metal_spent, crystal_spent, deuterium_spent, time_unlocked
-#     ) = IFacilities._robot_factory_upgrade_start(_facilities_address, caller)
-#     Resources._pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
-#     let (spent_so_far) = _players_spent_resources.read(caller)
-#     let new_total_spent = spent_so_far + metal_spent + crystal_spent
-#     _players_spent_resources.write(caller, new_total_spent)
-#     return ()
-# end
+@external
+func robotUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.robot_upgrade_start()
+    return ()
+end
 
-# @external
-# func robot_factory_upgrade_complete{
-#     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-# }():
-#     let (caller) = get_caller_address()
-#     let (planet_id) = _planet_to_owner.read(caller)
-#     let (_facilities_address) = facilities_address.read()
-#     let (success) = IFacilities._robot_factory_upgrade_complete(_facilities_address, caller)
-#     assert success = TRUE
-#     let (current_robot_factory_level) = robot_factory_level.read(planet_id)
-#     robot_factory_level.write(planet_id, current_robot_factory_level + 1)
-#     return ()
-# end
+@external
+func robotUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.robot_upgrade_complete()
+    return ()
+end
 
-# @external
-# func shipyard_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     let (caller) = get_caller_address()
-#     let (_facilities_address) = facilities_address.read()
-#     let (
-#         metal_spent, crystal_spent, deuterium_spent, time_unlocked
-#     ) = IFacilities._shipyard_upgrade_start(_facilities_address, caller)
-#     Resources._pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
-#     let (spent_so_far) = _players_spent_resources.read(caller)
-#     let new_total_spent = spent_so_far + metal_spent + crystal_spent
-#     _players_spent_resources.write(caller, new_total_spent)
-#     return ()
-# end
+@external
+func shipyardUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.shipyard_upgrade_start()
+    return ()
+end
 
-# @external
-# func shipyard_upgrade_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     let (caller) = get_caller_address()
-#     let (planet_id) = _planet_to_owner.read(caller)
-#     let (_facilities_address) = facilities_address.read()
-#     let (success) = IFacilities._shipyard_upgrade_complete(_facilities_address, caller)
-#     assert success = TRUE
-#     let (current_shipyard_level) = shipyard_level.read(planet_id)
-#     shipyard_level.write(planet_id, current_shipyard_level + 1)
-#     return ()
-# end
+@external
+func shipyardUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.shipyard_upgrade_complete()
+    return ()
+end
 
-# @external
-# func research_lab_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     ):
-#     let (caller) = get_caller_address()
-#     let (_facilities_address) = facilities_address.read()
-#     let (
-#         metal_spent, crystal_spent, deuterium_spent, time_unlocked
-#     ) = IFacilities._research_lab_upgrade_start(_facilities_address, caller)
-#     Resources._pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
-#     let (spent_so_far) = _players_spent_resources.read(caller)
-#     let new_total_spent = spent_so_far + metal_spent + crystal_spent
-#     _players_spent_resources.write(caller, new_total_spent)
-#     return ()
-# end
+@external
+func researchUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.research_upgrade_start()
+    return ()
+end
 
-# @external
-# func research_lab_upgrade_complete{
-#     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-# }():
-#     let (caller) = get_caller_address()
-#     let (planet_id) = _planet_to_owner.read(caller)
-#     let (_facilities_address) = facilities_address.read()
-#     let (success) = IFacilities._research_lab_upgrade_complete(_facilities_address, caller)
-#     assert success = TRUE
-#     let (current_research_lab_level) = research_lab_level.read(planet_id)
-#     research_lab_level.write(planet_id, current_research_lab_level + 1)
-#     return ()
-# end
+@external
+func researchUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.research_upgrade_complete()
+    return ()
+end
 
-# @external
-# func nanite_factory_upgrade_start{
-#     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-# }():
-#     let (caller) = get_caller_address()
-#     let (_facilities_address) = facilities_address.read()
-#     let (
-#         metal_spent, crystal_spent, deuterium_spent, time_unlocked
-#     ) = IFacilities._nanite_factory_upgrade_start(_facilities_address, caller)
-#     Resources._pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
-#     let (spent_so_far) = _players_spent_resources.read(caller)
-#     let new_total_spent = spent_so_far + metal_spent + crystal_spent
-#     _players_spent_resources.write(caller, new_total_spent)
-#     return ()
-# end
+@external
+func naniteUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.nanite_upgrade_start()
+    return ()
+end
 
-# @external
-# func nanite_factory_upgrade_complete{
-#     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-# }():
-#     let (caller) = get_caller_address()
-#     let (planet_id) = _planet_to_owner.read(caller)
-#     let (_facilities_address) = facilities_address.read()
-#     let (success) = IFacilities._nanite_factory_upgrade_complete(_facilities_address, caller)
-#     assert success = TRUE
-#     let (current_nanite_factory_level) = nanite_factory_level.read(planet_id)
-#     nanite_factory_level.write(planet_id, current_nanite_factory_level + 1)
-#     return ()
-# end
-
+@external
+func naniteComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.nanite_upgrade_complete()
+    return ()
+end
 # ##############################################################################################
 # #                              RESEARCH EXTERNALS FUNCS                                      #
 # ##############################################################################################
