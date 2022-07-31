@@ -258,9 +258,9 @@ end
 #                                FACILITIES COST CALCULATION                                        #
 #####################################################################################################
 
-func _robot_factory_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    current_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+func _robot_factory_upgrade_cost{syscall_ptr : felt*, range_check_ptr}(current_level : felt) -> (
+    metal : felt, crystal : felt, deuterium : felt
+):
     let base_metal = 400
     let base_crystal = 120
     let base_deuterium = 200
@@ -273,9 +273,9 @@ func _robot_factory_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     end
 end
 
-func _shipyard_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    current_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+func _shipyard_upgrade_cost{syscall_ptr : felt*, range_check_ptr}(current_level : felt) -> (
+    metal : felt, crystal : felt, deuterium : felt
+):
     let base_metal = 400
     let base_crystal = 200
     let base_deuterium = 100
@@ -288,9 +288,9 @@ func _shipyard_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     end
 end
 
-func _research_lab_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    current_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+func _research_lab_upgrade_cost{syscall_ptr : felt*, range_check_ptr}(current_level : felt) -> (
+    metal : felt, crystal : felt, deuterium : felt
+):
     let base_metal = 200
     let base_crystal = 400
     let base_deuterium = 200
@@ -303,9 +303,9 @@ func _research_lab_upgrade_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     end
 end
 
-func _nanite_factory_upgrade_cost{
-    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(current_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+func _nanite_factory_upgrade_cost{syscall_ptr : felt*, range_check_ptr}(current_level : felt) -> (
+    metal : felt, crystal : felt, deuterium : felt
+):
     let base_metal = 1000000
     let base_crystal = 500000
     let base_deuterium = 100000
