@@ -171,7 +171,7 @@ func _test_robot_cost_recursive{syscall_ptr : felt*, range_check_ptr}(
     assert metal_balance = Uint256(0, 0)
     assert crystal_balance = Uint256(0, 0)
     assert deuterium_balance = Uint256(0, 0)
-    _reset_facilities_timelock(addresses.resources, addresses.owner)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
 
     _test_robot_cost_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -197,7 +197,7 @@ func _test_shipyard_cost_recursive{syscall_ptr : felt*, range_check_ptr}(
     assert metal_balance = Uint256(0, 0)
     assert crystal_balance = Uint256(0, 0)
     assert deuterium_balance = Uint256(0, 0)
-    _reset_facilities_timelock(addresses.resources, addresses.owner)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
 
     _test_shipyard_cost_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -223,7 +223,7 @@ func _test_lab_cost_recursive{syscall_ptr : felt*, range_check_ptr}(
     assert metal_balance = Uint256(0, 0)
     assert crystal_balance = Uint256(0, 0)
     assert deuterium_balance = Uint256(0, 0)
-    _reset_facilities_timelock(addresses.resources, addresses.owner)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
 
     _test_lab_cost_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -250,7 +250,7 @@ func _test_nanite_cost_recursive{syscall_ptr : felt*, range_check_ptr}(
     assert metal_balance = Uint256(0, 0)
     assert crystal_balance = Uint256(0, 0)
     assert deuterium_balance = Uint256(0, 0)
-    _reset_facilities_timelock(addresses.resources, addresses.owner)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
 
     _test_nanite_cost_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -345,7 +345,6 @@ func _test_nanite_time_recursive{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
     _set_facilities_levels(addresses.game, id=1, robot=10, shipyard=0, research=0, nanite=input)
-    %{ store(ids.addresses.game, "NoGame_computer_tech", [10], [1,0]) %}
     %{ store(ids.addresses.game, "NoGame_robot_factory_level", [10], [1,0]) %}
 
     NoGame.naniteUpgradeStart(addresses.game)
