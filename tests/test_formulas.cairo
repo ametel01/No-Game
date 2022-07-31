@@ -175,9 +175,16 @@ end
 @external
 func test_production_time{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     alloc_locals
-    let (actual_time) = _set_timelock_and_que(0x0, 01, 2, 0, 800, 400)
-    let (expected_time) = Formulas.buildings_production_time(800, 400, 2, 0)
-
+    let (actual_time) = _set_timelock_and_que(0x0, 01, 10, 20, 1048576000000, 524288000000)
+    let (expected_time) = Formulas.buildings_production_time(1048576000000, 524288000000, 10, 20)
+    %{ print(ids.actual_time, ids.expected_time) %}
+    assert actual_time = expected_time
+    let (actual_time) = _set_timelock_and_que(
+        0x0, 01, 10, 45, 35184372088832000000, 17592186044416000000
+    )
+    let (expected_time) = Formulas.buildings_production_time(
+        35184372088832000000, 17592186044416000000, 10, 45
+    )
     %{ print(ids.actual_time, ids.expected_time) %}
     assert actual_time = expected_time
     return ()
