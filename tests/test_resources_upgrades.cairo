@@ -129,26 +129,22 @@ func test_busy_que_reverts{syscall_ptr : felt*, range_check_ptr}():
     NoGame.metalUpgradeStart(addresses.game)
     %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
     NoGame.crystalUpgradeStart(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     NoGame.crystalUpgradeStart(addresses.game)
     %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
     NoGame.metalUpgradeStart(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     NoGame.deuteriumUpgradeStart(addresses.game)
     %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
     NoGame.solarUpgradeStart(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     NoGame.solarUpgradeStart(addresses.game)
     %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
     NoGame.deuteriumUpgradeStart(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     return ()
 end
@@ -166,29 +162,25 @@ func test_wrong_resource_reverts{syscall_ptr : felt*, range_check_ptr}():
     %{ stop_warp = warp(1000) %}
     %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
     NoGame.crystalUpgradeComplete(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     NoGame.crystalUpgradeStart(addresses.game)
     %{ stop_warp = warp(2000) %}
     %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
     NoGame.metalUpgradeComplete(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     NoGame.deuteriumUpgradeStart(addresses.game)
     %{ stop_warp = warp(3000) %}
     %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
     NoGame.solarUpgradeComplete(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     NoGame.solarUpgradeStart(addresses.game)
     %{ stop_warp = warp(4000) %}
     %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
     NoGame.deuteriumUpgradeComplete(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     return ()
 end
@@ -231,29 +223,25 @@ func test_timelock_expired_reverts{syscall_ptr : felt*, range_check_ptr}():
     NoGame.metalUpgradeStart(addresses.game)
     %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.metalUpgradeComplete(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
     _reset_que(addresses.resources, addresses.owner, METAL_MINE_ID)
 
     NoGame.crystalUpgradeStart(addresses.game)
     %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.crystalUpgradeComplete(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
     _reset_que(addresses.resources, addresses.owner, CRYSTAL_MINE_ID)
 
     NoGame.deuteriumUpgradeStart(addresses.game)
     %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.deuteriumUpgradeComplete(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
     _reset_que(addresses.resources, addresses.owner, DEUTERIUM_MINE_ID)
 
     NoGame.solarUpgradeStart(addresses.game)
     %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.solarUpgradeComplete(addresses.game)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
     _reset_que(addresses.resources, addresses.owner, SOLAR_PLANT_ID)
 
     return ()
@@ -281,8 +269,7 @@ func _test_metal_time_recursive{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner)
     %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -306,8 +293,7 @@ func _test_crystal_time_recursive{
     let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner)
     %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -331,8 +317,7 @@ func _test_deuterium_time_recursive{
     let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner)
     %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -356,8 +341,7 @@ func _test_solar_time_recursive{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner)
     %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -380,8 +364,7 @@ func _test_metal_recursive{syscall_ptr : felt*, range_check_ptr}(
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
     assert metal_balance = Uint256(0, 0)
     assert crystal_balance = Uint256(0, 0)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     _test_metal_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -404,8 +387,7 @@ func _test_crystal_recursive{syscall_ptr : felt*, range_check_ptr}(
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
     assert metal_balance = Uint256(0, 0)
     assert crystal_balance = Uint256(0, 0)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     _test_crystal_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -428,8 +410,7 @@ func _test_deuterium_recursive{syscall_ptr : felt*, range_check_ptr}(
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
     assert metal_balance = Uint256(0, 0)
     assert crystal_balance = Uint256(0, 0)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     _test_deuterium_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
@@ -452,8 +433,7 @@ func _test_solar_recursive{syscall_ptr : felt*, range_check_ptr}(
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
     assert metal_balance = Uint256(0, 0)
     assert crystal_balance = Uint256(0, 0)
-    _reset_resources_timelock
-    (addresses.resources, addresses.owner)
+    _reset_resources_timelock(addresses.resources, addresses.owner)
 
     _test_solar_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
