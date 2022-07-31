@@ -56,6 +56,7 @@ from resources.library import (
     SOLAR_PLANT_ID,
     ResourcesQue,
 )
+from facilities.library import ROBOT_FACTORY_ID, SHIPYARD_ID, RESEARCH_LAB_ID, NANITE_FACTORY_ID
 from research.IResearchLab import IResearchLab
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
@@ -424,7 +425,7 @@ namespace NoGame:
         ) = IFacilities.robotFactoryUpgradeStart(facilities_address, caller)
         _pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
         let (planet_id) = _get_planet_id(caller)
-        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(ROBOT_FACTORY_ID, time_unlocked))
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -456,7 +457,7 @@ namespace NoGame:
         ) = IFacilities.shipyardUpgradeStart(facilities_address, caller)
         _pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
         let (planet_id) = _get_planet_id(caller)
-        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(SHIPYARD_ID, time_unlocked))
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -489,7 +490,7 @@ namespace NoGame:
         ) = IFacilities.researchLabUpgradeStart(facilities_address, caller)
         _pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
         let (planet_id) = _get_planet_id(caller)
-        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(RESEARCH_LAB_ID, time_unlocked))
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
@@ -521,7 +522,7 @@ namespace NoGame:
         ) = IFacilities.naniteFactoryUpgradeStart(facilities_address, caller)
         _pay_resources_erc20(caller, metal_spent, crystal_spent, deuterium_spent)
         let (planet_id) = _get_planet_id(caller)
-        NoGame_resources_que_status.write(planet_id, ResourcesQue(SOLAR_PLANT_ID, time_unlocked))
+        NoGame_resources_que_status.write(planet_id, ResourcesQue(NANITE_FACTORY_ID, time_unlocked))
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal_spent + crystal_spent
         NoGame_planets_spent_resources.write(planet_id, new_total_spent)
