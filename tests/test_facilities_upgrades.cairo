@@ -345,7 +345,7 @@ func _test_nanite_time_recursive{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
     _set_facilities_levels(addresses.game, id=1, robot=10, shipyard=0, research=0, nanite=input)
-    %{ store(ids.addresses.game, "NoGame_robot_factory_level", [10], [1,0]) %}
+    %{ store(ids.addresses.game, "NoGame_computer_tech", [10], [1,0]) %}
 
     NoGame.naniteUpgradeStart(addresses.game)
 
