@@ -1,11 +1,15 @@
 %lang starknet
 
+from starkware.cairo.common.cairo_builtins import HashBuiltin
+
 from resources.library import (
     _metal_building_cost,
     _crystal_building_cost,
     _deuterium_building_cost,
     _solar_plant_building_cost,
 )
+from utils.formulas import Formulas
+from facilities.library import _set_timelock_and_que
 from tests.conftest import _get_expected_cost
 
 @external
@@ -165,5 +169,16 @@ func test_solar{syscall_ptr : felt*, range_check_ptr}():
     assert metal = exp_metal
     assert crystal = exp_crystal
 
+    return ()
+end
+
+@external
+func test_production_time{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    let (actual_time) = _set_timelock_and_que(0x0, 01, 2, 0, 800, 400)
+    let (expected_time) = Formulas.buildings_production_time(800, 400, 2, 0)
+
+    %{ print(ids.actual_time, ids.expected_time) %}
+    assert actual_time = expected_time
     return ()
 end
