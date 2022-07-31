@@ -182,9 +182,9 @@ func _reset_resources_timelock{syscall_ptr : felt*, range_check_ptr}(
 end
 
 func _reset_facilities_timelock{syscall_ptr : felt*, range_check_ptr}(
-    resources : felt, player : felt
+    facilities : felt, player : felt
 ):
-    %{ store(ids.resources, "Facilities_timelock", [0,0], key=[ids.player]) %}
+    %{ store(ids.facilities, "Facilities_timelock", [0,0], key=[ids.player]) %}
 
     return ()
 end
