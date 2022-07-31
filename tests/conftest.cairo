@@ -161,8 +161,30 @@ func _set_mines_levels{syscall_ptr : felt*, range_check_ptr}(
     return ()
 end
 
-func _reset_timelock{syscall_ptr : felt*, range_check_ptr}(resources : felt, player : felt):
+func _set_facilities_levels{syscall_ptr : felt*, range_check_ptr}(
+    game : felt, id : felt, robot : felt, shipyard : felt, research : felt, nanite : felt
+):
+    %{
+        store(ids.game, "NoGame_robot_factory_level", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_shipyard_level", [ids.shipyard], key=[ids.id,0])
+        store(ids.game, "NoGame_research_lab_level", [ids.research], key=[ids.id,0])
+        store(ids.game, "NoGame_nanite_factory_level", [ids.nanite], key=[ids.id,0])
+    %}
+    return ()
+end
+
+func _reset_resources_timelock{syscall_ptr : felt*, range_check_ptr}(
+    resources : felt, player : felt
+):
     %{ store(ids.resources, "Resources_timelock", [0,0], key=[ids.player]) %}
+
+    return ()
+end
+
+func _reset_facilities_timelock{syscall_ptr : felt*, range_check_ptr}(
+    resources : felt, player : felt
+):
+    %{ store(ids.resources, "Facilities_timelock", [0,0], key=[ids.player]) %}
 
     return ()
 end
