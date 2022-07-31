@@ -82,38 +82,6 @@ namespace Facilities:
         return (res)
     end
 
-    func shipyard_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt
-    ) -> (metal : felt, crystal : felt, deuterium : felt, time_unlocked : felt):
-        alloc_locals
-        assert_not_zero(caller)
-        _check_que_not_busy(caller)
-        _shipyard_requirements_check(caller)
-        let (no_game) = Facilities_no_game_address.read()
-        let (robot_factory_level, _, shipyard_level, nanite_level) = INoGame.getFacilitiesLevels(
-            no_game, caller
-        )
-        let (metal_required, crystal_required, deuterium_required) = _shipyard_upgrade_cost(
-            shipyard_level
-        )
-        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        let (time_unlocked) = _set_timelock_and_que(
-            caller, SHIPYARD_ID, robot_factory_level, nanite_level, metal_required, crystal_required
-        )
-        return (metal_required, crystal_required, deuterium_required, time_unlocked)
-    end
-
-    func shipyard_upgrade_complete{
-        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt) -> (success : felt):
-        alloc_locals
-        _check_trying_to_complete_the_right_facility(caller, SHIPYARD_ID)
-        _check_waited_enough(caller)
-        _reset_que(caller, SHIPYARD_ID)
-        _reset_timelock(caller)
-        return (TRUE)
-    end
-
     func robot_factory_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt) -> (metal : felt, crystal : felt, deuterium : felt, time_unlocked : felt):
@@ -146,6 +114,38 @@ namespace Facilities:
         _check_trying_to_complete_the_right_facility(caller, ROBOT_FACTORY_ID)
         _check_waited_enough(caller)
         _reset_que(caller, ROBOT_FACTORY_ID)
+        _reset_timelock(caller)
+        return (TRUE)
+    end
+
+    func shipyard_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_unlocked : felt):
+        alloc_locals
+        assert_not_zero(caller)
+        _check_que_not_busy(caller)
+        _shipyard_requirements_check(caller)
+        let (no_game) = Facilities_no_game_address.read()
+        let (robot_factory_level, shipyard_level, _, nanite_level) = INoGame.getFacilitiesLevels(
+            no_game, caller
+        )
+        let (metal_required, crystal_required, deuterium_required) = _shipyard_upgrade_cost(
+            shipyard_level
+        )
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_unlocked) = _set_timelock_and_que(
+            caller, SHIPYARD_ID, robot_factory_level, nanite_level, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_unlocked)
+    end
+
+    func shipyard_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (success : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_facility(caller, SHIPYARD_ID)
+        _check_waited_enough(caller)
+        _reset_que(caller, SHIPYARD_ID)
         _reset_timelock(caller)
         return (TRUE)
     end
