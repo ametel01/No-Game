@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "no-game"
+version = "0.1.0"
+description = ""
+authors = ["ametel01 <alex-metelli@gmx.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+cairo-lang = "^0.9.1"
+starknet-devnet = "^0.2.6"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
