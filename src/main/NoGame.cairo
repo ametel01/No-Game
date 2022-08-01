@@ -4,10 +4,11 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
 from facilities.IFacilities import IFacilities
 from main.library import NoGame
-from main.structs import Cost, TechLevels, TechCosts, Fleet
+from main.structs import Cost, TechLevels, TechCosts
 from resources.IResources import IResources
 from resources.library import ResourcesQue
 from research.IResearchLab import IResearchLab
+from shipyard.library import Fleet
 
 #########################################################################################
 #                                   Constructor                                         #
@@ -262,6 +263,26 @@ end
 @external
 func naniteUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     NoGame.nanite_upgrade_complete()
+    return ()
+end
+
+#########################################################################################################
+#                                           SHIPYARD FUNCTIONS                                          #
+#########################################################################################################
+
+@external
+func cargoShipBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.cargo_ship_build_start(units)
+    return ()
+end
+
+@external
+func cargoShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+):
+    NoGame.cargo_ship_build_complete()
     return ()
 end
 # ##############################################################################################
@@ -704,39 +725,6 @@ end
 # ) -> (result : TechLevels):
 #     let (res) = NoGame.tech_levels(caller)
 #     return (res)
-# end
-
-# #########################################################################################################
-# #                                           SHIPYARD FUNCTIONS                                          #
-# #########################################################################################################
-
-# @external
-# func cargo_ship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     number_of_units : felt
-# ):
-#     let (caller) = get_caller_address()
-#     let (planet_id) = _planet_to_owner.read(caller)
-#     let (_shipyard_address) = shipyard_address.read()
-#     let (metal, crystal, deuterium) = IShipyard._cargo_ship_build_start(
-#         _shipyard_address, caller, number_of_units
-#     )
-#     Resources._pay_resources_erc20(caller, metal, crystal, deuterium)
-#     let (spent_so_far) = _players_spent_resources.read(caller)
-#     let new_total_spent = spent_so_far + metal + crystal
-#     _players_spent_resources.write(caller, new_total_spent)
-#     return ()
-# end
-
-# @external
-# func cargo_ship_build_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
-#     let (caller) = get_caller_address()
-#     let (_shipyard_address) = shipyard_address.read()
-#     let (planet_id) = _planet_to_owner.read(caller)
-#     let (units_produced, success) = IShipyard._cargo_ship_build_complete(_shipyard_address, caller)
-#     assert success = TRUE
-#     let (current_amount_of_units) = _ships_cargo.read(planet_id)
-#     _ships_cargo.write(planet_id, current_amount_of_units + units_produced)
-#     return ()
 # end
 
 # @external
