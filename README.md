@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="readme/NoGame_logo.svg" width=700 alt="nogame-logo" />
+  <img src="readme/NoGame_logo.svg" width=900 alt="nogame-logo" />
 
   <h4>Space themed MMORPG running on Starknet</h4>
 </div>
