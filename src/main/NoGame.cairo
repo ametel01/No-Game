@@ -8,7 +8,8 @@ from main.structs import Cost, TechLevels, TechCosts
 from resources.IResources import IResources
 from resources.library import ResourcesQue
 from research.IResearchLab import IResearchLab
-from shipyard.library import Fleet
+from shipyard.library import Fleet, ShipyardQue
+from shipyard.IShipyard import IShipyard
 
 #########################################################################################
 #                                   Constructor                                         #
@@ -135,14 +136,14 @@ func getResourcesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     return (status)
 end
 
-# @view
-# func getFacilitiesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-#     caller : felt
-# ) -> (status : BuildingQue):
-#     let (_, facilities, _, _) = getModulesAddresses()
-#     let (que_details) = IFacilities.getTimelockStatus(facilities, caller)
-#     return (que_details)
-# end
+@view
+func getShipyardQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (status : ShipyardQue):
+    let (_, _, shipyard, _) = getModulesAddresses()
+    let (que_details) = IShipyard.getQueStatus(shipyard, caller)
+    return (que_details)
+end
 
 # ##########################################################################################
 # #                                      Externals                                         #
@@ -279,9 +280,7 @@ func cargoShipBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 end
 
 @external
-func cargoShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    number_of_units : felt
-):
+func cargoShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
     NoGame.cargo_ship_build_complete()
     return ()
 end

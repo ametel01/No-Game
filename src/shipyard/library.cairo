@@ -87,6 +87,14 @@ namespace Shipyard:
         Shipyard_no_game_address.write(no_game_address)
         return ()
     end
+
+    func que_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (status : ShipyardQue):
+        let (res) = Shipyard_timelock.read(caller)
+        return (res)
+    end
+
     func cargo_ship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt, number_of_units : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
@@ -413,9 +421,6 @@ func _deathstar_requirements_check{
         assert_le(7, tech_levels.hyperspace_drive)
     end
     # TODO: add graviton tech here
-    with_attr error_message("SHIPYARD::HYPERSPACE DRIVE MUST BE AT LEVEL 7"):
-        assert_le(7, tech_levels.espionage_tech)
-    end
     return (TRUE)
 end
 

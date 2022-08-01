@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from shipyard.library import Shipyard
+from shipyard.library import Shipyard, ShipyardQue
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -12,6 +12,13 @@ func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     return ()
 end
 
+@external
+func getQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (status : ShipyardQue):
+    let (res) = Shipyard.que_status(caller)
+    return (res)
+end
 ########################################################################################################
 #                                   SHIPS UPGRADE FUNCTION                                             #
 # ######################################################################################################
@@ -29,9 +36,9 @@ end
 @external
 func cargoShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (unit_produced : felt, success : felt):
+) -> (unit_produced : felt):
     let (units_produced) = Shipyard.cargo_ship_build_complete(caller)
-    return (units_produced, TRUE)
+    return (units_produced)
 end
 
 @external
@@ -47,9 +54,9 @@ end
 @external
 func recyclerShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (unit_produced : felt, success : felt):
+) -> (unit_produced : felt):
     let (units_produced) = Shipyard.recycler_ship_build_complete(caller)
-    return (units_produced, TRUE)
+    return (units_produced)
 end
 
 @external
@@ -65,9 +72,9 @@ end
 @external
 func espionageProbeBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (units_produced : felt, success : felt):
+) -> (units_produced : felt):
     let (units_produced) = Shipyard.espionage_probe_build_complete(caller)
-    return (units_produced, TRUE)
+    return (units_produced)
 end
 
 @external
@@ -83,9 +90,9 @@ end
 @external
 func solarSatelliteBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (units_produced : felt, success : felt):
+) -> (units_produced : felt):
     let (units_produced) = Shipyard.solar_satellite_build_complete(caller)
-    return (units_produced, TRUE)
+    return (units_produced)
 end
 
 @external
@@ -101,9 +108,9 @@ end
 @external
 func lightFighterBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (units_produced : felt, success : felt):
+) -> (units_produced : felt):
     let (units_produced) = Shipyard.light_fighter_build_complete(caller)
-    return (units_produced, TRUE)
+    return (units_produced)
 end
 
 @external
@@ -119,9 +126,9 @@ end
 @external
 func cruiserBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (units_produced : felt, success : felt):
+) -> (units_produced : felt):
     let (units_produced) = Shipyard.cruiser_build_complete(caller)
-    return (units_produced, TRUE)
+    return (units_produced)
 end
 
 @external
@@ -137,7 +144,7 @@ end
 @external
 func battleshipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (units_produced : felt, success : felt):
+) -> (units_produced : felt):
     let (units_produced) = Shipyard.battleship_build_complete(caller)
-    return (units_produced, TRUE)
+    return (units_produced)
 end
