@@ -26,7 +26,7 @@
   - [x] Mines costs
   - [x] Mines constraints
   - [x] Testing
-- [ ] Implement Facilities
+- [x] Implement Facilities :heavy_check_mark:
   - [x] Facilities upgrades.
   - [x] Facilities costs.
   - [x] Facilities constraints.
