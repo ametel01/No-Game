@@ -3,6 +3,7 @@
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
 from resources.library import ResourcesQue
+from shipyard.library import Fleet
 
 @contract_interface
 namespace NoGame:
@@ -34,6 +35,9 @@ namespace NoGame:
     func getFacilitiesUpgradeCost(caller : felt) -> (
         robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost
     ):
+    end
+
+    func getFleetLevels(caller : felt) -> (levels : Fleet):
     end
 
     func getTechLevels(caller : felt) -> (tech_levels : TechLevels):
@@ -97,6 +101,12 @@ namespace NoGame:
     end
 
     func naniteUpgradeComplete():
+    end
+
+    func cargoShipBuildStart(units : felt):
+    end
+
+    func cargoShipBuildComplete():
     end
 end
 
