@@ -5,7 +5,7 @@ description = ""
 authors = ["ametel01 <alex-metelli@gmx.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "3.9.13"
 cairo-lang = "^0.9.1"
 starknet-devnet = "^0.2.6"
 
