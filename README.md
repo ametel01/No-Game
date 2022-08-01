@@ -1,5 +1,39 @@
 # No-Game
 
+## Usage
+
+Create a virtual environment:
+
+```
+python -m venv ~/cairo_venv
+source ~/cairo_venv/bin/activate
+```
+
+From the repo's root install dependencies:
+
+```
+pip install poetry
+poetry install
+```
+
+Install Protostar:
+
+```
+curl -L https://raw.githubusercontent.com/software-mansion/protostar/master/install.sh | bash
+```
+
+Install OpenZeppelin contracts:
+
+```
+protostar install https://github.com/OpenZeppelin/cairo-contracts
+```
+
+To run the tests:
+
+```
+protostar test
+```
+
 ## Functionalities Roadmap.
 
 ### v0.1 :heavy_check_mark:
@@ -53,3 +87,7 @@
   - [ ] Battle damage calculation
   - [ ] Loot amounts calculation
   - [ ] ERC20 loot managment
+
+```
+
+```
