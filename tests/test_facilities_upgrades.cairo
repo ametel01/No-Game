@@ -147,6 +147,147 @@ func test_upgrades_time{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     return ()
 end
 
+@external
+func test_busy_que_reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    _set_resource_levels(addresses.metal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.crystal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.deuterium, addresses.owner, 2000000)
+
+    NoGame.robotUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="FACILITIES::QUE IS BUSY!!!") %}
+    NoGame.shipyardUpgradeStart(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+
+    NoGame.shipyardUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="FACILITIES::QUE IS BUSY!!!") %}
+    NoGame.robotUpgradeStart(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+
+    NoGame.researchUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="FACILITIES::QUE IS BUSY!!!") %}
+    NoGame.naniteUpgradeStart(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+
+    NoGame.naniteUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="FACILITIES::QUE IS BUSY!!!") %}
+    NoGame.researchUpgradeStart(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+
+    return ()
+end
+
+@external
+func test_wrong_resource_reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    _set_resource_levels(addresses.metal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.crystal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.deuterium, addresses.owner, 2000000)
+
+    NoGame.robotUpgradeStart(addresses.game)
+    %{ stop_warp = warp(1000) %}
+    %{ expect_revert(error_message="FACILITIES::TRIED TO COMPLETE THE WRONG FACILITY!!!") %}
+    NoGame.shipyardUpgradeComplete(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+
+    NoGame.shipyardUpgradeStart(addresses.game)
+    %{ stop_warp = warp(2000) %}
+    %{ expect_revert(error_message="FACILITIES::TRIED TO COMPLETE THE WRONG FACILITY!!!") %}
+    NoGame.robotUpgradeComplete(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+
+    NoGame.researchUpgradeStart(addresses.game)
+    %{ stop_warp = warp(3000) %}
+    %{ expect_revert(error_message="FACILITIES::TRIED TO COMPLETE THE WRONG FACILITY!!!") %}
+    NoGame.naniteUpgradeComplete(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+
+    NoGame.naniteUpgradeStart(addresses.game)
+    %{ stop_warp = warp(40000) %}
+    %{ expect_revert(error_message="FACILITIES::TRIED TO COMPLETE THE WRONG FACILITY!!!") %}
+    NoGame.researchUpgradeComplete(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+
+    return ()
+end
+
+@external
+func test_enough_resources_reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    %{ store(ids.addresses.metal, "ERC20_balances", [0,0], key=[ids.addresses.owner]) %}
+
+    %{ expect_revert(error_message="FACILITIES::NOT ENOUGH RESOURCES!!!") %}
+    NoGame.robotUpgradeStart(addresses.game)
+
+    %{ expect_revert(error_message="FACILITIES::NOT ENOUGH RESOURCES!!!") %}
+    NoGame.shipyardUpgradeStart(addresses.game)
+
+    %{ expect_revert(error_message="FACILITIES::NOT ENOUGH RESOURCES!!!") %}
+    NoGame.researchUpgradeStart(addresses.game)
+
+    %{ expect_revert(error_message="FACILITIES::NOT ENOUGH RESOURCES!!!") %}
+    NoGame.naniteUpgradeStart(addresses.game)
+
+    return ()
+end
+
+@external
+func test_timelock_expired_reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    _set_resource_levels(addresses.metal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.crystal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.deuterium, addresses.owner, 2000000)
+
+    NoGame.robotUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="FACILITIES::TIMELOCK NOT YET EXPIRED!!!") %}
+    NoGame.robotUpgradeComplete(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+    _reset_que(addresses.facilities, addresses.owner, ROBOT_FACTORY_ID)
+
+    NoGame.shipyardUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="FACILITIES::TIMELOCK NOT YET EXPIRED!!!") %}
+    NoGame.shipyardUpgradeComplete(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+    _reset_que(addresses.facilities, addresses.owner, SHIPYARD_ID)
+
+    NoGame.researchUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="FACILITIES::TIMELOCK NOT YET EXPIRED!!!") %}
+    NoGame.researchUpgradeComplete(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+    _reset_que(addresses.facilities, addresses.owner, RESEARCH_LAB_ID)
+
+    NoGame.naniteUpgradeStart(addresses.game)
+    %{ expect_revert(error_message="FACILITIES::TIMELOCK NOT YET EXPIRED!!!") %}
+    NoGame.naniteUpgradeComplete(addresses.game)
+    _reset_facilities_timelock(addresses.facilities, addresses.owner)
+    _reset_que(addresses.facilities, addresses.owner, NANITE_FACTORY_ID)
+
+    return ()
+end
 #######################################################################################################
 #                                           PRIVATE FUNC                                              #
 #######################################################################################################
