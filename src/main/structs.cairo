@@ -30,18 +30,6 @@ struct Cost:
     member deuterium : felt
 end
 
-# @dev Temporary struct to represent a fleet.
-struct Fleet:
-    member cargo : felt
-    member recycler : felt
-    member espionage_probe : felt
-    member solar_satellite : felt
-    member light_fighter : felt
-    member cruiser : felt
-    member battle_ship : felt
-    member death_star : felt
-end
-
 # @dev Stores the building on cue details
 struct BuildingQue:
     member id : felt

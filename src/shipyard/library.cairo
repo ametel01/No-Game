@@ -51,6 +51,16 @@ struct ShipyardQue:
     member lock_end : felt
 end
 
+struct Fleet:
+    member cargo : felt
+    member recycler : felt
+    member espionage_probe : felt
+    member solar_satellite : felt
+    member light_fighter : felt
+    member cruiser : felt
+    member battle_ship : felt
+    member death_star : felt
+end
 #########################################################################################
 #                                           STORAGES                                    #
 #########################################################################################
@@ -79,7 +89,7 @@ namespace Shipyard:
     end
     func cargo_ship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt, number_of_units : felt
-    ) -> (metal : felt, crystal : felt, deuterium : felt):
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _cargo_ship_cost(
             number_of_units
@@ -87,10 +97,10 @@ namespace Shipyard:
         _check_que_not_busy(caller)
         _cargo_ship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
+        let (time_end) = _set_timelock_and_que(
             caller, CARGO_SHIP_ID, number_of_units, metal_required, crystal_required
         )
-        return (metal_required, crystal_required, deuterium_required)
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func cargo_ship_build_complete{
@@ -107,7 +117,7 @@ namespace Shipyard:
     func recycler_ship_build_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt, number_of_units : felt) -> (
-        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
+        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt
     ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _recycler_ship_cost(
@@ -116,10 +126,10 @@ namespace Shipyard:
         _check_que_not_busy(caller)
         _recycler_ship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
+        let (time_end) = _set_timelock_and_que(
             caller, RECYCLER_SHIP_ID, number_of_units, metal_required, crystal_required
         )
-        return (metal_required, crystal_required, deuterium_required)
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func recycler_ship_build_complete{
@@ -136,7 +146,7 @@ namespace Shipyard:
     func espionage_probe_build_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt, number_of_units : felt) -> (
-        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
+        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt
     ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _espionage_probe_cost(
@@ -145,10 +155,10 @@ namespace Shipyard:
         _check_que_not_busy(caller)
         _espionage_probe_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
+        let (time_end) = _set_timelock_and_que(
             caller, ESPIONAGE_PROBE_ID, number_of_units, metal_required, crystal_required
         )
-        return (metal_required, crystal_required, deuterium_required)
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func espionage_probe_build_complete{
@@ -165,7 +175,7 @@ namespace Shipyard:
     func solar_satellite_build_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt, number_of_units : felt) -> (
-        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
+        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt
     ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _solar_satellite_cost(
@@ -174,10 +184,10 @@ namespace Shipyard:
         _check_que_not_busy(caller)
         _solar_satellite_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
+        let (time_end) = _set_timelock_and_que(
             caller, SOLAR_SATELLITE_ID, number_of_units, metal_required, crystal_required
         )
-        return (metal_required, crystal_required, deuterium_required)
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func solar_satellite_build_complete{
@@ -194,7 +204,7 @@ namespace Shipyard:
     func light_fighter_build_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(caller : felt, number_of_units : felt) -> (
-        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt
+        metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt
     ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _light_fighter_cost(
@@ -203,10 +213,10 @@ namespace Shipyard:
         _check_que_not_busy(caller)
         _light_fighter_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
+        let (time_end) = _set_timelock_and_que(
             caller, LIGHT_FIGHTER_ID, number_of_units, metal_required, crystal_required
         )
-        return (metal_required, crystal_required, deuterium_required)
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func light_fighter_build_complete{
@@ -222,14 +232,16 @@ namespace Shipyard:
 
     func cruiser_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt, number_of_units : felt
-    ) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
+    ) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _cruiser_cost(number_of_units)
         _check_que_not_busy(caller)
         _cruiser_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, CRUISER_ID, number_of_units, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, CRUISER_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func cruiser_build_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -245,7 +257,7 @@ namespace Shipyard:
 
     func battleship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt, number_of_units : felt
-    ) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
+    ) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _battleship_cost(
             number_of_units
@@ -253,10 +265,10 @@ namespace Shipyard:
         _check_que_not_busy(caller)
         _battleship_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(
+        let (time_end) = _set_timelock_and_que(
             caller, BATTLESHIP_ID, number_of_units, metal_required, crystal_required
         )
-        return (metal_required, crystal_required, deuterium_required)
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func battleship_build_complete{
@@ -279,7 +291,7 @@ func _cargo_ship_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 2"):
         assert_le(2, shipyard_level)
@@ -294,7 +306,7 @@ func _recycler_ship_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 4"):
         assert_le(4, shipyard_level)
@@ -312,7 +324,7 @@ func _espionage_probe_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 3"):
         assert_le(3, shipyard_level)
@@ -330,7 +342,7 @@ func _solar_satellite_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 1"):
         assert_le(1, shipyard_level)
     end
@@ -341,7 +353,7 @@ func _light_fighter_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 1"):
         assert_le(1, shipyard_level)
@@ -356,7 +368,7 @@ func _cruiser_requirements_check{syscall_ptr : felt*, pedersen_ptr : HashBuiltin
     caller : felt
 ) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 5"):
         assert_le(5, shipyard_level)
@@ -374,7 +386,7 @@ func _battleship_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 7"):
         assert_le(7, shipyard_level)
@@ -389,7 +401,7 @@ func _deathstar_requirements_check{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt) -> (response : felt):
     let (no_game) = Shipyard_no_game_address.read()
-    let (_, _, shipyard_level, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 12"):
         assert_le(12, shipyard_level)
@@ -603,7 +615,7 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     number_of_units : felt,
     metal_required : felt,
     crystal_required : felt,
-):
+) -> (time_end : felt):
     let (no_game) = Shipyard_no_game_address.read()
     let (_, shipyard_level, _, nanite_level) = INoGame.getFacilitiesLevels(no_game, caller)
     let (build_time) = Formulas.buildings_production_time(
@@ -614,5 +626,5 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     let que_details = ShipyardQue(SHIP_ID, number_of_units, time_end)
     Shipyard_qued.write(caller, SHIP_ID, TRUE)
     Shipyard_timelock.write(caller, que_details)
-    return ()
+    return (time_end)
 end
