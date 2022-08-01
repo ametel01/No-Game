@@ -2,7 +2,16 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
-from shipyard.library import Fleet
+from shipyard.library import (
+    Fleet,
+    _cargo_ship_cost,
+    _recycler_ship_cost,
+    _espionage_probe_cost,
+    _solar_satellite_cost,
+    _light_fighter_cost,
+    _cruiser_cost,
+    _battleship_cost,
+)
 from tests.conftest import (
     Contracts,
     _get_test_addresses,
@@ -11,7 +20,7 @@ from tests.conftest import (
     _time_warp,
     _set_facilities_levels,
     _set_resource_levels,
-    _reset_facilities_timelock,
+    _reset_shipyard_timelock,
     _reset_que,
 )
 from tests.interfaces import NoGame, ERC20
@@ -85,5 +94,231 @@ func test_build_base{syscall_ptr : felt*, range_check_ptr}():
     assert new_levels.cruiser = 1
     assert new_levels.battle_ship = 1
 
+    return ()
+end
+
+@external
+func test_upgrades_costs{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+    %{
+        store(ids.addresses.game, "NoGame_shipyard_level", [10], [1,0])
+        store(ids.addresses.game, "NoGame_combustion_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_shielding_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_espionage_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_ion_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_impulse_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_hyperspace_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_hyperspace_tech", [10], [1,0])
+    %}
+
+    tempvar inputs = new (1, 5, 10, 20, 30, 45)
+    let inputs_len = 6
+
+    %{ print("\n***test_cargo_upgrades_cost***" ) %}
+    _test_cargo_cost_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***_test_recycler_cost_recursive***" ) %}
+    _test_recycler_cost_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***_test_espionage_cost_recursive***" ) %}
+    _test_espionage_cost_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***_test_satellite_cost_recursive***" ) %}
+    _test_satellite_cost_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***_test_light_fighter_cost_recursive***" ) %}
+    _test_light_fighter_cost_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***_test_cruiser_cost_recursive***" ) %}
+    _test_cruiser_cost_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***_test_battleship_cost_recursive***" ) %}
+    _test_battleship_cost_recursive(inputs_len, inputs, addresses)
+
+    return ()
+end
+
+#######################################################################################################
+#                                           PRIVATE FUNC                                              #
+#######################################################################################################
+
+func _test_cargo_cost_recursive{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    inputs_len : felt, inputs : felt*, addresses : Contracts
+):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _cargo_ship_cost(input)
+    %{ print(f"Cost for {ids.input} units: {ids.cost_metal}\t {ids.cost_crystal}\t {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.cargoShipBuildStart(addresses.game, input)
+    let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner)
+    let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
+    let (deuterium_balance) = ERC20.balanceOf(addresses.deuterium, addresses.owner)
+    assert metal_balance = Uint256(0, 0)
+    assert crystal_balance = Uint256(0, 0)
+    assert deuterium_balance = Uint256(0, 0)
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_cargo_cost_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_recycler_cost_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _recycler_ship_cost(input)
+    %{ print(f"Cost for {ids.input} units: {ids.cost_metal}\t {ids.cost_crystal}\t {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.recyclerShipBuildStart(addresses.game, input)
+    let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner)
+    let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
+    let (deuterium_balance) = ERC20.balanceOf(addresses.deuterium, addresses.owner)
+    assert metal_balance = Uint256(0, 0)
+    assert crystal_balance = Uint256(0, 0)
+    assert deuterium_balance = Uint256(0, 0)
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_recycler_cost_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_espionage_cost_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _espionage_probe_cost(input)
+    %{ print(f"Cost for {ids.input} units: {ids.cost_metal}\t {ids.cost_crystal}\t {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.espionageProbeBuildStart(addresses.game, input)
+    let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner)
+    let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
+    let (deuterium_balance) = ERC20.balanceOf(addresses.deuterium, addresses.owner)
+    assert metal_balance = Uint256(0, 0)
+    assert crystal_balance = Uint256(0, 0)
+    assert deuterium_balance = Uint256(0, 0)
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_espionage_cost_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_satellite_cost_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _solar_satellite_cost(input)
+    %{ print(f"Cost for {ids.input} units: {ids.cost_metal}\t {ids.cost_crystal}\t {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.solarSatelliteBuildStart(addresses.game, input)
+    let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner)
+    let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
+    let (deuterium_balance) = ERC20.balanceOf(addresses.deuterium, addresses.owner)
+    assert metal_balance = Uint256(0, 0)
+    assert crystal_balance = Uint256(0, 0)
+    assert deuterium_balance = Uint256(0, 0)
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_satellite_cost_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_light_fighter_cost_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _light_fighter_cost(input)
+    %{ print(f"Cost for {ids.input} units: {ids.cost_metal}\t {ids.cost_crystal}\t {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.lightFighterBuildStart(addresses.game, input)
+    let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner)
+    let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
+    let (deuterium_balance) = ERC20.balanceOf(addresses.deuterium, addresses.owner)
+    assert metal_balance = Uint256(0, 0)
+    assert crystal_balance = Uint256(0, 0)
+    assert deuterium_balance = Uint256(0, 0)
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_light_fighter_cost_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_cruiser_cost_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _cruiser_cost(input)
+    %{ print(f"Cost for {ids.input} units: {ids.cost_metal}\t {ids.cost_crystal}\t {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.cruiserBuildStart(addresses.game, input)
+    let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner)
+    let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
+    let (deuterium_balance) = ERC20.balanceOf(addresses.deuterium, addresses.owner)
+    assert metal_balance = Uint256(0, 0)
+    assert crystal_balance = Uint256(0, 0)
+    assert deuterium_balance = Uint256(0, 0)
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_cruiser_cost_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_battleship_cost_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _battleship_cost(input)
+    %{ print(f"Cost for {ids.input} units: {ids.cost_metal}\t {ids.cost_crystal}\t {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.battleShipBuildStart(addresses.game, input)
+    let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner)
+    let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner)
+    let (deuterium_balance) = ERC20.balanceOf(addresses.deuterium, addresses.owner)
+    assert metal_balance = Uint256(0, 0)
+    assert crystal_balance = Uint256(0, 0)
+    assert deuterium_balance = Uint256(0, 0)
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_battleship_cost_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
 end
