@@ -44,8 +44,9 @@ from main.storage import (
     NoGame_ships_cruiser,
     NoGame_ships_battleship,
     NoGame_ships_deathstar,
+    NoGame_shipyard_que_status,
 )
-from main.structs import TechLevels, Fleet, Cost, TechCosts, E18
+from main.structs import TechLevels, Cost, TechCosts, E18
 from facilities.IFacilities import IFacilities
 from manager.IModulesManager import IModulesManager
 from resources.IResources import IResources
@@ -58,6 +59,19 @@ from resources.library import (
 )
 from facilities.library import ROBOT_FACTORY_ID, SHIPYARD_ID, RESEARCH_LAB_ID, NANITE_FACTORY_ID
 from research.IResearchLab import IResearchLab
+from shipyard.IShipyard import IShipyard
+from shipyard.library import (
+    Fleet,
+    ShipyardQue,
+    CARGO_SHIP_ID,
+    RECYCLER_SHIP_ID,
+    ESPIONAGE_PROBE_ID,
+    SOLAR_SATELLITE_ID,
+    LIGHT_FIGHTER_ID,
+    CRUISER_ID,
+    BATTLESHIP_ID,
+    DEATHSTAR_ID,
+)
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 
@@ -540,6 +554,48 @@ namespace NoGame:
         let (current_nanite_level) = NoGame_nanite_factory_level.read(planet_id)
         NoGame_nanite_factory_level.write(planet_id, current_nanite_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
+        return ()
+    end
+
+    ##############################################################################################
+    #                              SHIPYARD PUBLIC FUNCS                                         #
+    ##############################################################################################
+
+    @external
+    func cargo_ship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        number_of_units : felt
+    ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IShipyard.cargoShipBuildStart(
+            shipyard, caller, number_of_units
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_shipyard_que_status.write(
+            planet_id, ShipyardQue(CARGO_SHIP_ID, number_of_units, time_end)
+        )
+        return ()
+    end
+
+    @external
+    func cargo_ship_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (units_produced) = IShipyard.cargoShipBuildComplete(shipyard, caller)
+        let (current_units) = NoGame_ships_cargo.read(planet_id)
+        NoGame_ships_cargo.write(planet_id, current_units + units_produced)
+        NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
         return ()
     end
 end
