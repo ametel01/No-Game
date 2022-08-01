@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.uint256 import Uint256
 from resources.library import ResourcesQue
+from shipyard.library import ShipyardQue
 
 @storage_var
 func NoGame_modules_manager() -> (address : felt):
@@ -179,4 +180,8 @@ end
 
 @storage_var
 func NoGame_ships_deathstar(planet_id : Uint256) -> (amount : felt):
+end
+
+@storage_var
+func NoGame_shipyard_que_status(planet_id : Uint256) -> (status : ShipyardQue):
 end
