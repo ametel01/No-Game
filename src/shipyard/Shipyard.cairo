@@ -19,11 +19,11 @@ end
 @external
 func cargoShipBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, number_of_units : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
-    let (metal_required, crystal_required, deuterium_required) = Shipyard.cargo_ship_build_start(
-        caller, number_of_units
-    )
-    return (metal_required, crystal_required, deuterium_required)
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+    let (
+        metal_required, crystal_required, deuterium_required, time_end
+    ) = Shipyard.cargo_ship_build_start(caller, number_of_units)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -37,11 +37,11 @@ end
 @external
 func recyclerShipBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, number_of_units : felt
-) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
-    let (metal_required, crystal_required, deuterium_required) = Shipyard.recycler_ship_build_start(
-        caller, number_of_units
-    )
-    return (metal_required, crystal_required, deuterium_required)
+) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt):
+    let (
+        metal_required, crystal_required, deuterium_required, time_end
+    ) = Shipyard.recycler_ship_build_start(caller, number_of_units)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -55,11 +55,11 @@ end
 @external
 func espionageProbeBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, number_of_units : felt
-) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
+) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = Shipyard.espionage_probe_build_start(caller, number_of_units)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -73,11 +73,11 @@ end
 @external
 func solarSatelliteBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, number_of_units : felt
-) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
+) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = Shipyard.solar_satellite_build_start(caller, number_of_units)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -91,11 +91,11 @@ end
 @external
 func lightFighterBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, number_of_units : felt
-) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
-    let (metal_required, crystal_required, deuterium_required) = Shipyard.light_fighter_build_start(
-        caller, number_of_units
-    )
-    return (metal_required, crystal_required, deuterium_required)
+) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt):
+    let (
+        metal_required, crystal_required, deuterium_required, time_end
+    ) = Shipyard.light_fighter_build_start(caller, number_of_units)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -109,11 +109,11 @@ end
 @external
 func cruiserBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, number_of_units : felt
-) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
-    let (metal_required, crystal_required, deuterium_required) = Shipyard.cruiser_build_start(
-        caller, number_of_units
-    )
-    return (metal_required, crystal_required, deuterium_required)
+) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt):
+    let (
+        metal_required, crystal_required, deuterium_required, time_end
+    ) = Shipyard.cruiser_build_start(caller, number_of_units)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -127,11 +127,11 @@ end
 @external
 func battleshipBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, number_of_units : felt
-) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt):
-    let (metal_required, crystal_required, deuterium_required) = Shipyard.battleship_build_start(
-        caller, number_of_units
-    )
-    return (metal_required, crystal_required, deuterium_required)
+) -> (metal_spent : felt, crystal_spent : felt, deuterium_spent : felt, time_end : felt):
+    let (
+        metal_required, crystal_required, deuterium_required, time_end
+    ) = Shipyard.battleship_build_start(caller, number_of_units)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
