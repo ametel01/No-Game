@@ -284,6 +284,92 @@ func cargoShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ra
     NoGame.cargo_ship_build_complete()
     return ()
 end
+
+@external
+func recyclerShipBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.recycler_ship_build_start(units)
+    return ()
+end
+
+@external
+func recyclerShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.recycler_ship_build_complete()
+    return ()
+end
+
+@external
+func espionageProbeBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.espionage_probe_build_start(units)
+    return ()
+end
+
+@external
+func espionageProbeBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    NoGame.espionage_probe_build_complete()
+    return ()
+end
+
+@external
+func solarSatelliteBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.solar_satellite_build_start(units)
+    return ()
+end
+
+@external
+func solarSatelliteBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    NoGame.solar_satellite_build_complete()
+    return ()
+end
+
+@external
+func lightFighterBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.light_fighter_build_start(units)
+    return ()
+end
+
+@external
+func lightFighterBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.light_fighter_build_complete()
+    return ()
+end
+
+@external
+func cruiserBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.cruiser_build_start(units)
+    return ()
+end
+
+@external
+func cruiserBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.cruiser_build_complete()
+    return ()
+end
+
+@external
+func battleShipBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.battleship_build_start(units)
+    return ()
+end
+
+@external
+func battleShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.battleship_build_complete()
+    return ()
+end
 # ##############################################################################################
 # #                              RESEARCH EXTERNALS FUNCS                                      #
 # ##############################################################################################

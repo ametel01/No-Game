@@ -598,6 +598,233 @@ namespace NoGame:
         NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
         return ()
     end
+
+    @external
+    func recycler_ship_build_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(number_of_units : felt):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IShipyard.recyclerShipBuildStart(
+            shipyard, caller, number_of_units
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_shipyard_que_status.write(
+            planet_id, ShipyardQue(CARGO_SHIP_ID, number_of_units, time_end)
+        )
+        return ()
+    end
+
+    @external
+    func recycler_ship_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (units_produced) = IShipyard.recyclerShipBuildComplete(shipyard, caller)
+        let (current_units) = NoGame_ships_recycler.read(planet_id)
+        NoGame_ships_recycler.write(planet_id, current_units + units_produced)
+        NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
+        return ()
+    end
+
+    @external
+    func espionage_probe_build_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(number_of_units : felt):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IShipyard.espionageProbeBuildStart(
+            shipyard, caller, number_of_units
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_shipyard_que_status.write(
+            planet_id, ShipyardQue(ESPIONAGE_PROBE_ID, number_of_units, time_end)
+        )
+        return ()
+    end
+
+    @external
+    func espionage_probe_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (units_produced) = IShipyard.espionageProbeBuildComplete(shipyard, caller)
+        let (current_units) = NoGame_ships_espionage_probe.read(planet_id)
+        NoGame_ships_espionage_probe.write(planet_id, current_units + units_produced)
+        NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
+        return ()
+    end
+
+    @external
+    func solar_satellite_build_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(number_of_units : felt):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IShipyard.solarSatelliteBuildStart(
+            shipyard, caller, number_of_units
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_shipyard_que_status.write(
+            planet_id, ShipyardQue(SOLAR_SATELLITE_ID, number_of_units, time_end)
+        )
+        return ()
+    end
+
+    @external
+    func solar_satellite_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (units_produced) = IShipyard.solarSatelliteBuildComplete(shipyard, caller)
+        let (current_units) = NoGame_ships_solar_satellite.read(planet_id)
+        NoGame_ships_solar_satellite.write(planet_id, current_units + units_produced)
+        NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
+        return ()
+    end
+
+    @external
+    func light_fighter_build_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(number_of_units : felt):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IShipyard.lightFighterBuildStart(
+            shipyard, caller, number_of_units
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_shipyard_que_status.write(
+            planet_id, ShipyardQue(LIGHT_FIGHTER_ID, number_of_units, time_end)
+        )
+        return ()
+    end
+
+    @external
+    func light_fighter_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (units_produced) = IShipyard.lightFighterBuildComplete(shipyard, caller)
+        let (current_units) = NoGame_ships_light_fighter.read(planet_id)
+        NoGame_ships_light_fighter.write(planet_id, current_units + units_produced)
+        NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
+        return ()
+    end
+
+    @external
+    func cruiser_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        number_of_units : felt
+    ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IShipyard.cruiserBuildStart(
+            shipyard, caller, number_of_units
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_shipyard_que_status.write(
+            planet_id, ShipyardQue(CRUISER_ID, number_of_units, time_end)
+        )
+        return ()
+    end
+
+    @external
+    func cruiser_build_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (units_produced) = IShipyard.cruiserBuildComplete(shipyard, caller)
+        let (current_units) = NoGame_ships_cruiser.read(planet_id)
+        NoGame_ships_cruiser.write(planet_id, current_units + units_produced)
+        NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
+        return ()
+    end
+
+    @external
+    func battleship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        number_of_units : felt
+    ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IShipyard.battleshipBuildStart(
+            shipyard, caller, number_of_units
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_shipyard_que_status.write(
+            planet_id, ShipyardQue(BATTLESHIP_ID, number_of_units, time_end)
+        )
+        return ()
+    end
+
+    @external
+    func battleship_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, shipyard, _) = IModulesManager.getModulesAddresses(manager)
+        let (units_produced) = IShipyard.battleshipBuildComplete(shipyard, caller)
+        let (current_units) = NoGame_ships_battleship.read(planet_id)
+        NoGame_ships_battleship.write(planet_id, current_units + units_produced)
+        NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
+        return ()
+    end
 end
 
 ##########################################################################################
