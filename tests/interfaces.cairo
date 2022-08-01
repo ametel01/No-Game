@@ -108,6 +108,42 @@ namespace NoGame:
 
     func cargoShipBuildComplete():
     end
+
+    func recyclerShipBuildStart(units : felt):
+    end
+
+    func recyclerShipBuildComplete():
+    end
+
+    func espionageProbeBuildStart(units : felt):
+    end
+
+    func espionageProbeBuildComplete():
+    end
+
+    func solarSatelliteBuildStart(units : felt):
+    end
+
+    func solarSatelliteBuildComplete():
+    end
+
+    func lightFighterBuildStart(units : felt):
+    end
+
+    func lightFighterBuildComplete():
+    end
+
+    func cruiserBuildStart(units : felt):
+    end
+
+    func cruiserBuildComplete():
+    end
+
+    func battleShipBuildStart(units : felt):
+    end
+
+    func battleShipBuildComplete():
+    end
 end
 
 @contract_interface
