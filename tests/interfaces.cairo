@@ -4,6 +4,7 @@ from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
 from resources.library import ResourcesQue
 from shipyard.library import Fleet, ShipyardQue
+from research.library import TechLevels
 
 @contract_interface
 namespace NoGame:
