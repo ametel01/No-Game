@@ -42,20 +42,20 @@ end
 #########################################################################################
 #                                           CONSTANTS                                   #
 #########################################################################################
-const ENERGY_TECH_ID = 11
-const COMPUTER_TECH_ID = 12
-const LASER_TECH_ID = 13
-const ARMOUR_TECH_ID = 14
-const ESPIONAGE_TECH_ID = 15
-const ION_TECH_ID = 16
-const PLASMA_TECH_ID = 17
-const WEAPONS_TECH_ID = 18
-const SHIELDING_TECH_ID = 19
-const HYPERSPACE_TECH_ID = 20
-const ASTROPHYSICS_TECH_ID = 21
-const COMBUSTION_DRIVE_ID = 22
-const HYPERSPACE_DRIVE_ID = 23
-const IMPULSE_DRIVE_ID = 24
+const ARMOUR_TECH_ID = 11
+const ASTROPHYSICS_TECH_ID = 12
+const COMBUSTION_DRIVE_ID = 13
+const COMPUTER_TECH_ID = 14
+const ENERGY_TECH_ID = 15
+const ESPIONAGE_TECH_ID = 16
+const HYPERSPACE_DRIVE_ID = 17
+const HYPERSPACE_TECH_ID = 18
+const IMPULSE_DRIVE_ID = 19
+const ION_TECH_ID = 20
+const LASER_TECH_ID = 21
+const PLASMA_TECH_ID = 22
+const SHIELDING_TECH_ID = 23
+const WEAPONS_TECH_ID = 24
 
 namespace ResearchLab:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
