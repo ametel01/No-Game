@@ -3,7 +3,7 @@
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
 from resources.library import ResourcesQue
-from shipyard.library import Fleet
+from shipyard.library import Fleet, ShipyardQue
 
 @contract_interface
 namespace NoGame:
@@ -47,6 +47,9 @@ namespace NoGame:
     end
 
     func getResourcesQueStatus(caller : felt) -> (status : ResourcesQue):
+    end
+
+    func getShipyardQueStatus(caller : felt) -> (status : ShipyardQue):
     end
 
     func numberOfPlanets() -> (n_planets : felt):
