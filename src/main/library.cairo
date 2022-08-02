@@ -883,6 +883,473 @@ namespace NoGame:
         NoGame_armour_tech.write(planet_id, current_tech_level + 1)
         return ()
     end
+
+    @external
+    func astrophysics_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_astrophysics.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.astrophysicsUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(ASTROPHYSICS_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func astrophysics_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.astrophysicsUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_astrophysics.read(planet_id)
+        NoGame_astrophysics.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func combustion_drive_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_combustion_drive.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.combustionDriveUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(COMBUSTION_DRIVE_ID, time_end))
+        return ()
+    end
+
+    @external
+    func combustion_drive_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.combustionDriveUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_combustion_drive.read(planet_id)
+        NoGame_combustion_drive.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func computer_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_computer_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.computerTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(COMPUTER_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func computer_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.computerTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_computer_tech.read(planet_id)
+        NoGame_computer_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func energy_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_energy_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.energyTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(ENERGY_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func energy_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.energyTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_energy_tech.read(planet_id)
+        NoGame_energy_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func espionage_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_espionage_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.espionageTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(ESPIONAGE_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func espionage_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.espionageTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_espionage_tech.read(planet_id)
+        NoGame_espionage_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func hyperspace_drive_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_hyperspace_drive.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.hyperspaceDriveUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(HYPERSPACE_DRIVE_ID, time_end))
+        return ()
+    end
+
+    @external
+    func hyperspace_drive_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.hyperspaceDriveUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_hyperspace_drive.read(planet_id)
+        NoGame_hyperspace_drive.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func hyperspace_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_hyperspace_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.hyperspaceTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(HYPERSPACE_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func hyperspace_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.hyperspaceTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_hyperspace_tech.read(planet_id)
+        NoGame_hyperspace_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func impulse_drive_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_impulse_drive.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.impulseDriveUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(IMPULSE_DRIVE_ID, time_end))
+        return ()
+    end
+
+    @external
+    func impulse_drive_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.impulseDriveUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_impulse_drive.read(planet_id)
+        NoGame_impulse_drive.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func ion_tech_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        ):
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_ion_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.ionTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(ION_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func ion_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.ionTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_ion_tech.read(planet_id)
+        NoGame_ion_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func laser_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_laser_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.laserTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(LASER_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func laser_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.laserTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_laser_tech.read(planet_id)
+        NoGame_laser_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func plasma_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_plasma_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.plasmaTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(PLASMA_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func plasma_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.plasmaTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_plasma_tech.read(planet_id)
+        NoGame_plasma_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func shielding_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_shielding_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.shieldingTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(SHIELDING_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func shielding_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.ShieldingTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_shielding_tech.read(planet_id)
+        NoGame_shielding_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
+
+    @external
+    func weapons_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_level) = NoGame_weapons_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium, time_end) = IResearchLab.weaponsTechUpgradeStart(
+            lab, caller, current_tech_level
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(WEAPONS_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func weapons_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        alloc_locals
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.weaponsTechUpgradeComplete(lab, caller)
+        let (current_tech_level) = NoGame_weapons_tech.read(planet_id)
+        NoGame_weapons_tech.write(planet_id, current_tech_level + 1)
+        return ()
+    end
 end
 
 ##########################################################################################
