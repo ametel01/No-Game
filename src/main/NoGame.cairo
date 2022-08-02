@@ -386,3 +386,164 @@ func armourTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*,
     NoGame.armour_tech_upgrade_complete()
     return ()
 end
+
+@external
+func astrophysicsUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.astrophysics_upgrade_start()
+    return ()
+end
+
+@external
+func astrophysicsTechUpgradeComplete{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}():
+    NoGame.astrophysics_tech_upgrade_complete()
+    return ()
+end
+
+@external
+func combustionDriveUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    NoGame.combustion_drive_upgrade_start()
+    return ()
+end
+
+@external
+func combustionDriveUpgradeComplete{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}():
+    NoGame.combustion_drive_upgrade_complete()
+    return ()
+end
+
+@external
+func energyTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.energy_tech_upgrade_start()
+    return ()
+end
+
+@external
+func energyTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.energy_tech_upgrade_complete()
+    return ()
+end
+
+@external
+func espionageTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.espionage_tech_upgrade_start()
+    return ()
+end
+
+@external
+func espionageTechUpgradeComplete{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}():
+    NoGame.espionage_tech_upgrade_complete()
+    return ()
+end
+
+@external
+func hyperspaceDriveUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    NoGame.hyperspace_drive_upgrade_start()
+    return ()
+end
+
+@external
+func hyperspaceDriveUpgradeComplete{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}():
+    NoGame.hyperspace_drive_upgrade_complete()
+    return ()
+end
+
+@external
+func hyperspaceTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    NoGame.hyperspace_tech_upgrade_start()
+    return ()
+end
+
+@external
+func hyperspaceTechUpgradeComplete{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}():
+    NoGame.hyperspace_tech_upgrade_complete()
+    return ()
+end
+
+@external
+func impulseDriveUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.impulse_drive_upgrade_start()
+    return ()
+end
+
+@external
+func impulseDriveUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    NoGame.impulse_drive_upgrade_complete()
+    return ()
+end
+
+@external
+func ionTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.ion_tech_upgrade_start()
+    return ()
+end
+
+@external
+func ionTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.ion_tech_upgrade_complete()
+    return ()
+end
+
+@external
+func laserTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.laser_tech_upgrade_start()
+    return ()
+end
+
+@external
+func laserTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.laser_tech_upgrade_complete()
+    return ()
+end
+
+@external
+func plasmaTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.plasma_tech_upgrade_start()
+    return ()
+end
+
+@external
+func plasmaTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.plasma_tech_upgrade_complete()
+    return ()
+end
+
+@external
+func shieldingTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.shielding_tech_upgrade_start()
+    return ()
+end
+
+@external
+func shieldingTechUpgradeComplete{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}():
+    NoGame.shielding_tech_upgrade_complete()
+    return ()
+end
+
+@external
+func weaponsTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.weapons_tech_upgrade_start()
+    return ()
+end
+
+@external
+func weaponsTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    NoGame.weapons_tech_upgrade_complete()
+    return ()
+end
