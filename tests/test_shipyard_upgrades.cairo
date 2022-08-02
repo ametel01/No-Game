@@ -116,7 +116,7 @@ func test_upgrades_costs{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
         store(ids.addresses.game, "NoGame_hyperspace_tech", [10], [1,0])
     %}
 
-    tempvar inputs = new (1, 5, 10, 20, 30, 45)
+    tempvar inputs = new (1, 50, 250, 1000, 100000, 1000000)
     let inputs_len = 6
 
     %{ print("\n***test_cargo_upgrades_cost***" ) %}
@@ -134,6 +134,45 @@ func test_upgrades_costs{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     %{ print("\n***_test_battleship_cost_recursive***" ) %}
     _test_battleship_cost_recursive(inputs_len, inputs, addresses)
 
+    return ()
+end
+
+@external
+func test_upgrades_time{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+    %{
+        store(ids.addresses.game, "NoGame_shipyard_level", [10], [1,0])
+        store(ids.addresses.game, "NoGame_combustion_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_shielding_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_espionage_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_ion_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_impulse_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_hyperspace_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_hyperspace_tech", [10], [1,0])
+    %}
+
+    tempvar inputs = new (1, 50, 250, 1000, 100000, 1000000)
+    let inputs_len = 6
+
+    %{ print("\n***test_cargo_upgrades_time***" ) %}
+    _test_cargo_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_recycler_upgrades_time***" ) %}
+    _test_recycler_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***_test_espionage_time_recursive***" ) %}
+    _test_espionage_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_satellite_upgrades_time***" ) %}
+    _test_satellite_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_fighter_upgrades_time***" ) %}
+    _test_fighter_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_cruiser_upgrades_time***" ) %}
+    _test_cruiser_time_recursive(inputs_len, inputs, addresses)
+    %{ print("\n***test_battleship_upgrades_time***" ) %}
+    _test_battleship_time_recursive(inputs_len, inputs, addresses)
     return ()
 end
 
@@ -320,5 +359,180 @@ func _test_battleship_cost_recursive{
     _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
 
     _test_battleship_cost_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_cargo_time_recursive{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    inputs_len : felt, inputs : felt*, addresses : Contracts
+):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _cargo_ship_cost(input)
+    %{ print(f"Cost for {ids.input} units: m: {ids.cost_metal}\tc: {ids.cost_crystal}\td: {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.cargoShipBuildStart(addresses.game, input)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 10, 0)
+    let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
+    assert expected_time = que_details.lock_end
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_cargo_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_recycler_time_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _recycler_ship_cost(input)
+    %{ print(f"Cost for {ids.input} units: m: {ids.cost_metal}\tc: {ids.cost_crystal}\td: {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.recyclerShipBuildStart(addresses.game, input)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 10, 0)
+    let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
+    assert expected_time = que_details.lock_end
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_recycler_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_espionage_time_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _espionage_probe_cost(input)
+    %{ print(f"Cost for {ids.input} units: m: {ids.cost_metal}\tc: {ids.cost_crystal}\td: {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.espionageProbeBuildStart(addresses.game, input)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 10, 0)
+    let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
+    assert expected_time = que_details.lock_end
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_espionage_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_satellite_time_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _solar_satellite_cost(input)
+    %{ print(f"Cost for {ids.input} units: m: {ids.cost_metal}\tc: {ids.cost_crystal}\td: {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.solarSatelliteBuildStart(addresses.game, input)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 10, 0)
+    let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
+    assert expected_time = que_details.lock_end
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_satellite_cost_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_fighter_time_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _light_fighter_cost(input)
+    %{ print(f"Cost for {ids.input} units: m: {ids.cost_metal}\tc: {ids.cost_crystal}\td: {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.lightFighterBuildStart(addresses.game, input)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 10, 0)
+    let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
+    assert expected_time = que_details.lock_end
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_fighter_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_cruiser_time_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _cruiser_cost(input)
+    %{ print(f"Cost for {ids.input} units: m: {ids.cost_metal}\tc: {ids.cost_crystal}\td: {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.cruiserBuildStart(addresses.game, input)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 10, 0)
+    let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
+    assert expected_time = que_details.lock_end
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_cruiser_time_recursive(inputs_len - 1, inputs + 1, addresses)
+    return ()
+end
+
+func _test_battleship_time_recursive{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(inputs_len : felt, inputs : felt*, addresses : Contracts):
+    if inputs_len == 0:
+        return ()
+    end
+    let input = [inputs]
+    let (cost_metal, cost_crystal, cost_deuterium) = _battleship_cost(input)
+    %{ print(f"Cost for {ids.input} units: m: {ids.cost_metal}\tc: {ids.cost_crystal}\td: {ids.cost_deuterium}") %}
+    _set_resource_levels(addresses.metal, addresses.owner, cost_metal)
+    _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal)
+    _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium)
+
+    NoGame.battleShipBuildStart(addresses.game, input)
+
+    let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 10, 0)
+    let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner)
+    %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
+    assert expected_time = que_details.lock_end
+    _reset_shipyard_timelock(addresses.shipyard, addresses.owner)
+
+    _test_battleship_time_recursive(inputs_len - 1, inputs + 1, addresses)
     return ()
 end
