@@ -173,6 +173,43 @@ func _set_facilities_levels{syscall_ptr : felt*, range_check_ptr}(
     return ()
 end
 
+func _set_tech_levels{syscall_ptr : felt*, range_check_ptr}(
+    game : felt,
+    id : felt,
+    armour_tech : felt,
+    astrophysics : felt,
+    combustion_drive : felt,
+    computer_tech : felt,
+    energy_tech : felt,
+    espionage_tech : felt,
+    hyperspace_drive : felt,
+    hyperspace_tech : felt,
+    impulse_drive : felt,
+    ion_tech : felt,
+    laser_tech : felt,
+    plasma_tech : felt,
+    shielding_tech : felt,
+    weapons_tech : felt,
+):
+    %{
+        store(ids.game, "NoGame_armour_tech", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_astrophysics", [ids.shipyard], key=[ids.id,0])
+        store(ids.game, "NoGame_combustion_drive", [ids.research], key=[ids.id,0])
+        store(ids.game, "NoGame_computer_tech(", [ids.nanite], key=[ids.id,0])
+        store(ids.game, "NoGame_energy_tech", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_espionage_tech", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_hyperspace_drive", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_hyperspace_tech", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_impulse_drive", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_ion_tech", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_laser_tech", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_plasma_tech", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_shielding_tech", [ids.robot], key=[ids.id,0])
+        store(ids.game, "NoGame_weapons_tech", [ids.robot], key=[ids.id,0])
+    %}
+    return ()
+end
+
 func _reset_resources_timelock{syscall_ptr : felt*, range_check_ptr}(
     resources : felt, player : felt
 ):
@@ -191,6 +228,12 @@ end
 
 func _reset_shipyard_timelock{syscall_ptr : felt*, range_check_ptr}(shipyard : felt, player : felt):
     %{ store(ids.shipyard, "Shipyard_timelock", [0,0,0], key=[ids.player]) %}
+
+    return ()
+end
+
+func _reset_lab_timelock{syscall_ptr : felt*, range_check_ptr}(shipyard : felt, player : felt):
+    %{ store(ids.shipyard, "Research_timelock", [0,0], key=[ids.player]) %}
 
     return ()
 end
