@@ -3,6 +3,7 @@
 from starkware.cairo.common.uint256 import Uint256
 from resources.library import ResourcesQue
 from shipyard.library import ShipyardQue
+from research.library import ResearchQue
 
 @storage_var
 func NoGame_modules_manager() -> (address : felt):
@@ -91,43 +92,7 @@ end
 ##################################################################################
 
 @storage_var
-func NoGame_energy_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
-func NoGame_computer_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
-func NoGame_laser_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
 func NoGame_armour_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
-func NoGame_ion_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
-func NoGame_espionage_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
-func NoGame_plasma_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
-func NoGame_weapons_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
-func NoGame_shielding_tech(planet_id : Uint256) -> (level : felt):
-end
-
-@storage_var
-func NoGame_hyperspace_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
@@ -139,13 +104,52 @@ func NoGame_combustion_drive(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
+func NoGame_computer_tech(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
+func NoGame_energy_tech(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
+func NoGame_espionage_tech(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
 func NoGame_hyperspace_drive(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
+func NoGame_hyperspace_tech(planet_id : Uint256) -> (level : felt):
 end
 
 @storage_var
 func NoGame_impulse_drive(planet_id : Uint256) -> (level : felt):
 end
 
+@storage_var
+func NoGame_ion_tech(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
+func NoGame_laser_tech(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
+func NoGame_plasma_tech(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
+func NoGame_shielding_tech(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
+func NoGame_weapons_tech(planet_id : Uint256) -> (level : felt):
+end
+
+@storage_var
+func NoGame_research_que_status(planet_id : Uint256) -> (status : ResearchQue):
+end
 ##################################################################################
 #                             SHIPYARD STORAGE                                   #
 ##################################################################################
