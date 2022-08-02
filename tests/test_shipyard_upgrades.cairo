@@ -176,6 +176,47 @@ func test_upgrades_time{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     return ()
 end
 
+@external
+func test__reverts{syscall_ptr : felt*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 1)
+    %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    %{
+        store(ids.addresses.game, "NoGame_shipyard_level", [10], [1,0])
+        store(ids.addresses.game, "NoGame_combustion_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_shielding_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_espionage_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_ion_tech", [10], [1,0])
+        store(ids.addresses.game, "NoGame_impulse_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_hyperspace_drive", [10], [1,0])
+        store(ids.addresses.game, "NoGame_hyperspace_tech", [10], [1,0])
+    %}
+
+    _set_resource_levels(addresses.metal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.crystal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.deuterium, addresses.owner, 2000000)
+
+    NoGame.cargoShipBuildStart(addresses.game, 1)
+    %{ expect_revert(error_message="SHIPYARD::QUE IS BUSY") %}
+    NoGame.battleShipBuildStart(addresses.game, 1)
+    _reset_shipyard_timelock(addresses.facilities, addresses.owner)
+
+    NoGame.espionageProbeBuildStart(addresses.game, 1)
+    %{ expect_revert(error_message="SHIPYARD::TRIED TO COMPLETE THE WRONG SHIP") %}
+    NoGame.cruiserBuildStart(addresses.game, 1)
+    _reset_shipyard_timelock(addresses.facilities, addresses.owner)
+
+    NoGame.solarSatelliteBuildStart(addresses.game, 1)
+    %{ expect_revert(error_message="SHIPYARD::TIMELOCK NOT YET EXPIRED") %}
+    NoGame.solarSatelliteBuildComplete(addresses.game)
+
+    return ()
+end
+
 #######################################################################################################
 #                                           PRIVATE FUNC                                              #
 #######################################################################################################
