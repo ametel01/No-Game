@@ -852,18 +852,19 @@ namespace NoGame:
     func armour_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
+        alloc_locals
         let (caller) = get_caller_address()
         let (planet_id) = _get_planet_id(caller)
-        let (current_tech_levels) = NoGame_armour_tech.read(planet_id)
+        let (current_tech_level) = NoGame_armour_tech.read(planet_id)
         let (manager) = NoGame_modules_manager.read()
         let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
-        let (metal, crystal, deuterium) = IResearchLab.armourTechUpgradeStart(
-            lab, caller, current_tech_levels.armour_tech
+        let (metal, crystal, deuterium, time_end) = IResearchLab.armourTechUpgradeStart(
+            lab, caller, current_tech_level
         )
         _pay_resources_erc20(caller, metal, crystal, deuterium)
-        let (spent_so_far) = NoGame_planets_spent_resources.read(caller)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id)
         let new_total_spent = spent_so_far + metal + crystal
-        NoGame_planets_spent_resources.write(caller, new_total_spent)
+        NoGame_planets_spent_resources.write(planet_id, new_total_spent)
         NoGame_research_que_status.write(planet_id, ResearchQue(ARMOUR_TECH_ID, time_end))
         return ()
     end
@@ -872,12 +873,12 @@ namespace NoGame:
     func armour_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
+        alloc_locals
         let (caller) = get_caller_address()
         let (planet_id) = _get_planet_id(caller)
-        let (current_tech_levels) = NoGame_armour_tech.read(planet_id)
         let (manager) = NoGame_modules_manager.read()
         let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
-        IResearchLab.armourTechUpgradeComplete(lab_address, caller)
+        IResearchLab.armourTechUpgradeComplete(lab, caller)
         let (current_tech_level) = NoGame_armour_tech.read(planet_id)
         NoGame_armour_tech.write(planet_id, current_tech_level + 1)
         return ()

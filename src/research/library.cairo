@@ -105,7 +105,9 @@ namespace ResearchLab:
 
     func energy_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _energy_tech_upgrade_cost(
             current_tech_level
@@ -114,8 +116,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _energy_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, ENERGY_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, ENERGY_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func energy_tech_upgrade_complete{
@@ -131,7 +135,9 @@ namespace ResearchLab:
 
     func computer_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _computer_tech_upgrade_cost(
             current_tech_level
@@ -140,8 +146,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _computer_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, COMPUTER_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, COMPUTER_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func computer_tech_upgrade_complete{
@@ -157,7 +165,9 @@ namespace ResearchLab:
 
     func laser_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _laser_tech_upgrade_cost(
             current_tech_level
@@ -166,8 +176,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _laser_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, LASER_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, LASER_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func laser_tech_upgrade_complete{
@@ -183,7 +195,9 @@ namespace ResearchLab:
 
     func armour_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _armour_tech_upgrade_cost(
             current_tech_level
@@ -192,8 +206,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _armour_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, ARMOUR_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, ARMOUR_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func armour_tech_upgrade_complete{
@@ -209,7 +225,7 @@ namespace ResearchLab:
 
     func ion_tech_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt, current_tech_level : felt
-    ) -> (metal : felt, crystal : felt, deuterium : felt):
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _ion_tech_upgrade_cost(
             current_tech_level
@@ -218,8 +234,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _ion_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, ION_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, ION_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func ion_tech_upgrade_complete{
@@ -235,7 +253,9 @@ namespace ResearchLab:
 
     func espionage_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _espionage_tech_upgrade_cost(
             current_tech_level
@@ -244,8 +264,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _espionage_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, ESPIONAGE_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, ESPIONAGE_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func espionage_tech_upgrade_complete{
@@ -261,7 +283,9 @@ namespace ResearchLab:
 
     func plasma_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _plasma_tech_upgrade_cost(
             current_tech_level
@@ -270,8 +294,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _plasma_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, PLASMA_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, PLASMA_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func plasma_tech_upgrade_complete{
@@ -287,7 +313,9 @@ namespace ResearchLab:
 
     func weapons_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _weapons_tech_upgrade_cost(
             current_tech_level
@@ -296,8 +324,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _weapons_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, WEAPONS_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, WEAPONS_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func weapons_tech_upgrade_complete{
@@ -313,7 +343,9 @@ namespace ResearchLab:
 
     func shielding_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _shielding_tech_upgrade_cost(
             current_tech_level
@@ -322,8 +354,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _shielding_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, SHIELDING_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, SHIELDING_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func shielding_tech_upgrade_complete{
@@ -339,7 +373,9 @@ namespace ResearchLab:
 
     func hyperspace_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _hyperspace_tech_upgrade_cost(
             current_tech_level
@@ -348,8 +384,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _hyperspace_tech_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, HYPERSPACE_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, HYPERSPACE_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func hyperspace_tech_upgrade_complete{
@@ -365,7 +403,9 @@ namespace ResearchLab:
 
     func astrophysics_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _astrophysics_upgrade_cost(
             current_tech_level
@@ -374,8 +414,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _astrophysics_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, ASTROPHYSICS_TECH_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, ASTROPHYSICS_TECH_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func astrophysics_upgrade_complete{
@@ -391,7 +433,9 @@ namespace ResearchLab:
 
     func combustion_drive_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _combustion_drive_upgrade_cost(
             current_tech_level
@@ -400,8 +444,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _combustion_drive_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, COMBUSTION_DRIVE_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, COMBUSTION_DRIVE_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func combustion_drive_upgrade_complete{
@@ -417,7 +463,9 @@ namespace ResearchLab:
 
     func hyperspace_drive_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _hyperspace_drive_upgrade_cost(
             current_tech_level
@@ -426,8 +474,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _hyperspace_drive_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, HYPERSPACE_DRIVE_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, HYPERSPACE_DRIVE_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func hyperspace_drive_upgrade_complete{
@@ -443,7 +493,9 @@ namespace ResearchLab:
 
     func impulse_drive_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt, current_tech_level : felt) -> (metal : felt, crystal : felt, deuterium : felt):
+    }(caller : felt, current_tech_level : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
         alloc_locals
         let (metal_required, crystal_required, deuterium_required) = _impulse_drive_upgrade_cost(
             current_tech_level
@@ -452,8 +504,10 @@ namespace ResearchLab:
         _check_que_not_busy(caller)
         _impulse_drive_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
-        _set_timelock_and_que(caller, IMPULSE_DRIVE_ID, metal_required, crystal_required)
-        return (metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, IMPULSE_DRIVE_ID, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
     func impulse_drive_upgrade_complete{
@@ -1034,7 +1088,7 @@ end
 
 func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, TECH_ID : felt, metal_required : felt, crystal_required : felt
-):
+) -> (time_end : felt):
     let (no_game_address) = Research_no_game_address.read()
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let (research_time) = Formulas.buildings_production_time(
@@ -1045,5 +1099,5 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     let que_details = ResearchQue(TECH_ID, time_end)
     Research_qued.write(caller, TECH_ID, TRUE)
     Research_timelock.write(caller, que_details)
-    return ()
+    return (time_end)
 end

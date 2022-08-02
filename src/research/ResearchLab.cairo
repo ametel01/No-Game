@@ -27,11 +27,11 @@ end
 @external
 func energyTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.energy_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -45,11 +45,11 @@ end
 @external
 func computerTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.computer_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -63,11 +63,11 @@ end
 @external
 func laserTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.laser_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -81,11 +81,11 @@ end
 @external
 func armourTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.armour_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -99,11 +99,11 @@ end
 @external
 func ionTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
-    let (metal_required, crystal_required, deuterium_required) = ResearchLab.ion_tech_upgrade_start(
-        caller, current_tech_level
-    )
-    return (metal_required, crystal_required, deuterium_required)
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+    let (
+        metal_required, crystal_required, deuterium_required, time_end
+    ) = ResearchLab.ion_tech_upgrade_start(caller, current_tech_level)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -117,11 +117,11 @@ end
 @external
 func espionageTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.espionage_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -135,11 +135,11 @@ end
 @external
 func plasmaTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.plasma_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -153,11 +153,11 @@ end
 @external
 func weaponsTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.weapons_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -171,11 +171,11 @@ end
 @external
 func shieldingTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.shielding_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -189,11 +189,11 @@ end
 @external
 func hyperspaceTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.hyperspace_tech_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -207,11 +207,11 @@ end
 @external
 func astrophysicsUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.astrophysics_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -225,11 +225,11 @@ end
 @external
 func combustionDriveUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.combustion_drive_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -243,11 +243,11 @@ end
 @external
 func hyperspaceDriveUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.hyperspace_drive_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external
@@ -261,11 +261,11 @@ end
 @external
 func impulseDriveUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, current_tech_level : felt
-) -> (metal : felt, crystal : felt, deuterium : felt):
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
-        metal_required, crystal_required, deuterium_required
+        metal_required, crystal_required, deuterium_required, time_end
     ) = ResearchLab.impulse_drive_upgrade_start(caller, current_tech_level)
-    return (metal_required, crystal_required, deuterium_required)
+    return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
 @external

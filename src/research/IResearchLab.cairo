@@ -5,7 +5,7 @@ from main.structs import TechCosts
 @contract_interface
 namespace IResearchLab:
     func energyTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -13,7 +13,7 @@ namespace IResearchLab:
     end
 
     func computerTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -21,7 +21,7 @@ namespace IResearchLab:
     end
 
     func laserTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -29,7 +29,7 @@ namespace IResearchLab:
     end
 
     func armourTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -37,7 +37,7 @@ namespace IResearchLab:
     end
 
     func ionTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -45,7 +45,7 @@ namespace IResearchLab:
     end
 
     func espionageTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -53,7 +53,7 @@ namespace IResearchLab:
     end
 
     func plasmaTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -61,7 +61,7 @@ namespace IResearchLab:
     end
 
     func weaponsTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -69,7 +69,7 @@ namespace IResearchLab:
     end
 
     func shieldingTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -77,7 +77,7 @@ namespace IResearchLab:
     end
 
     func hyperspaceTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -85,7 +85,7 @@ namespace IResearchLab:
     end
 
     func astrophysicsUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -93,7 +93,7 @@ namespace IResearchLab:
     end
 
     func combustionDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -101,7 +101,7 @@ namespace IResearchLab:
     end
 
     func hyperspaceDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
@@ -109,7 +109,7 @@ namespace IResearchLab:
     end
 
     func impulseDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
-        metal_required : felt, crystal_required : felt, deuterium_required : felt
+        metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):
     end
 
