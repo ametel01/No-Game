@@ -9,7 +9,7 @@ namespace IResearchLab:
     ):
     end
 
-    func energyTechUpgradeComplete(caller : felt) -> (success : felt):
+    func energyTechUpgradeComplete(caller : felt):
     end
 
     func computerTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -17,7 +17,7 @@ namespace IResearchLab:
     ):
     end
 
-    func computerTechUpgradeComplete(caller : felt) -> (success : felt):
+    func computerTechUpgradeComplete(caller : felt):
     end
 
     func laserTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -25,7 +25,7 @@ namespace IResearchLab:
     ):
     end
 
-    func laserTechUpgradeComplete(caller : felt) -> (success : felt):
+    func laserTechUpgradeComplete(caller : felt):
     end
 
     func armourTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -33,7 +33,7 @@ namespace IResearchLab:
     ):
     end
 
-    func armourTechUpgradeComplete(caller : felt) -> (success : felt):
+    func armourTechUpgradeComplete(caller : felt):
     end
 
     func ionTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -41,7 +41,7 @@ namespace IResearchLab:
     ):
     end
 
-    func ionTechUpgradeComplete(caller : felt) -> (success : felt):
+    func ionTechUpgradeComplete(caller : felt):
     end
 
     func espionageTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -49,7 +49,7 @@ namespace IResearchLab:
     ):
     end
 
-    func espionageTechUpgradeComplete(caller : felt) -> (success : felt):
+    func espionageTechUpgradeComplete(caller : felt):
     end
 
     func plasmaTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -57,7 +57,7 @@ namespace IResearchLab:
     ):
     end
 
-    func plasmaTechUpgradeComplete(caller : felt) -> (success : felt):
+    func plasmaTechUpgradeComplete(caller : felt):
     end
 
     func weaponsTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -65,7 +65,7 @@ namespace IResearchLab:
     ):
     end
 
-    func weaponsTechUpgradeComplete(caller : felt) -> (success : felt):
+    func weaponsTechUpgradeComplete(caller : felt):
     end
 
     func shieldingTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -73,7 +73,7 @@ namespace IResearchLab:
     ):
     end
 
-    func ShieldingTechUpgradeComplete(caller : felt) -> (success : felt):
+    func ShieldingTechUpgradeComplete(caller : felt):
     end
 
     func hyperspaceTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -81,7 +81,7 @@ namespace IResearchLab:
     ):
     end
 
-    func hyperspaceTechUpgradeComplete(caller : felt) -> (success : felt):
+    func hyperspaceTechUpgradeComplete(caller : felt):
     end
 
     func astrophysicsUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -89,7 +89,7 @@ namespace IResearchLab:
     ):
     end
 
-    func astrophysicsUpgradeComplete(caller : felt) -> (success : felt):
+    func astrophysicsUpgradeComplete(caller : felt):
     end
 
     func combustionDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -97,7 +97,7 @@ namespace IResearchLab:
     ):
     end
 
-    func combustionDriveUpgradeComplete(caller : felt) -> (success : felt):
+    func combustionDriveUpgradeComplete(caller : felt):
     end
 
     func hyperspaceDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -105,7 +105,7 @@ namespace IResearchLab:
     ):
     end
 
-    func hyperspaceDriveUpgradeComplete(caller : felt) -> (success : felt):
+    func hyperspaceDriveUpgradeComplete(caller : felt):
     end
 
     func impulseDriveUpgradeStart(caller : felt, current_tech_level : felt) -> (
@@ -113,7 +113,7 @@ namespace IResearchLab:
     ):
     end
 
-    func impulseDriveUpgradeComplete(caller : felt) -> (success : felt):
+    func impulseDriveUpgradeComplete(caller : felt):
     end
 
     func getUpgradesCost(caller : felt) -> (cost : TechCosts):
