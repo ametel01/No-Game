@@ -45,6 +45,7 @@ from main.storage import (
     NoGame_ships_battleship,
     NoGame_ships_deathstar,
     NoGame_shipyard_que_status,
+    NoGame_research_que_status,
 )
 from main.structs import TechLevels, Cost, TechCosts, E18
 from facilities.IFacilities import IFacilities
@@ -59,6 +60,23 @@ from resources.library import (
 )
 from facilities.library import ROBOT_FACTORY_ID, SHIPYARD_ID, RESEARCH_LAB_ID, NANITE_FACTORY_ID
 from research.IResearchLab import IResearchLab
+from research.library import (
+    ResearchQue,
+    ARMOUR_TECH_ID,
+    ASTROPHYSICS_TECH_ID,
+    COMBUSTION_DRIVE_ID,
+    COMPUTER_TECH_ID,
+    ENERGY_TECH_ID,
+    ESPIONAGE_TECH_ID,
+    HYPERSPACE_DRIVE_ID,
+    HYPERSPACE_TECH_ID,
+    IMPULSE_DRIVE_ID,
+    ION_TECH_ID,
+    LASER_TECH_ID,
+    PLASMA_TECH_ID,
+    SHIELDING_TECH_ID,
+    WEAPONS_TECH_ID,
+)
 from shipyard.IShipyard import IShipyard
 from shipyard.library import (
     Fleet,
@@ -823,6 +841,45 @@ namespace NoGame:
         let (current_units) = NoGame_ships_battleship.read(planet_id)
         NoGame_ships_battleship.write(planet_id, current_units + units_produced)
         NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
+        return ()
+    end
+
+    ##########################################################################################
+    #                                  RESEARCH LAB PUBLIC FUNCTIONS                         #
+    ##########################################################################################
+
+    @external
+    func armour_tech_upgrade_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_levels) = NoGame_armour_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        let (metal, crystal, deuterium) = IResearchLab.armourTechUpgradeStart(
+            lab, caller, current_tech_levels.armour_tech
+        )
+        _pay_resources_erc20(caller, metal, crystal, deuterium)
+        let (spent_so_far) = NoGame_planets_spent_resources.read(caller)
+        let new_total_spent = spent_so_far + metal + crystal
+        NoGame_planets_spent_resources.write(caller, new_total_spent)
+        NoGame_research_que_status.write(planet_id, ResearchQue(ARMOUR_TECH_ID, time_end))
+        return ()
+    end
+
+    @external
+    func armour_tech_upgrade_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }():
+        let (caller) = get_caller_address()
+        let (planet_id) = _get_planet_id(caller)
+        let (current_tech_levels) = NoGame_armour_tech.read(planet_id)
+        let (manager) = NoGame_modules_manager.read()
+        let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
+        IResearchLab.armourTechUpgradeComplete(lab_address, caller)
+        let (current_tech_level) = NoGame_armour_tech.read(planet_id)
+        NoGame_armour_tech.write(planet_id, current_tech_level + 1)
         return ()
     end
 end
