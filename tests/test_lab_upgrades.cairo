@@ -25,6 +25,7 @@ from tests.conftest import (
     _run_minter,
     _time_warp,
     _set_facilities_levels,
+    _set_resource_levels,
     _set_tech_levels,
     _reset_lab_timelock,
     _reset_que,
@@ -44,6 +45,18 @@ func test_base{syscall_ptr : felt*, range_check_ptr}():
                    ids.addresses.owner, target_contract_address=ids.addresses.game)
     %}
     NoGame.generatePlanet(addresses.game)
+    _set_resource_levels(addresses.metal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.crystal, addresses.owner, 2000000)
+    _set_resource_levels(addresses.deuterium, addresses.owner, 2000000)
+    _set_facilities_levels(addresses.game, 1, 0, 0, 2, 0)
+    let (init_levels : TechLevels) = NoGame.getTechLevels(addresses.game, addresses.owner)
+    assert init_levels = TechLevels(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    NoGame.armourTechUpgradeStart(addresses.game)
+    _time_warp(1000, addresses.research)
+    NoGame.armourTechUpgradeComplete(addresses.game)
 
-    let (current_levels : Fleet) = NoGame.getFleetLevels(addresses.game, addresses.owner)
-    assert current_levels = Fleet(0, 0, 0, 0, 0, 0, 0, 0)
+    let (new_levels : TechLevels) = NoGame.getTechLevels(addresses.game, addresses.owner)
+    assert new_levels.armour_tech = 1
+
+    return ()
+end

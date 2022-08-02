@@ -51,8 +51,6 @@ func test_build_base{syscall_ptr : felt*, range_check_ptr}():
         store(ids.addresses.game, "NoGame_hyperspace_drive", [10], [1,0])
         store(ids.addresses.game, "NoGame_hyperspace_tech", [10], [1,0])
     %}
-    let (_, shipyard, _, _) = NoGame.getFacilitiesLevels(addresses.game, addresses.owner)
-    %{ print(ids.shipyard) %}
     _set_resource_levels(addresses.metal, addresses.owner, 2000000)
     _set_resource_levels(addresses.crystal, addresses.owner, 2000000)
     _set_resource_levels(addresses.deuterium, addresses.owner, 2000000)
