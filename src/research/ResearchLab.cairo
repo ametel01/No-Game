@@ -37,9 +37,9 @@ end
 @external
 func energyTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.energy_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -55,9 +55,9 @@ end
 @external
 func computerTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.computer_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -73,9 +73,9 @@ end
 @external
 func laserTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.ion_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -91,9 +91,9 @@ end
 @external
 func armourTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.armour_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -109,9 +109,9 @@ end
 @external
 func ionTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.ion_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -127,9 +127,9 @@ end
 @external
 func espionageTechUpgradeComplete{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(caller : felt) -> (success : felt):
+}(caller : felt):
     ResearchLab.espionage_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -145,9 +145,9 @@ end
 @external
 func plasmaTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.plasma_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -163,9 +163,9 @@ end
 @external
 func weaponsTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.weapons_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -181,9 +181,9 @@ end
 @external
 func shieldingTechUpgradeComplete{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(caller : felt) -> (success : felt):
+}(caller : felt):
     ResearchLab.shielding_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -199,9 +199,9 @@ end
 @external
 func hyperspaceTechUpgradeComplete{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(caller : felt) -> (success : felt):
+}(caller : felt):
     ResearchLab.hyperspace_tech_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -217,9 +217,9 @@ end
 @external
 func astrophysicsUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.astrophysics_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -235,9 +235,9 @@ end
 @external
 func combustionDriveUpgradeComplete{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(caller : felt) -> (success : felt):
+}(caller : felt):
     ResearchLab.combustion_drive_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -253,9 +253,9 @@ end
 @external
 func hyperspaceDriveUpgradeComplete{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(caller : felt) -> (success : felt):
+}(caller : felt):
     ResearchLab.hyperspace_drive_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
 
 @external
@@ -271,7 +271,7 @@ end
 @external
 func impulseDriveUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (success : felt):
+):
     ResearchLab.impulse_drive_upgrade_complete(caller)
-    return (TRUE)
+    return ()
 end
