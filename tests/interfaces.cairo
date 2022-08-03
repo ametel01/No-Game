@@ -153,6 +153,84 @@ namespace NoGame:
 
     func armourTechUpgradeComplete():
     end
+
+    func astrophysicsUpgradeStart():
+    end
+
+    func astrophysicsUpgradeComplete():
+    end
+
+    func combustionDriveUpgradeStart():
+    end
+
+    func combustionDriveUpgradeComplete():
+    end
+
+    func computerTechUpgradeStart():
+    end
+
+    func computerTechUpgradeComplete():
+    end
+
+    func energyTechUpgradeStart():
+    end
+
+    func energyTechUpgradeComplete():
+    end
+
+    func espionageTechUpgradeStart():
+    end
+
+    func espionageTechUpgradeComplete():
+    end
+
+    func hyperspaceDriveUpgradeStart():
+    end
+
+    func hyperspaceDriveUpgradeComplete():
+    end
+
+    func hyperspaceTechUpgradeStart():
+    end
+
+    func hyperspaceTechUpgradeComplete():
+    end
+
+    func impulseDriveUpgradeStart():
+    end
+
+    func impulseDriveUpgradeComplete():
+    end
+
+    func ionTechUpgradeStart():
+    end
+
+    func ionTechUpgradeComplete():
+    end
+
+    func laserTechUpgradeStart():
+    end
+
+    func laserTechUpgradeComplete():
+    end
+
+    func plasmaTechUpgradeStart():
+    end
+
+    func plasmaTechUpgradeComplete():
+    end
+
+    func shieldingTechUpgradeStart():
+    end
+
+    func shieldingTechUpgradeComplete():
+    end
+
+    func weaponsTechUpgradeStart():
+    end
+
+    func weaponsTechUpgradeComplete():
+    end
 end
 
 @contract_interface
