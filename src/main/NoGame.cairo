@@ -394,9 +394,8 @@ func astrophysicsUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
 end
 
 @external
-func astrophysicsTechUpgradeComplete{
-    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}():
+func astrophysicsUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
     NoGame.astrophysics_tech_upgrade_complete()
     return ()
 end
@@ -413,6 +412,19 @@ func combustionDriveUpgradeComplete{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }():
     NoGame.combustion_drive_upgrade_complete()
+    return ()
+end
+
+@external
+func computerTechUpgradeStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.computer_tech_upgrade_start()
+    return ()
+end
+
+@external
+func computerTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    ):
+    NoGame.computer_tech_upgrade_complete()
     return ()
 end
 

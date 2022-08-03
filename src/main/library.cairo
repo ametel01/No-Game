@@ -207,7 +207,20 @@ namespace NoGame:
         let (weapons_tech) = NoGame_weapons_tech.read(planet_id)
 
         return (
-            TechLevels(armour_tech, astrophysics, combustion_drive, computer_tech, energy_tech, espionage_tech, hyperspace_drive, hyperspace_tech, impulse_drive, ion_tech, laser_tech, plasma_tech, shielding_tech, weapons_tech),
+            TechLevels(armour_tech,
+            astrophysics,
+            combustion_drive,
+            computer_tech,
+            energy_tech,
+            espionage_tech,
+            hyperspace_drive,
+            hyperspace_tech,
+            impulse_drive,
+            ion_tech,
+            laser_tech,
+            plasma_tech,
+            shielding_tech,
+            weapons_tech),
         )
     end
 
@@ -1309,7 +1322,7 @@ namespace NoGame:
         let (planet_id) = _get_planet_id(caller)
         let (manager) = NoGame_modules_manager.read()
         let (_, _, _, lab) = IModulesManager.getModulesAddresses(manager)
-        IResearchLab.ShieldingTechUpgradeComplete(lab, caller)
+        IResearchLab.shieldingTechUpgradeComplete(lab, caller)
         let (current_tech_level) = NoGame_shielding_tech.read(planet_id)
         NoGame_shielding_tech.write(planet_id, current_tech_level + 1)
         return ()
