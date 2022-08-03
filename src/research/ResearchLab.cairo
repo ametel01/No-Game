@@ -74,7 +74,7 @@ end
 func laserTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ):
-    ResearchLab.ion_tech_upgrade_complete(caller)
+    ResearchLab.laser_tech_upgrade_complete(caller)
     return ()
 end
 
