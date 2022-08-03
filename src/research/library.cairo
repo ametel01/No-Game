@@ -1039,7 +1039,7 @@ func _check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 ):
     let (que_status) = Research_timelock.read(caller)
     let current_timelock = que_status.lock_end
-    with_attr error_message("Research lab is busy"):
+    with_attr error_message("Research Lab::Research lab is busy"):
         assert current_timelock = 0
     end
     return ()
@@ -1050,7 +1050,7 @@ func _check_enough_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
 ):
     alloc_locals
     let (metal_available, crystal_available, deuterium_available) = _get_available_resources(caller)
-    with_attr error_message("not enough resources"):
+    with_attr error_message("Research Lab::Not enough resources"):
         let (enough_metal) = is_le(metal_required, metal_available)
         assert enough_metal = TRUE
         let (enough_crystal) = is_le(crystal_required, crystal_available)
@@ -1065,7 +1065,7 @@ func _check_trying_complete_right_tech{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt, TECH_ID : felt):
     let (is_qued) = Research_qued.read(caller, TECH_ID)
-    with_attr error_message("Tried to complete the wrong technology"):
+    with_attr error_message("Research Lab::Tried to complete the wrong technology"):
         assert is_qued = TRUE
     end
     return ()
@@ -1080,7 +1080,7 @@ func _check_waited_enough{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     let (cue_details) = Research_timelock.read(caller)
     let timelock_end = cue_details.lock_end
     let (waited_enough) = is_le(timelock_end, time_now)
-    with_attr error_message("Timelock not yet expired"):
+    with_attr error_message("Research Lab::Timelock not yet expired"):
         assert waited_enough = TRUE
     end
     return ()
