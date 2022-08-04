@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_block_timestamp
-from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
+from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero, assert_lt
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
 from starkware.cairo.common.bool import TRUE, FALSE
@@ -52,27 +52,6 @@ namespace Formulas:
         let fact8 = fact7 * time_elapsed
         let (prod_scaled, _) = unsigned_div_rem(fact8, 1000)
         return (deuterium_produced=prod_scaled)
-    end
-
-    #############
-    # Buildings #
-    #############
-
-    func robot_factory_building_cost{
-        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(factory_level : felt) -> (metal_cost : felt, crystal_cost : felt, deuterium_cost : felt):
-        let base_metal = 400
-        let base_crystal = 120
-        let base_deuterium = 200
-        if factory_level == 0:
-            return (base_metal, base_crystal, base_deuterium)
-        else:
-            let (fact0) = pow(2, factory_level)
-            let metal = base_metal * fact0
-            let crystal = base_crystal * fact0
-            let deuterium = base_deuterium * fact0
-            return (metal, crystal, deuterium)
-        end
     end
 
     ##########
@@ -131,8 +110,8 @@ namespace Formulas:
             let (res, _) = unsigned_div_rem(fact3, fact4)
             return (res)
         else:
-            let (fact5, _) = unsigned_div_rem(fact3, 1000)
-            let (fact6, _) = unsigned_div_rem(fact4, 1000)
+            let (fact5, _) = unsigned_div_rem(fact3, E18)
+            let (fact6, _) = unsigned_div_rem(fact4, E18)
             let (res, _) = unsigned_div_rem(fact5, fact6)
             return (res)
         end
@@ -142,18 +121,22 @@ namespace Formulas:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(mine_level : felt) -> (consumption : felt):
         alloc_locals
-        let fact1 = 20 * mine_level
-        let (fact2) = pow(11, mine_level)
-        local fact3 = fact1 * fact2
-        let (fact4) = pow(10, mine_level)
         let (level_in_bound) = is_le(mine_level, 25)
         if level_in_bound == TRUE:
+            let fact1 = 20 * mine_level
+            let (fact2) = pow(11, mine_level)
+            local fact3 = fact1 * fact2
+            let (fact4) = pow(10, mine_level)
             let (res, _) = unsigned_div_rem(fact3, fact4)
             return (res)
         else:
-            let (fact5, _) = unsigned_div_rem(fact3, 1000)
-            let (fact6, _) = unsigned_div_rem(fact4, 1000)
-            let (res, _) = unsigned_div_rem(fact5, fact6)
+            let fact1 = 20 * mine_level
+            let (fact2) = pow(11, mine_level)
+            let (f2_b, _) = unsigned_div_rem(fact2, E18)
+            local fact3 = fact1 * f2_b
+            let (fact4) = pow(10, mine_level)
+            let (f4_b, _) = unsigned_div_rem(fact4, E18)
+            let (res, _) = unsigned_div_rem(fact3, f4_b)
             return (res)
         end
     end
@@ -194,18 +177,25 @@ namespace Formulas:
         plant_level : felt
     ) -> (production_hour):
         alloc_locals
+        with_attr error_message("Solar Plant max level is 54"):
+            assert_lt(plant_level, 55)
+        end
         let fact1 = 20 * plant_level
-        let (local fact2) = pow(11, plant_level)
-        local fact3 = fact1 * fact2
-        let (fact4) = pow(10, plant_level)
         let (level_in_bound) = is_le(plant_level, 25)
         if level_in_bound == TRUE:
+            let (local fact2) = pow(11, plant_level)
+            local fact3 = fact1 * fact2
+            let (fact4) = pow(10, plant_level)
+            let (level_in_bound) = is_le(plant_level, 25)
             let (res, _) = unsigned_div_rem(fact3, fact4)
             return (res)
         else:
-            let (fact5, _) = unsigned_div_rem(fact3, 1000)
-            let (fact6, _) = unsigned_div_rem(fact4, 1000)
-            let (res, _) = unsigned_div_rem(fact5, fact6)
+            let (local fact2) = pow(11, plant_level)
+            let (f2_b, _) = unsigned_div_rem(fact2, E18)
+            local fact3 = fact1 * f2_b
+            let (fact4) = pow(10, plant_level)
+            let (f4_b, _) = unsigned_div_rem(fact4, E18)
+            let (res, _) = unsigned_div_rem(fact3, f4_b)
             return (res)
         end
     end
