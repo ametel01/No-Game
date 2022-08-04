@@ -21,6 +21,9 @@ namespace Formulas:
         alloc_locals
         let (time_now) = get_block_timestamp()
         local time_elapsed = time_now - last_timestamp
+        if time_elapsed == 0:
+            return (0)
+        end
         let (metal_hour) = _resources_production_formula(30, mine_level)
         let (prod_second, _) = unsigned_div_rem(metal_hour * 10000, 3600)  # 91
         let fact8 = prod_second * time_elapsed
@@ -34,6 +37,9 @@ namespace Formulas:
         alloc_locals
         let (time_now) = get_block_timestamp()
         local time_elapsed = time_now - last_timestamp
+        if time_elapsed == 0:
+            return (0)
+        end
         let (crystal_hour) = _resources_production_formula(20, mine_level)
         let (fact7, _) = unsigned_div_rem(crystal_hour * 10000, 3600)
         let fact8 = fact7 * time_elapsed
@@ -47,6 +53,9 @@ namespace Formulas:
         alloc_locals
         let (time_now) = get_block_timestamp()
         local time_elapsed = time_now - last_timestamp
+        if time_elapsed == 0:
+            return (0)
+        end
         let (deuterium_hour) = _resources_production_formula(10, mine_level)
         let (fact7, _) = unsigned_div_rem(deuterium_hour * 10000, 3600)
         let fact8 = fact7 * time_elapsed
