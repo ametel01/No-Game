@@ -1,7 +1,6 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-
 from resources.library import (
     _metal_building_cost,
     _crystal_building_cost,
