@@ -1,9 +1,9 @@
 %lang starknet
 
-from starkware.cairo.common.bool import FALSE
+from starkware.cairo.common.bool import FALSE, TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
-from starkware.cairo.common.math_cmp import is_le
+from starkware.cairo.common.math_cmp import is_le, is_not_zero
 from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_block_timestamp, get_caller_address
 from openzeppelin.access.ownable.library import Ownable
@@ -354,9 +354,10 @@ namespace NoGame:
         let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
         IResources.metalUpgradeComplete(resources_address, caller)
         let (planet_id) = _get_planet_id(caller)
-        collect_resources(caller)
-        let (current_metal_level) = NoGame_metal_mine_level.read(planet_id)
-        NoGame_metal_mine_level.write(planet_id, current_metal_level + 1)
+        let (current_level) = NoGame_metal_mine_level.read(planet_id)
+        let (cur_level_not_zero) = is_not_zero(current_level)
+        _collect(caller, cur_level_not_zero)
+        NoGame_metal_mine_level.write(planet_id, current_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
     end
@@ -387,9 +388,10 @@ namespace NoGame:
         let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
         IResources.crystalUpgradeComplete(resources_address, caller)
         let (planet_id) = _get_planet_id(caller)
-        collect_resources(caller)
-        let (current_metal_level) = NoGame_crystal_mine_level.read(planet_id)
-        NoGame_crystal_mine_level.write(planet_id, current_metal_level + 1)
+        let (current_level) = NoGame_crystal_mine_level.read(planet_id)
+        let (cur_level_not_zero) = is_not_zero(current_level)
+        _collect(caller, cur_level_not_zero)
+        NoGame_crystal_mine_level.write(planet_id, current_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
     end
@@ -421,9 +423,10 @@ namespace NoGame:
         let (resources_address, _, _, _) = IModulesManager.getModulesAddresses(manager)
         IResources.deuteriumUpgradeComplete(resources_address, caller)
         let (planet_id) = _get_planet_id(caller)
-        collect_resources(caller)
-        let (current_metal_level) = NoGame_deuterium_mine_level.read(planet_id)
-        NoGame_deuterium_mine_level.write(planet_id, current_metal_level + 1)
+        let (current_level) = NoGame_deuterium_mine_level.read(planet_id)
+        let (cur_level_not_zero) = is_not_zero(current_level)
+        _collect(caller, cur_level_not_zero)
+        NoGame_deuterium_mine_level.write(planet_id, current_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
     end
@@ -1493,4 +1496,15 @@ func _get_available_erc20s{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
     let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
     return (metal_available.low, crystal_available.low, deuterium_available.low)
+end
+
+func _collect{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt, condition : felt
+):
+    alloc_locals
+    if condition == TRUE:
+        NoGame.collect_resources(caller)
+        return ()
+    end
+    return ()
 end
