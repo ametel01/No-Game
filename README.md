@@ -6,10 +6,10 @@
 
 ## Usage
 
-Create a virtual environment:
+Create a virtual environment (with python 3.7):
 
 ```
-python -m venv ~/cairo_venv
+python3.7 -m venv ~/cairo_venv
 source ~/cairo_venv/bin/activate
 ```
 
@@ -74,11 +74,11 @@ protostar test
     -   [x] Ships costs.
     -   [x] Ships constraints.
     -   [x] Testing
--   [ ] Implement Research
+-   [x] Implement Research :heavy_check_mark:
     -   [x] Research upgrades.
     -   [x] Research cost.
     -   [x] Research contsraints.
-    -   [ ] Testing
+    -   [x] Testing
 
 ### v0.3
 
