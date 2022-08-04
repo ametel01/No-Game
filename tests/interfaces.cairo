@@ -258,6 +258,9 @@ namespace ERC721:
 
     func isApprovedForAll(owner : felt, operator : felt) -> (res : felt):
     end
+
+    func transferFrom(from_ : felt, to : felt, tokenId : Uint256):
+    end
 end
 
 @contract_interface
