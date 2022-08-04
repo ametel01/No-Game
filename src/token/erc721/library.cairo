@@ -372,6 +372,9 @@ namespace ERC721:
 
         # Increase receiver balance
         let (receiver_bal) = ERC721_balances.read(to)
+        with_attr error_message("ERC721: receiver already owns a token"):
+            assert receiver_bal.low = 0
+        end
         let (new_balance : Uint256) = SafeUint256.add(receiver_bal, Uint256(1, 0))
         ERC721_balances.write(to, new_balance)
 
@@ -380,6 +383,7 @@ namespace ERC721:
         Transfer.emit(from_, to, token_id)
 
         # Update owner
+        ERC721_owner_to_id.write(from_, Uint256(0, 0))
         ERC721_owner_to_id.write(to, token_id)
         return ()
     end
