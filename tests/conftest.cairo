@@ -12,6 +12,7 @@ const URI_LEN = 1
 const URI = 10101010
 
 const PK = 11111
+const PK2 = 22222
 
 const METAL_NAME = 0x6f67616d65206d6574616c2076302e31
 const METAL_SYMBOL = 0x4f674d455476302e31
@@ -24,6 +25,7 @@ const DEUTERIUM_SYMBOL = 0x4f6744455576302e31
 
 struct Contracts:
     member owner : felt
+    member p1 : felt
     member minter : felt
     member manager : felt
     member erc721 : felt
@@ -48,7 +50,8 @@ end
 func __setup__{syscall_ptr : felt*, range_check_ptr}():
     alloc_locals
     %{
-        context.owner_address = deploy_contract("lib/openzeppelin/account/presets/Account.cairo", [ids.PK]).contract_address 
+        context.owner_address = deploy_contract("lib/openzeppelin/account/presets/Account.cairo", [ids.PK]).contract_address
+        context.p1_address = deploy_contract("lib/openzeppelin/account/presets/Account.cairo", [ids.PK2]).contract_address 
         context.minter_address = deploy_contract("src/minter/erc721_minter.cairo", [context.owner_address]).contract_address
         context.erc721_address = deploy_contract("src/token/erc721/ERC721.cairo",[ids.ERC721_NAME, ids.ERC721_SYMBOL, context.minter_address, ids.URI_LEN, ids.URI]).contract_address
         #print("erc721_address: ", context.erc721_address)
@@ -88,6 +91,7 @@ func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (addresses :
     tempvar _addresses : Contracts
     %{
         ids._addresses.owner = context.owner_address
+        ids._addresses.p1 = context.p1_address
         ids._addresses.minter = context.minter_address
         ids._addresses.manager = context.manager_address
         ids._addresses.erc721 = context.erc721_address
