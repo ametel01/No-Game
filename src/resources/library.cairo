@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import assert_not_zero, unsigned_div_rem
+from starkware.cairo.common.math import assert_not_zero, unsigned_div_rem, assert_le
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
 from starkware.starknet.common.syscalls import get_block_timestamp
@@ -82,9 +82,12 @@ namespace Resources:
         alloc_locals
         _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
-        let (metal_level, _, _, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
+        let (level, _, _, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
+        with_attr error_message("Resources::Max upgrade level is 45"):
+            assert_le(level, 45)
+        end
         let (robot_level, _, _, nanite_level) = INoGame.getFacilitiesLevels(no_game, caller)
-        let (metal_required, crystal_required) = _metal_building_cost(metal_level)
+        let (metal_required, crystal_required) = _metal_building_cost(level)
         _check_enough_resources(caller, metal_required, crystal_required, 0)
         let (time_unlocked) = _set_timelock_and_que(
             caller, METAL_MINE_ID, robot_level, nanite_level, metal_required, crystal_required
@@ -109,9 +112,12 @@ namespace Resources:
         alloc_locals
         _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
-        let (_, crystal_level, _, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
+        let (_, level, _, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
+        with_attr error_message("Resources::Max upgrade level is 45"):
+            assert_le(level, 45)
+        end
         let (robot_level, _, _, nanite_level) = INoGame.getFacilitiesLevels(no_game, caller)
-        let (metal_required, crystal_required) = _crystal_building_cost(crystal_level)
+        let (metal_required, crystal_required) = _crystal_building_cost(level)
         _check_enough_resources(caller, metal_required, crystal_required, 0)
         let (time_unlocked) = _set_timelock_and_que(
             caller, CRYSTAL_MINE_ID, robot_level, nanite_level, metal_required, crystal_required
@@ -136,9 +142,12 @@ namespace Resources:
         alloc_locals
         _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
-        let (_, _, deuterium_level, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
+        let (_, _, level, _) = INoGame.getResourcesBuildingsLevels(no_game, caller)
+        with_attr error_message("Resources::Max upgrade level is 45"):
+            assert_le(level, 45)
+        end
         let (robot_level, _, _, nanite_level) = INoGame.getFacilitiesLevels(no_game, caller)
-        let (metal_required, crystal_required) = _deuterium_building_cost(deuterium_level)
+        let (metal_required, crystal_required) = _deuterium_building_cost(level)
         _check_enough_resources(caller, metal_required, crystal_required, 0)
         let (time_unlocked) = _set_timelock_and_que(
             caller, DEUTERIUM_MINE_ID, robot_level, nanite_level, metal_required, crystal_required
@@ -163,9 +172,12 @@ namespace Resources:
         alloc_locals
         _check_que_not_busy(caller)
         let (no_game) = Resources_no_game_address.read()
-        let (_, _, _, solar_level) = INoGame.getResourcesBuildingsLevels(no_game, caller)
+        let (_, _, _, level) = INoGame.getResourcesBuildingsLevels(no_game, caller)
+        with_attr error_message("Resources::Max upgrade level is 45"):
+            assert_le(level, 45)
+        end
         let (robot_level, _, _, nanite_level) = INoGame.getFacilitiesLevels(no_game, caller)
-        let (metal_required, crystal_required) = _solar_plant_building_cost(solar_level)
+        let (metal_required, crystal_required) = _solar_plant_building_cost(level)
         _check_enough_resources(caller, metal_required, crystal_required, 0)
         let (time_unlocked) = _set_timelock_and_que(
             caller, SOLAR_PLANT_ID, robot_level, nanite_level, metal_required, crystal_required
@@ -205,8 +217,9 @@ func _metal_building_cost{syscall_ptr : felt*, range_check_ptr}(mine_level : fel
     let (local max_level) = is_le(25, mine_level)
     if max_level == TRUE:
         let (second_fact) = pow(15, exponent)
-        let (local metal_cost, _) = unsigned_div_rem(base_metal * second_fact, E18)
-        let (local crystal_cost, _) = unsigned_div_rem(base_crystal * second_fact, E18)
+        let (f2, _) = unsigned_div_rem(second_fact, E18)
+        local metal_cost = base_metal * f2
+        local crystal_cost = base_crystal * f2
         let (local exp2) = pow(10, mine_level)
         let (exp2, _) = unsigned_div_rem(exp2, E18)
         let (metal_scaled, _) = unsigned_div_rem(metal_cost, exp2)
