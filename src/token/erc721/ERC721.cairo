@@ -15,6 +15,7 @@ from token.erc721.ERC721_Metadata_base import (
 )
 from openzeppelin.introspection.erc165.library import ERC165
 from openzeppelin.access.ownable.library import Ownable
+from token.erc721.extension import ERC721_nogame
 
 #
 # Constructor
@@ -105,7 +106,7 @@ end
 func ownerToPlanet{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (token_id : Uint256):
-    let (token_id) = ERC721.owner_to_planet(caller)
+    let (token_id) = ERC721_nogame.owner_to_planet(caller)
     return (token_id)
 end
 

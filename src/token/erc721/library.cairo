@@ -11,19 +11,16 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.cairo.common.uint256 import Uint256, uint256_check
 
 from openzeppelin.security.safemath.library import SafeUint256
-
 from openzeppelin.introspection.erc165.library import ERC165
-
 from openzeppelin.token.erc721.IERC721Receiver import IERC721Receiver
-
 from openzeppelin.introspection.erc165.IERC165 import IERC165
-
 from openzeppelin.utils.constants.library import (
     IERC721_ID,
     IERC721_METADATA_ID,
     IERC721_RECEIVER_ID,
     IACCOUNT_ID,
 )
+from token.erc721.extension import ERC721_nogame
 
 #
 # Events
@@ -372,9 +369,7 @@ namespace ERC721:
 
         # Increase receiver balance
         let (receiver_bal) = ERC721_balances.read(to)
-        with_attr error_message("ERC721: receiver already owns a token"):
-            assert receiver_bal.low = 0
-        end
+        ERC721_nogame.assert_no_ownership(receiver_bal)
         let (new_balance : Uint256) = SafeUint256.add(receiver_bal, Uint256(1, 0))
         ERC721_balances.write(to, new_balance)
 
@@ -383,8 +378,7 @@ namespace ERC721:
         Transfer.emit(from_, to, token_id)
 
         # Update owner
-        ERC721_owner_to_id.write(from_, Uint256(0, 0))
-        ERC721_owner_to_id.write(to, token_id)
+        ERC721_nogame.update_ownership(from_, to, token_id)
         return ()
     end
 
