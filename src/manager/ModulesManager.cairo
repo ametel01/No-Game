@@ -20,7 +20,7 @@ end
 
 @view
 func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt
+    resources : felt, facilities : felt, shipyard : felt, research_lab : felt
 ):
     let (resources, facilities, shipyard, research) = ModulesManager.modules_addresses()
     return (resources, facilities, shipyard, research)
