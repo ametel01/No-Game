@@ -37,6 +37,11 @@ namespace NoGame:
     ):
     end
 
+    func getResourcesAvailable(caller : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, energy : felt
+    ):
+    end
+
     func getFleetLevels(caller : felt) -> (levels : Fleet):
     end
 
@@ -56,6 +61,9 @@ namespace NoGame:
     end
 
     func generatePlanet():
+    end
+
+    func collectResources():
     end
 
     func metalUpgradeStart():
