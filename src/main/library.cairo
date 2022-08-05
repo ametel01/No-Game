@@ -259,9 +259,9 @@ namespace NoGame:
             metal_produced, crystal_produced, deuterium_produced, energy_available
         ) = _calculate_production(caller)
         return (
-            metal_available + metal_produced,
-            crystal_available + crystal_produced,
-            deuterium_available + deuterium_produced,
+            metal_available + metal_produced * E18,
+            crystal_available + crystal_produced * E18,
+            deuterium_available + deuterium_produced * E18,
             energy_available,
         )
     end
@@ -1406,9 +1406,10 @@ func _calculate_production{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
         metal, crystal, deuterium, solar_plant, satellites
     )
     let (time_start) = NoGame_resources_timer.read(planet_id)
-    let (metal_produced) = Formulas.metal_mine_production(time_start, metal)
-    let (crystal_produced) = Formulas.crystal_mine_production(time_start, crystal)
-    let (deuterium_produced) = Formulas.deuterium_mine_production(time_start, deuterium)
+    let (time_now) = get_block_timestamp()
+    let (metal_produced) = Formulas.metal_mine_production(time_now - time_start, metal)
+    let (crystal_produced) = Formulas.crystal_mine_production(time_now - time_start, crystal)
+    let (deuterium_produced) = Formulas.deuterium_mine_production(time_now - time_start, deuterium)
     if energy_available == 0:
         let (actual_metal, actual_crystal, actual_deuterium) = Formulas.energy_production_scaler(
             metal_produced,

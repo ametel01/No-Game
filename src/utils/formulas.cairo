@@ -16,11 +16,9 @@ const E18 = 10 ** 18
 namespace Formulas:
     # Prod per second = 30 * Level * 11**Level / 10**Level * 10000 / 3600 * 10000
     func metal_mine_production{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        last_timestamp : felt, mine_level : felt
+        time_elapsed : felt, mine_level : felt
     ) -> (metal_produced : felt):
         alloc_locals
-        let (time_now) = get_block_timestamp()
-        local time_elapsed = time_now - last_timestamp
         if time_elapsed == 0:
             return (0)
         end
@@ -32,11 +30,9 @@ namespace Formulas:
     end
 
     func crystal_mine_production{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        last_timestamp : felt, mine_level : felt
+        time_elapsed : felt, mine_level : felt
     ) -> (crystal_produced : felt):
         alloc_locals
-        let (time_now) = get_block_timestamp()
-        local time_elapsed = time_now - last_timestamp
         if time_elapsed == 0:
             return (0)
         end
@@ -49,10 +45,8 @@ namespace Formulas:
 
     func deuterium_mine_production{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(last_timestamp : felt, mine_level : felt) -> (deuterium_produced : felt):
+    }(time_elapsed : felt, mine_level : felt) -> (deuterium_produced : felt):
         alloc_locals
-        let (time_now) = get_block_timestamp()
-        local time_elapsed = time_now - last_timestamp
         if time_elapsed == 0:
             return (0)
         end
