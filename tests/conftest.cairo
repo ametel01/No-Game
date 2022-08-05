@@ -143,6 +143,17 @@ func _time_warp{syscall_ptr : felt*, range_check_ptr}(new_timestamp : felt, targ
     return ()
 end
 
+func _warp_all{syscall_ptr : felt*, range_check_ptr}(new_timestamp : felt, addresses : Contracts):
+    %{
+        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.game)
+        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.resources)
+        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.facilities)
+        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.shipyard)
+        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.research)
+    %}
+    return ()
+end
+
 func _set_resource_levels{syscall_ptr : felt*, range_check_ptr}(
     resource : felt, wallet : felt, amount : felt
 ):
