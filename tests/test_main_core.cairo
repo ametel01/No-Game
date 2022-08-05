@@ -1,8 +1,18 @@
 %lang starknet
 
+from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
-from tests.conftest import E18, Contracts, _get_test_addresses, _run_modules_manager, _run_minter
+from utils.formulas import Formulas
+from tests.conftest import (
+    E18,
+    Contracts,
+    _get_test_addresses,
+    _run_modules_manager,
+    _run_minter,
+    _set_mines_levels,
+    _time_warp,
+)
 from tests.interfaces import NoGame, ERC721, ERC20
 
 @external
@@ -54,6 +64,34 @@ func test_generate_planet{syscall_ptr : felt*, range_check_ptr}():
     assert metal_balance = Uint256(500 * E18, 0)
     assert crystal_balance = Uint256(300 * E18, 0)
     assert deuterium_balance = Uint256(100 * E18, 0)
+    return ()
+end
+
+@external
+func test_collect_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    alloc_locals
+    let (addresses : Contracts) = _get_test_addresses()
+    _run_modules_manager(addresses)
+    _run_minter(addresses, 10)
+    %{ stop_prank_callable1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
+    NoGame.generatePlanet(addresses.game)
+
+    _set_mines_levels(game=addresses.game, id=1, m=1, c=1, d=1, s=5)
+    _time_warp(3600, addresses.game)
+
+    let (exp_metal) = Formulas.metal_mine_production(0, 3600, 1)
+    let (exp_crystal) = Formulas.crystal_mine_production(0, 3600, 1)
+    let (exp_deuterium) = Formulas.deuterium_mine_production(0, 3600, 1)
+
+    NoGame.collectResources(addresses.game)
+    let (actual_metal, actual_crystal, actual_deuterium, _) = NoGame.getResourcesAvailable(
+        addresses.game, addresses.owner
+    )
+    %{ print(f"actual_metal: {ids.actual_metal}\tactual_crystal: {ids.actual_crystal}\tactual_deuterium: {ids.actual_deuterium}") %}
+    assert actual_metal = exp_metal * E18 + 500 * E18
+    assert actual_crystal = exp_crystal * E18 + 300 * E18
+    assert actual_deuterium = exp_deuterium * E18 + 100 * E18
+
     return ()
 end
 
