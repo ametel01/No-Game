@@ -6,6 +6,7 @@ from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from main.INoGame import INoGame
+from main.structs import Cost
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 
@@ -25,11 +26,6 @@ const DEATHSTAR_ID = 38
 #########################################################################################
 #                                           STRUCTS                                     #
 #########################################################################################
-struct ShipsCost:
-    member metal : felt
-    member crystal : felt
-    member deuterium : felt
-end
 
 struct Performance:
     member structural_intergrity : felt
@@ -38,11 +34,6 @@ struct Performance:
     member cargo_capacity : felt
     member base_speed : felt
     member fuel_consumption : felt
-end
-
-struct Ships:
-    member cost : ShipsCost
-    member performance : Performance
 end
 
 struct ShipyardQue:
@@ -60,6 +51,17 @@ struct Fleet:
     member cruiser : felt
     member battle_ship : felt
     member death_star : felt
+end
+
+struct ShipsCosts:
+    member cargo : Cost
+    member recycler : Cost
+    member espionage_probe : Cost
+    member solar_satellite : Cost
+    member light_fighter : Cost
+    member cruiser : Cost
+    member battle_ship : Cost
+    member death_star : Cost
 end
 #########################################################################################
 #                                           STORAGES                                    #
@@ -93,6 +95,14 @@ namespace Shipyard:
     ) -> (status : ShipyardQue):
         let (res) = Shipyard_timelock.read(caller)
         return (res)
+    end
+
+    func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (costs : ShipsCosts):
+        return (
+            ShipsCosts(Cost(2000, 2000, 0, 0), Cost(10000, 6000, 2000, 0), Cost(0, 1000, 0, 0), Cost(0, 2000, 500, 0), Cost(3000, 1000, 0, 0), Cost(20000, 7000, 2000, 0), Cost(45000, 15000, 0, 0)),
+        )
     end
 
     func cargo_ship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
