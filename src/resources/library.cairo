@@ -7,7 +7,7 @@ from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
 from starkware.starknet.common.syscalls import get_block_timestamp
 from main.INoGame import INoGame
-from main.structs import Cost
+from main.structs import CostResources, Cost
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 
@@ -58,20 +58,31 @@ namespace Resources:
 
     func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
-    ) -> (metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost):
+    ) -> (
+        metal_mine : CostResources,
+        crystal_mine : CostResources,
+        deuterium_mine : CostResources,
+        solar_plant : Cost,
+    ):
         alloc_locals
         let (no_game) = Resources_no_game_address.read()
         let (
-            metal_mine, crystal_mine, deuterium_mine, solar_plant
+            metal_level, crystal_level, deuterium_level, solar_level
         ) = INoGame.getResourcesBuildingsLevels(no_game, caller)
-        let (m_m, m_c) = _metal_building_cost(metal_mine)
-        let (c_m, c_c) = _crystal_building_cost(crystal_mine)
-        let (d_m, d_c) = _deuterium_building_cost(deuterium_mine)
-        let (s_m, s_c) = _solar_plant_building_cost(solar_plant)
+        let (m_m, m_c) = _metal_building_cost(metal_level)
+        let (m_ene) = Formulas.consumption_energy(metal_level)
+
+        let (c_m, c_c) = _crystal_building_cost(crystal_level)
+        let (c_ene) = Formulas.consumption_energy(crystal_level)
+
+        let (d_m, d_c) = _deuterium_building_cost(deuterium_level)
+        let (d_ene) = Formulas.consumption_energy(deuterium_level)
+
+        let (s_m, s_c) = _solar_plant_building_cost(solar_level)
         return (
-            metal_mine=Cost(m_m, m_c, 0),
-            crystal_mine=Cost(c_m, c_c, 0),
-            deuterium_mine=Cost(d_m, d_c, 0),
+            metal_mine=CostResources(m_m, m_c, 0, m_ene),
+            crystal_mine=CostResources(c_m, c_c, 0, c_ene),
+            deuterium_mine=CostResources(d_m, d_c, 0, d_ene),
             solar_plant=Cost(s_m, s_c, 0),
         )
     end
