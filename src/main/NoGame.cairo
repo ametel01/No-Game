@@ -8,6 +8,7 @@ from main.structs import Cost, TechLevels, TechCosts
 from resources.IResources import IResources
 from resources.library import ResourcesQue
 from research.IResearchLab import IResearchLab
+from research.library import ResearchQue
 from shipyard.library import Fleet, ShipyardQue
 from shipyard.IShipyard import IShipyard
 
@@ -129,7 +130,7 @@ func getResourcesAvailable{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 end
 
 @view
-func getResourcesQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+func getBuildingQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (status : ResourcesQue):
     let (status) = NoGame.resources_que(caller)
@@ -142,6 +143,15 @@ func getShipyardQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
 ) -> (status : ShipyardQue):
     let (_, _, shipyard, _) = getModulesAddresses()
     let (que_details) = IShipyard.getQueStatus(shipyard, caller)
+    return (que_details)
+end
+
+@view
+func getResearchQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (status : ResearchQue):
+    let (_, _, _, lab) = getModulesAddresses()
+    let (que_details) = IResearchLab.getQueStatus(lab, caller)
     return (que_details)
 end
 
