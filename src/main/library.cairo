@@ -181,10 +181,8 @@ namespace NoGame:
         alloc_locals
         let (modules_manager) = NoGame_modules_manager.read(modules_manager)
         let (_, facilities, _, _) = IModulesManager.getModulesAddresses()
-        let (metal_mine, crystal_mine, deuterium_mine, solar_plant) = IFacilities.getUpgradeCost(
-            facilities, caller
-        )
-        return (metal_mine, crystal_mine, deuterium_mine, solar_plant)
+        let (robot, shipyard, research, nanite) = IFacilities.getUpgradeCost(facilities, caller)
+        return (robot, shipyard, research, nanite)
     end
 
     func tech_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -226,9 +224,39 @@ namespace NoGame:
 
     func tech_upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
-    ) -> (costs : TechCosts):
-        let (costs) = IResearchLab.getUpgradesCost(caller)
-        return (costs)
+    ) -> (
+        armour_tech : Cost,
+        astrophysics : Cost,
+        combustion_drive : Cost,
+        computer_tech : Cost,
+        energy_tech : Cost,
+        espionage_tech : Cost,
+        hyperspace_drive : Cost,
+        hyperspace_tech : Cost,
+        impulse_drive : Cost,
+        ion_tech : Cost,
+        laser_tech : Cost,
+        plasma_tech : Cost,
+        shielding_tech : Cost,
+        weapons_tech : Cost,
+    ):
+        let (costs : TechCosts) = IResearchLab.getUpgradesCost(caller)
+        return (
+            costs.armour_tech,
+            costs.astrophysics,
+            costs.combustion_drive,
+            costs.computer_tech,
+            costs.energy_tech,
+            costs.espionage_tech,
+            costs.hyperspace_drive,
+            costs.hyperspace_tech,
+            costs.impulse_drive,
+            costs.ion_tech,
+            costs.laser_tech,
+            costs.plasma_tech,
+            costs.shielding_tech,
+            costs.weapons_tech,
+        )
     end
 
     func fleet_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -598,7 +626,6 @@ namespace NoGame:
     #                              SHIPYARD PUBLIC FUNCS                                         #
     ##############################################################################################
 
-    @external
     func cargo_ship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         number_of_units : felt
     ):
@@ -620,7 +647,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func cargo_ship_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -636,7 +662,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func recycler_ship_build_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(number_of_units : felt):
@@ -658,7 +683,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func recycler_ship_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -674,7 +698,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func espionage_probe_build_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(number_of_units : felt):
@@ -696,7 +719,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func espionage_probe_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -712,7 +734,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func solar_satellite_build_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(number_of_units : felt):
@@ -734,7 +755,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func solar_satellite_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -750,7 +770,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func light_fighter_build_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(number_of_units : felt):
@@ -772,7 +791,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func light_fighter_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -788,7 +806,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func cruiser_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         number_of_units : felt
     ):
@@ -810,7 +827,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func cruiser_build_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ):
         alloc_locals
@@ -825,7 +841,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func battleship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         number_of_units : felt
     ):
@@ -847,7 +862,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func battleship_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -867,7 +881,6 @@ namespace NoGame:
     #                                  RESEARCH LAB PUBLIC FUNCTIONS                         #
     ##########################################################################################
 
-    @external
     func armour_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -888,7 +901,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func armour_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -903,7 +915,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func astrophysics_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -924,7 +935,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func astrophysics_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -939,7 +949,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func combustion_drive_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -960,7 +969,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func combustion_drive_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -975,7 +983,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func computer_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -996,7 +1003,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func computer_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1011,7 +1017,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func energy_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1032,7 +1037,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func energy_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1047,7 +1051,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func espionage_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1068,7 +1071,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func espionage_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1083,7 +1085,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func hyperspace_drive_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1104,7 +1105,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func hyperspace_drive_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1119,7 +1119,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func hyperspace_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1140,7 +1139,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func hyperspace_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1155,7 +1153,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func impulse_drive_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1176,7 +1173,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func impulse_drive_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1191,7 +1187,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func ion_tech_upgrade_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         ):
         alloc_locals
@@ -1211,7 +1206,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func ion_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1226,7 +1220,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func laser_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1247,7 +1240,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func laser_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1262,7 +1254,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func plasma_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1283,7 +1274,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func plasma_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1298,7 +1288,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func shielding_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1319,7 +1308,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func shielding_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1334,7 +1322,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func weapons_tech_upgrade_start{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
@@ -1355,7 +1342,6 @@ namespace NoGame:
         return ()
     end
 
-    @external
     func weapons_tech_upgrade_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }():
