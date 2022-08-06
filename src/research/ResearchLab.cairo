@@ -3,7 +3,7 @@
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from main.structs import TechCosts
-from research.library import ResearchLab
+from research.library import ResearchLab, ResearchQue
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -11,6 +11,14 @@ func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
 ):
     ResearchLab.initializer(no_game_address)
     return ()
+end
+
+@external
+func getQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (status : ResearchQue):
+    let (res) = ResearchLab.que_status(caller)
+    return (res)
 end
 
 @external

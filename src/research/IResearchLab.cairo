@@ -1,9 +1,13 @@
 %lang starknet
 
 from main.structs import TechCosts
+from research.library import ResearchQue
 
 @contract_interface
 namespace IResearchLab:
+    func getQueStatus(caller : felt) -> (status : ResearchQue):
+    end
+
     func armourTechUpgradeStart(caller : felt, current_tech_level : felt) -> (
         metal_required : felt, crystal_required : felt, deuterium_required : felt, time_end : felt
     ):

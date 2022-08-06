@@ -65,6 +65,13 @@ namespace ResearchLab:
         return ()
     end
 
+    func que_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (status : ResearchQue):
+        let (res) = Research_timelock.read(caller)
+        return (res)
+    end
+
     func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (costs : TechCosts):
@@ -86,20 +93,20 @@ namespace ResearchLab:
         let (m13, c13, d13) = _hyperspace_drive_upgrade_cost(tech_levels.hyperspace_drive)
         let (m14, c14, d14) = _impulse_drive_upgrade_cost(tech_levels.impulse_drive)
         return (
-            TechCosts(armour_tech=Cost(m4, c4, d4),
-            astrophysics=Cost(m11, c11, d11),
-            combustion_drive=Cost(m12, c12, d12),
-            computer_tech=Cost(m2, c2, d2),
-            energy_tech=Cost(m1, c1, d1),
-            espionage_tech=Cost(m5, c5, d5),
-            hyperspace_drive=Cost(m13, c13, d13),
-            hyperspace_tech=Cost(m10, c10, d10),
-            impulse_drive=Cost(m14, c14, d14),
-            ion_tech=Cost(m6, c6, d6),
-            laser_tech=Cost(m3, c3, d3),
-            plasma_tech=Cost(m7, c7, d7),
-            shielding_tech=Cost(m9, c9, d9),
-            weapons_tech=Cost(m8, c8, d8)),
+            TechCosts(armour_tech=Cost(m4, c4, d4, 0),
+            astrophysics=Cost(m11, c11, d11, 0),
+            combustion_drive=Cost(m12, c12, d12, 0),
+            computer_tech=Cost(m2, c2, d2, 0),
+            energy_tech=Cost(m1, c1, d1, 0),
+            espionage_tech=Cost(m5, c5, d5, 0),
+            hyperspace_drive=Cost(m13, c13, d13, 0),
+            hyperspace_tech=Cost(m10, c10, d10, 0),
+            impulse_drive=Cost(m14, c14, d14, 0),
+            ion_tech=Cost(m6, c6, d6, 0),
+            laser_tech=Cost(m3, c3, d3, 0),
+            plasma_tech=Cost(m7, c7, d7, 0),
+            shielding_tech=Cost(m9, c9, d9, 0),
+            weapons_tech=Cost(m8, c8, d8, 0)),
         )
     end
 
