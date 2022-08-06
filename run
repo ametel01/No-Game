@@ -10,6 +10,10 @@ reset() {
     /usr/bin/rm ./deploy.txt
 }
 
+build() {
+    protostar build
+}
+
 deploy() {
     touch deploy.txt
 
@@ -71,6 +75,7 @@ deploy() {
 
 main() {
     case "$1" in
+        "build") build ;;
         "clean") clean ;;
         "deploy") deploy ;;
         "reset") reset ;;
