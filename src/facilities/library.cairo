@@ -68,10 +68,10 @@ namespace Facilities:
         let (l_m, l_c, l_d) = _research_lab_upgrade_cost(research_lab_level)
         let (n_m, n_c, n_d) = _nanite_factory_upgrade_cost(nanite_level)
         return (
-            robot_factory=Cost(r_m, r_c, r_d),
-            shipyard=Cost(s_m, s_c, s_d),
-            research_lab=Cost(l_m, l_c, l_d),
-            nanite=Cost(n_m, n_c, n_d),
+            robot_factory=Cost(r_m, r_c, r_d, 0),
+            shipyard=Cost(s_m, s_c, s_d, 0),
+            research_lab=Cost(l_m, l_c, l_d, 0),
+            nanite=Cost(n_m, n_c, n_d, 0),
         )
     end
 
