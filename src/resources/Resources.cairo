@@ -3,7 +3,7 @@
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from resources.library import Resources
-from main.structs import Cost
+from main.structs import Cost, CostResources
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -84,7 +84,12 @@ end
 @external
 func getUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost):
+) -> (
+    metal_mine : CostResources,
+    crystal_mine : CostResources,
+    deuterium_mine : CostResources,
+    solar_plant : Cost,
+):
     let (metal, crystal, deuterium, solar_plant) = Resources.upgrades_cost(caller)
     return (metal, crystal, deuterium, solar_plant)
 end
