@@ -4,6 +4,7 @@ from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.uint256 import Uint256
 from manager.IModulesManager import IModulesManager as Manager
 from tests.interfaces import Minter, NoGame
+from shipyard.library import Fleet
 
 const E18 = 10 ** 18
 const ERC721_NAME = 0x4e6f47616d6520
@@ -278,15 +279,21 @@ func _print_game_state{syscall_ptr : felt*, range_check_ptr}(addresses : Contrac
     let (metal, crystal, deuterium, _) = NoGame.getResourcesAvailable(
         addresses.game, addresses.owner
     )
+    let (f) = NoGame.getFleetLevels(addresses.game, addresses.owner)
     %{
         print(f"metal: {ids.metal/ids.E18}\tcrystal: {ids.crystal/ids.E18}\tdeuterium: {ids.deuterium/ids.E18}\n") 
         print(f"metal level: {ids.m}\tcrystal level: {ids.c}\tdeuterium level: {ids.d}\tsolar level: {ids.s}\n")
         print(f"robot level: {ids.ro}\tshipyard level: {ids.sh}\tresearch lab level: {ids.re}\tnanite level: {ids.na}\n")
+
         print(f"armour_tech: {ids.t.armour_tech}\tastrophysics: {ids.t.astrophysics}\tcombustion_drive: {ids.t.combustion_drive}")
         print(f"computer_tech : {ids.t.computer_tech }\tenergy_tech: {ids.t.energy_tech}\tespionage_tech: {ids.t.espionage_tech}")
         print(f"hyperspace_drive : {ids.t.hyperspace_drive }\thyperspace_tech: {ids.t.hyperspace_tech}\timpulse_drive: {ids.t.impulse_drive}")
         print(f"ion_tech : {ids.t.ion_tech }\tlaser_tech: {ids.t.laser_tech}\tplasma_tech: {ids.t.plasma_tech}")
-        print(f"shielding_tech : {ids.t.shielding_tech }\tshielding_tech: {ids.t.shielding_tech}")
+        print(f"shielding_tech : {ids.t.shielding_tech }\tweapons_tech: {ids.t.weapons_tech}\n")
+
+        print(f"cargo : {ids.f.cargo }\trecycler: {ids.f.recycler}\tespionage_probe: {ids.f.espionage_probe}")
+        print(f"solar_satellite : {ids.f.solar_satellite }\tlight_fighter: {ids.f.light_fighter}\tcruiser: {ids.f.cruiser}")
+        print(f"battle_ship: {ids.f.battle_ship}")
     %}
 
     return ()
