@@ -30,6 +30,13 @@ struct Cost:
     member deuterium : felt
 end
 
+struct CostResources:
+    member metal : felt
+    member crystal : felt
+    member deuterium : felt
+    member energy_cost : felt
+end
+
 # @dev Stores the building on cue details
 struct BuildingQue:
     member id : felt
