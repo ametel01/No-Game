@@ -81,6 +81,7 @@ from shipyard.IShipyard import IShipyard
 from shipyard.library import (
     Fleet,
     ShipyardQue,
+    ShipsCosts,
     CARGO_SHIP_ID,
     RECYCLER_SHIP_ID,
     ESPIONAGE_PROBE_ID,

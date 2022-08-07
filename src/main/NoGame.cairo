@@ -105,10 +105,40 @@ end
 @view
 func getTechUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (costs : TechCosts):
-    let (_, _, lab, _) = NoGame.modules_addresses()
-    let (costs) = IResearchLab.getUpgradesCost(lab, caller)
-    return (costs)
+) -> (
+    armour_tech : Cost,
+    astrophysics : Cost,
+    combustion_drive : Cost,
+    computer_tech : Cost,
+    energy_tech : Cost,
+    espionage_tech : Cost,
+    hyperspace_drive : Cost,
+    hyperspace_tech : Cost,
+    impulse_drive : Cost,
+    ion_tech : Cost,
+    laser_tech : Cost,
+    plasma_tech : Cost,
+    shielding_tech : Cost,
+    weapons_tech : Cost,
+):
+    let (_, _, _, lab) = NoGame.modules_addresses()
+    let (costs : TechCosts) = IResearchLab.getUpgradesCost(lab, caller)
+    return (
+        costs.armour_tech,
+        costs.astrophysics,
+        costs.combustion_drive,
+        costs.computer_tech,
+        costs.energy_tech,
+        costs.espionage_tech,
+        costs.hyperspace_drive,
+        costs.hyperspace_tech,
+        costs.impulse_drive,
+        costs.ion_tech,
+        costs.laser_tech,
+        costs.plasma_tech,
+        costs.shielding_tech,
+        costs.weapons_tech,
+    )
 end
 
 @view
@@ -117,6 +147,29 @@ func getFleetLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 ) -> (result : Fleet):
     let (res) = NoGame.fleet_levels(caller)
     return (res)
+end
+
+@view
+func getShipsCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    cargo : Cost,
+    recycler : Cost,
+    espionage_probe : Cost,
+    solar_satellite : Cost,
+    light_fighter : Cost,
+    cruiser : Cost,
+    battleship : Cost,
+):
+    let (_, _, shipyard, _) = NoGame.modules_addresses()
+    let (costs) = IShipyard.getShipsCost(shipyard)
+    return (
+        costs.cargo,
+        costs.recycler,
+        costs.espionage_probe,
+        costs.solar_satellite,
+        costs.light_fighter,
+        costs.cruiser,
+        costs.battle_ship,
+    )
 end
 
 @view
