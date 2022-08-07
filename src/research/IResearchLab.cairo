@@ -5,6 +5,9 @@ from research.library import ResearchQue
 
 @contract_interface
 namespace IResearchLab:
+    func getUpgradesCost(caller : felt) -> (cost : TechCosts):
+    end
+
     func getQueStatus(caller : felt) -> (status : ResearchQue):
     end
 
@@ -118,8 +121,5 @@ namespace IResearchLab:
     end
 
     func weaponsTechUpgradeComplete(caller : felt):
-    end
-
-    func getUpgradesCost(caller : felt) -> (cost : TechCosts):
     end
 end

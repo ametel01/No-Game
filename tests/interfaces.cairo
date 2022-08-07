@@ -45,10 +45,36 @@ namespace NoGame:
     func getFleetLevels(caller : felt) -> (levels : Fleet):
     end
 
+    func getShipsCost() -> (
+        cargo : Cost,
+        recycler : Cost,
+        espionage_probe : Cost,
+        solar_satellite : Cost,
+        light_fighter : Cost,
+        cruiser : Cost,
+        battleship : Cost,
+    ):
+    end
+
     func getTechLevels(caller : felt) -> (tech_levels : TechLevels):
     end
 
-    func getTechUpgradeCost(caller : felt) -> (tech_costs : TechCosts):
+    func getTechUpgradeCost(caller : felt) -> (
+        a : Cost,
+        b : Cost,
+        c : Cost,
+        d : Cost,
+        e : Cost,
+        f : Cost,
+        g : Cost,
+        h : Cost,
+        i : Cost,
+        l : Cost,
+        m : Cost,
+        n : Cost,
+        o : Cost,
+        p : Cost,
+    ):
     end
 
     func getResourcesQueStatus(caller : felt) -> (status : ResourcesQue):
