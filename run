@@ -18,57 +18,79 @@ deploy() {
     touch deploy.txt
 
     stdout=$(protostar deploy './build/minter.json' --network alpha-goerli --inputs $ADMIN 2>&1 )
+    sleep 10s
     minter=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'minter::'${minter}
     echo 'minter::'${minter} >> deploy.txt
     echo 'Deployed Minter...'
 
     stdout=$(protostar deploy ./build/erc721.json --network alpha-goerli --inputs  0x4e6f47616d6520 0x4f474d302e31 $minter 54 $URI 2>&1 )
+    sleep 10s
     erc721=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'erc721$::'${erc721}
     echo 'erc721$::'${erc721} >> deploy.txt
     echo 'Deployed ERC721...'
 
     stdout=$(protostar deploy ./build/manager.json --network alpha-goerli --inputs $ADMIN 2>&1 )
+    sleep 10s
     manager=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'manager::'${manager}
     echo 'manager::'${manager} >> deploy.txt
     echo 'Deployed Modules Manager...'
 
     stdout=$(protostar deploy ./build/main.json --network alpha-goerli --inputs $ADMIN $manager 2>&1 )
+    sleep 10s
     game=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'game::'${game}
     echo 'game::'${game} >> deploy.txt
     echo 'Deployed NoGame...'
 
     stdout=$(protostar deploy ./build/erc20.json --network alpha-goerli --inputs 0x4e6f47616d652d4d6574616c 0x4e472d4d 18 0 0 $game $game 2>&1 )
+    sleep 10s
     metal=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'metal::'${metal}
     echo 'metal::'${metal} >> deploy.txt
     echo 'Deployed ERC20 Metal...'
 
     stdout=$(protostar deploy ./build/erc20.json --network alpha-goerli --inputs  0x4e6f47616d652d4372797374616c 0x4e472d43 18 0 0 $game $game 2>&1 )
+    sleep 10s
     crystal=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'crystal::'${crystal}
     echo 'crystal::'${crystal} >> deploy.txt
     echo 'Deployed ERC20 Crystal...'
 
     stdout=$(protostar deploy ./build/erc20.json --network alpha-goerli --inputs  0x4e6f47616d652d44657574657269756d 0x4e472d44 18 0 0 $game $game 2>&1 )
+    sleep 10s
     deuterium=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'deuterium::'${deuterium}
     echo 'deuterium::'${deuterium} >> deploy.txt
     echo 'Deployed ERC20 Deuterium...'
 
     stdout=$(protostar deploy ./build/resources.json --network alpha-goerli --inputs $game 2>&1 )
+    sleep 10s
     resources=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'resources::'${resources}
     echo 'resources::'${resources} >> deploy.txt
     echo 'Deployed Resources Module...'
 
     stdout=$(protostar deploy ./build/facilities.json --network alpha-goerli --inputs $game 2>&1 )
+    sleep 10s
     facilities=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'facilities::'${facilities}
     echo 'facilities::'${facilities} >> deploy.txt
     echo 'Deployed Facilities Module...'
 
     stdout=$(protostar deploy ./build/shipyard.json --network alpha-goerli --inputs $game 2>&1 )
+    sleep 10s
     shipyard=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'shipyard::'${shipyard}
     echo 'shipyard::'${shipyard} >> deploy.txt
     echo 'Deployed Shipyard Module...'
 
     stdout=$(protostar deploy ./build/research.json --network alpha-goerli --inputs $game 2>&1 )
+    sleep 10s
     research=$(echo ${stdout}  | grep -o -P '(?<=Contract address: ).*(?= Transaction hash:)')
+    echo 'research::'${research}
     echo 'research::'${research} >> deploy.txt
     echo 'Deployed Research Lab Module...'
 }
