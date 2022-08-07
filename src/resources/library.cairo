@@ -65,13 +65,13 @@ namespace Resources:
             metal_level, crystal_level, deuterium_level, solar_level
         ) = INoGame.getResourcesBuildingsLevels(no_game, caller)
         let (m_m, m_c) = _metal_building_cost(metal_level)
-        let (m_ene) = Formulas.consumption_energy(metal_level)
+        let (m_ene) = Formulas.consumption_energy(metal_level + 1)
 
         let (c_m, c_c) = _crystal_building_cost(crystal_level)
-        let (c_ene) = Formulas.consumption_energy(crystal_level)
+        let (c_ene) = Formulas.consumption_energy(crystal_level + 1)
 
         let (d_m, d_c) = _deuterium_building_cost(deuterium_level)
-        let (d_ene) = Formulas.consumption_energy(deuterium_level)
+        let (d_ene) = Formulas.consumption_energy(deuterium_level + 1)
 
         let (s_m, s_c) = _solar_plant_building_cost(solar_level)
         return (
