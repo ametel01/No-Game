@@ -61,7 +61,6 @@ struct ShipsCosts:
     member light_fighter : Cost
     member cruiser : Cost
     member battle_ship : Cost
-    member death_star : Cost
 end
 #########################################################################################
 #                                           STORAGES                                    #
@@ -97,11 +96,17 @@ namespace Shipyard:
         return (res)
     end
 
-    func upgrades_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt
-    ) -> (costs : ShipsCosts):
+    func ships_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+        costs : ShipsCosts
+    ):
         return (
-            ShipsCosts(Cost(2000, 2000, 0, 0), Cost(10000, 6000, 2000, 0), Cost(0, 1000, 0, 0), Cost(0, 2000, 500, 0), Cost(3000, 1000, 0, 0), Cost(20000, 7000, 2000, 0), Cost(45000, 15000, 0, 0)),
+            ShipsCosts(cargo=Cost(2000, 2000, 0, 0),
+            recycler=Cost(10000, 6000, 2000, 0),
+            espionage_probe=Cost(0, 1000, 0, 0),
+            solar_satellite=Cost(0, 2000, 500, 0),
+            light_fighter=Cost(3000, 1000, 0, 0),
+            cruiser=Cost(20000, 7000, 2000, 0),
+            battle_ship=Cost(45000, 15000, 0, 0)),
         )
     end
 

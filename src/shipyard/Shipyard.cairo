@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from shipyard.library import Shipyard, ShipyardQue
+from shipyard.library import Shipyard, ShipyardQue, ShipsCosts
 
 @constructor
 func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -18,6 +18,14 @@ func getQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_
 ) -> (status : ShipyardQue):
     let (res) = Shipyard.que_status(caller)
     return (res)
+end
+
+@external
+func getShipsCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
+    costs : ShipsCosts
+):
+    let (costs) = Shipyard.ships_cost()
+    return (costs)
 end
 ########################################################################################################
 #                                   SHIPS UPGRADE FUNCTION                                             #

@@ -1,10 +1,13 @@
 %lang starknet
 
-from shipyard.library import ShipyardQue
+from shipyard.library import ShipyardQue, ShipsCosts
 
 @contract_interface
 namespace IShipyard:
     func getQueStatus(caller : felt) -> (status : ShipyardQue):
+    end
+
+    func getShipsCost() -> (costs : ShipsCosts):
     end
 
     func cargoShipBuildStart(caller : felt, number_of_units : felt) -> (
