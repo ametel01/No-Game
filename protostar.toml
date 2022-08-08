@@ -8,6 +8,15 @@ libs_path = "./lib/"
 cairo_path = ["./src"]
 disable_hint_validation = true
 
+[profile.devnet.protostar.deploy]
+gateway-url="http://127.0.0.1:5050/"
+
+[profile.testnet.protostar.deploy]
+network="alpha-goerli"
+
+[profile.mainnet.protostar.deploy]
+network="alpha-mainnet"
+
 ["protostar.contracts"]
 facilities = [
     "src/facilities/Facilities.cairo"
