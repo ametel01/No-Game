@@ -1,10 +1,16 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import assert_le, unsigned_div_rem, assert_not_zero
+from starkware.cairo.common.math import (
+    assert_le,
+    unsigned_div_rem,
+    assert_not_zero,
+    assert_not_equal,
+)
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
+from facilities.library import SHIPYARD_ID
 from main.INoGame import INoGame
 from main.structs import Cost
 from token.erc20.interfaces.IERC20 import IERC20
@@ -599,6 +605,12 @@ func _check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     let current_timelock = que_status.lock_end
     with_attr error_message("SHIPYARD::QUE IS BUSY"):
         assert current_timelock = 0
+    end
+
+    let (game) = Shipyard_no_game_address.read()
+    let (shipyard_available) = INoGame.getBuildingQueStatus(game, caller)
+    with_attr error_message("SHIPYARD::SHIPYARD IS UPGRADING"):
+        assert_not_equal(shipyard_available.id, SHIPYARD_ID)
     end
     return ()
 end
