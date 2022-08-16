@@ -46,11 +46,14 @@ func ERC721_Metadata_tokenURI{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, 
     _ERC721_Metadata_baseTokenURI(base_token_uri_len, base_token_uri)
 
     let (token_id_ss_len, token_id_ss) = uint256_to_ss(token_id)
+    let postfix_len = 5
+    tempvar postfix : felt* = new (46,106,115,111,110)
     let (token_uri, token_uri_len) = concat_arr(
         base_token_uri_len, base_token_uri, token_id_ss_len, token_id_ss
     )
+    let (final_uri, final_uri_len) = concat_arr(token_uri_len, token_uri, postfix_len, postfix)
 
-    return (token_uri_len=token_uri_len, token_uri=token_uri)
+    return (token_uri_len=final_uri_len, token_uri=final_uri)
 end
 
 func _ERC721_Metadata_baseTokenURI{
