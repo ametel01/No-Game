@@ -330,8 +330,6 @@ namespace NoGame:
         let (erc721_owner) = IERC721.ownerOf(erc721, new_planet_id)
         IERC721.transferFrom(erc721, erc721_owner, caller, new_planet_id)
         NoGame_number_of_planets.write(new_id)
-        NoGame_metal_mine_level.write(new_planet_id, 1)
-        NoGame_crystal_mine_level.write(new_planet_id, 1)
         NoGame_solar_plant_level.write(new_planet_id, 1)
         # Transfer resources ERC20 tokens to caller.
         _receive_resources_erc20(
