@@ -37,6 +37,11 @@ struct BuildingQue:
     member lock_end : felt
 end
 
+struct ResearchQue:
+    member tech_id : felt
+    member lock_end : felt
+end
+
 struct TechLevels:
     member armour_tech : felt
     member astrophysics : felt
