@@ -4,3 +4,5 @@ lib/
 build/
 
 deploy.txt
+
+metadata_gen/
