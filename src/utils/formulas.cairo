@@ -19,13 +19,11 @@ namespace Formulas:
         time_elapsed : felt, mine_level : felt
     ) -> (metal_produced : felt):
         alloc_locals
-        if time_elapsed == 0:
-            return (0)
-        end
         let (metal_hour) = _resources_production_formula(30, mine_level)
         let (prod_second, _) = unsigned_div_rem(metal_hour * 10000, 3600)  # 91
         let fact8 = prod_second * time_elapsed
-        let (prod_scaled, _) = unsigned_div_rem(fact8, 1000)  # 32
+        # @dev current production rate is set to 5X. To set to 1X set the diviso to 10000
+        let (prod_scaled, _) = unsigned_div_rem(fact8, 2000)  # 32
         return (metal_produced=prod_scaled)
     end
 
@@ -33,13 +31,11 @@ namespace Formulas:
         time_elapsed : felt, mine_level : felt
     ) -> (crystal_produced : felt):
         alloc_locals
-        if time_elapsed == 0:
-            return (0)
-        end
         let (crystal_hour) = _resources_production_formula(20, mine_level)
         let (fact7, _) = unsigned_div_rem(crystal_hour * 10000, 3600)
         let fact8 = fact7 * time_elapsed
-        let (prod_scaled, _) = unsigned_div_rem(fact8, 1000)
+        # @dev current production rate is set to 5X. To set to 1X set the diviso to 10000
+        let (prod_scaled, _) = unsigned_div_rem(fact8, 2000)
         return (crystal_produced=prod_scaled)
     end
 
@@ -47,13 +43,11 @@ namespace Formulas:
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
     }(time_elapsed : felt, mine_level : felt) -> (deuterium_produced : felt):
         alloc_locals
-        if time_elapsed == 0:
-            return (0)
-        end
         let (deuterium_hour) = _resources_production_formula(10, mine_level)
         let (fact7, _) = unsigned_div_rem(deuterium_hour * 10000, 3600)
         let fact8 = fact7 * time_elapsed
-        let (prod_scaled, _) = unsigned_div_rem(fact8, 1000)
+        # @dev current production rate is set to 5X. To set to 1X set the diviso to 10000
+        let (prod_scaled, _) = unsigned_div_rem(fact8, 2000)
         return (deuterium_produced=prod_scaled)
     end
 
