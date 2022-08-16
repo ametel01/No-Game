@@ -1,11 +1,12 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import assert_le, assert_not_zero
+from starkware.cairo.common.math import assert_le, assert_not_zero, assert_not_equal
 from starkware.cairo.common.math_cmp import is_le
 from starkware.cairo.common.pow import pow
 from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
+from facilities.library import RESEARCH_LAB_ID
 from main.INoGame import INoGame
 from token.erc20.interfaces.IERC20 import IERC20
 from main.structs import TechLevels, Cost, TechCosts
@@ -754,7 +755,7 @@ func _energy_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
-    with_attr error_message("research lab must be at level 1"):
+    with_attr error_message("ENERGY TECH::RESEARCH LAB MUST BE AT LEVEL 1"):
         assert_le(1, research_lab_level)
     end
     return ()
@@ -766,7 +767,7 @@ func _computer_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
-    with_attr error_message("research lab must be at level 1"):
+    with_attr error_message("COMPUTER TECH::RESEARCH LAB MUST BE AT LEVEL 1"):
         assert_le(1, research_lab_level)
     end
     return ()
@@ -780,10 +781,10 @@ func _laser_tech_requirements_check{
     let (tech_levels) = _get_tech_levels(caller)
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
-    with_attr error_message("research lab must be at level 1"):
+    with_attr error_message("LASER TECH::RESEARCH LAB MUST BE AT LEVEL 1"):
         assert_le(1, research_lab_level)
     end
-    with_attr error_message("energy tech must be at level 2"):
+    with_attr error_message("LASER TECH::ENERGY TECH MUST BE AT LEVEL 2"):
         assert_le(2, energy_tech_level)
     end
     return ()
@@ -795,7 +796,7 @@ func _armour_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
-    with_attr error_message("research lab must be at level 2"):
+    with_attr error_message("ARMOUR TECH::RESEARCH LAB MUST BE AT LEVEL 2"):
         assert_le(2, research_lab_level)
     end
     return ()
@@ -810,13 +811,13 @@ func _astrophysics_requirements_check{
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let impulse_drive_level = tech_levels.impulse_drive
     let espionage_tech_level = tech_levels.espionage_tech
-    with_attr error_message("research lab must be at level 3"):
+    with_attr error_message("ASTROPHYSICS::RESEARCH LAB MUST BE AT LEVEL 3"):
         assert_le(3, research_lab_level)
     end
-    with_attr error_message("impulse drive must be at level 3"):
+    with_attr error_message("ASTROPHYSICS::IMPULSE DRIVE MUST BE AT LEVEL 3"):
         assert_le(3, impulse_drive_level)
     end
-    with_attr error_message("espionage tech must be at level 4"):
+    with_attr error_message("ASTROPHYSICS::ESPIONAGE TECH MUST BE AT LEVEL 4"):
         assert_le(4, espionage_tech_level)
     end
     return ()
@@ -828,7 +829,7 @@ func _espionage_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
-    with_attr error_message("research lab must be at level 3"):
+    with_attr error_message("ESPIONAGE TECH::RESEARCH LAB MUST BE AT LEVEL 3"):
         assert_le(3, research_lab_level)
     end
     return ()
@@ -843,13 +844,13 @@ func _ion_tech_requirements_check{
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let laser_tech_level = tech_levels.laser_tech
     let energy_tech_level = tech_levels.energy_tech
-    with_attr error_message("research lab must be at level 4"):
+    with_attr error_message("ION TECH::RESEARCH LAB MUST BE AT LEVEL 4"):
         assert_le(4, research_lab_level)
     end
-    with_attr error_message("laser tech must be at level 5"):
+    with_attr error_message("ION TECH::LASER TECH MUST BE AT LEVEL 5"):
         assert_le(5, laser_tech_level)
     end
-    with_attr error_message("energy tech must be at level 4"):
+    with_attr error_message("ION TECH::ENERGY TECH MUST BE AT LEVEL 4"):
         assert_le(4, energy_tech_level)
     end
     return ()
@@ -865,16 +866,16 @@ func _plasma_tech_requirements_check{
     let laser_tech_level = tech_levels.laser_tech
     let energy_tech_level = tech_levels.energy_tech
     let ion_tech_level = tech_levels.ion_tech
-    with_attr error_message("research lab must be at level 4"):
+    with_attr error_message("PLASMA TECH::RESEARCH LAB MUST BE AT LEVEL 4"):
         assert_le(4, research_lab_level)
     end
-    with_attr error_message("energy tech must be at level 8"):
+    with_attr error_message("PLASMA TECH::ENERGY TECH MUST BE AT LEVEL 8"):
         assert_le(8, energy_tech_level)
     end
-    with_attr error_message("laser tech must be at level 10"):
+    with_attr error_message("PLASMA TECH::LASER TECH MUST BE AT LEVEL 10"):
         assert_le(10, laser_tech_level)
     end
-    with_attr error_message("ion tech must be at level 5"):
+    with_attr error_message("PLASMA TECH::HYPERSPACE TECH MUST BE AT LEVEL 5"):
         assert_le(5, ion_tech_level)
     end
     return ()
@@ -886,7 +887,7 @@ func _weapons_tech_requirements_check{
     alloc_locals
     let (no_game_address) = Research_no_game_address.read()
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
-    with_attr error_message("research lab must be at level 4"):
+    with_attr error_message("WEAPONS TECH::RESEARCH LAB MUST BE AT LEVEL 4"):
         assert_le(4, research_lab_level)
     end
     return ()
@@ -900,10 +901,10 @@ func _shielding_tech_requirements_check{
     let (tech_levels) = _get_tech_levels(caller)
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
-    with_attr error_message("research lab must be at level 6"):
+    with_attr error_message("SHIELDING TECH::RESEARCH LAB MUST BE AT LEVEL 6"):
         assert_le(6, research_lab_level)
     end
-    with_attr error_message("energy tech must be at level 3"):
+    with_attr error_message("SHIELDING TECH::ENERGY TECH MUST BE AT LEVEL 3"):
         assert_le(3, energy_tech_level)
     end
     return ()
@@ -918,13 +919,13 @@ func _hyperspace_tech_requirements_check{
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
     let shielding_tech_level = tech_levels.shielding_tech
-    with_attr error_message("research lab must be at level 7"):
+    with_attr error_message("HYPERSPACE TECH::RESEARCH LAB MUST BE AT LEVEL 7"):
         assert_le(7, research_lab_level)
     end
-    with_attr error_message("energy tech must be at level 5"):
+    with_attr error_message("HYPERSPACE TECH::ENERGY TECH MUST BE AT LEVEL 5"):
         assert_le(5, energy_tech_level)
     end
-    with_attr error_message("shielding tech must be at level 5"):
+    with_attr error_message("HYPERSPACE TECH::SHIELDING TECH MUST BE AT LEVEL 5"):
         assert_le(5, shielding_tech_level)
     end
     return ()
@@ -940,10 +941,10 @@ func _combustion_drive_requirements_check{
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
 
-    with_attr error_message("research lab must be at level 1"):
+    with_attr error_message("COMBUSTION DRIVE::RESEARCH LAB MUST BE AT LEVEL 1"):
         assert_le(1, research_lab_level)
     end
-    with_attr error_message("energy tech must be at level 1"):
+    with_attr error_message("COMBUSTION DRIVE::ENERGY TECH MUST BE AT LEVEL 1"):
         assert_le(1, energy_tech_level)
     end
 
@@ -958,10 +959,10 @@ func _impulse_drive_requirements_check{
     let (tech_levels) = _get_tech_levels(caller)
     let (_, _, research_lab_level, _) = INoGame.getFacilitiesLevels(no_game_address, caller)
     let energy_tech_level = tech_levels.energy_tech
-    with_attr error_message("research lab must be at level 2"):
+    with_attr error_message("IMPULSE DRIVE::RESEARCH LAB MUST BE AT LEVEL 2"):
         assert_le(2, research_lab_level)
     end
-    with_attr error_message("energy tech must be at level 1"):
+    with_attr error_message("IMPULSE DRIVE::ENERGY TECH MUST BE AT LEVEL 1"):
         assert_le(1, energy_tech_level)
     end
     return ()
@@ -977,31 +978,31 @@ func _hyperspace_drive_requirements_check{
     let energy_tech_level = tech_levels.energy_tech
     let shielding_tech_level = tech_levels.shielding_tech
     let hyperspace_tech_level = tech_levels.hyperspace_tech
-    with_attr error_message("research lab must be at level 7"):
+    with_attr error_message("HYPERSPACE DRIVE::RESEARCH LAB MUST BE AT LEVEL 7"):
         assert_le(7, research_lab_level)
     end
-    with_attr error_message("energy tech must be at level 5"):
+    with_attr error_message("HYPERSPACE DRIVE::ENERGY TECH MUST BE AT LEVEL 5"):
         assert_le(5, energy_tech_level)
     end
-    with_attr error_message("shielding tech must be at level 5"):
+    with_attr error_message("HYPERSPACE DRIVE::SHIELDING TECH MUST BE AT LEVEL 5"):
         assert_le(5, shielding_tech_level)
     end
-    with_attr error_message("hyperspace tech must be at level 3"):
+    with_attr error_message("HYPERSPACE DRIVE::HYPERSPACE TECH MUST BE AT LEVEL 3"):
         assert_le(3, hyperspace_tech_level)
     end
     return ()
 end
 
-func _graviton_tech_requirements_check{
-    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(caller : felt) -> ():
-    let (no_game_address) = Research_no_game_address.read()
-    let (_, _, _, enengy_available) = INoGame.resources_available(no_game_address, caller)
-    with_attr error_message("research lab must be at level 1"):
-        assert_le(300000, enengy_available)
-    end
-    return ()
-end
+# func _graviton_tech_requirements_check{
+#     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+# }(caller : felt) -> ():
+#     let (no_game_address) = Research_no_game_address.read()
+#     let (_, _, _, enengy_available) = INoGame.getResourcesAvailable(no_game_address, caller)
+#     with_attr error_message("RESEARCH LAB MUST BE AT LEVEL 1"):
+#         assert_le(300000, enengy_available)
+#     end
+#     return ()
+# end
 
 #######################################################################################################
 #                                           PRIVATE FUNC                                              #
@@ -1046,9 +1047,15 @@ func _check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
 ):
     let (que_status) = Research_timelock.read(caller)
     let current_timelock = que_status.lock_end
-    with_attr error_message("Research Lab::Research lab is busy"):
+    with_attr error_message("RESEARCH LAB::RESEARCH QUE IS BUSY"):
         assert current_timelock = 0
     end
+    let (game) = Research_no_game_address.read()
+    let (lab_available) = INoGame.getBuildingQueStatus(game, caller)
+    with_attr error_message("RESEARCH LAB::RESEARCH LAB IS UPGRADING"):
+        assert_not_equal(lab_available.id, RESEARCH_LAB_ID)
+    end
+
     return ()
 end
 
@@ -1057,7 +1064,7 @@ func _check_enough_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
 ):
     alloc_locals
     let (metal_available, crystal_available, deuterium_available) = _get_available_resources(caller)
-    with_attr error_message("Research Lab::Not enough resources"):
+    with_attr error_message("RESEARCH LAB::NOT ENOUGH RESOURCES"):
         let (enough_metal) = is_le(metal_required, metal_available)
         assert enough_metal = TRUE
         let (enough_crystal) = is_le(crystal_required, crystal_available)
@@ -1072,7 +1079,7 @@ func _check_trying_complete_right_tech{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt, TECH_ID : felt):
     let (is_qued) = Research_qued.read(caller, TECH_ID)
-    with_attr error_message("Research Lab::Tried to complete the wrong technology"):
+    with_attr error_message("RESEARCH LAB::TRIED TO COMPLETE THE WRONG TECH"):
         assert is_qued = TRUE
     end
     return ()
@@ -1087,7 +1094,7 @@ func _check_waited_enough{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     let (cue_details) = Research_timelock.read(caller)
     let timelock_end = cue_details.lock_end
     let (waited_enough) = is_le(timelock_end, time_now)
-    with_attr error_message("Research Lab::Timelock not yet expired"):
+    with_attr error_message("RESEARCH LAB::TIMELOCK NOT YET EXPIRED"):
         assert waited_enough = TRUE
     end
     return ()
