@@ -1,8 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
-
-from main.structs import TechLevels
+from main.structs import TechLevels, BuildingQue
 
 @contract_interface
 namespace INoGame:
@@ -27,9 +26,7 @@ namespace INoGame:
     ):
     end
 
-    func resources_available(caller : felt) -> (
-        metal : felt, crystal : felt, deuterium : felt, energy : felt
-    ):
+    func getBuildingQueStatus(caller : felt) -> (que_status : BuildingQue):
     end
 
     func getTechLevels(caller : felt) -> (result : TechLevels):
