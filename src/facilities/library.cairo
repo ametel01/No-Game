@@ -368,7 +368,8 @@ end
 func _check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ):
-    let (que_status) = Facilities_timelock.read(caller)
+    let (game) = Facilities_no_game_address.read()
+    let (que_status) = INoGame.getBuildingQueStatus(game, caller)
     let current_timelock = que_status.lock_end
     with_attr error_message("FACILITIES::QUE IS BUSY!!!"):
         assert current_timelock = 0
