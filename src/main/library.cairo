@@ -94,6 +94,10 @@ from shipyard.library import (
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 
+@event
+func resources_spent(planet_id : Uint256, spent : felt):
+end
+
 namespace NoGame:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         owner : felt, modules_manager : felt
@@ -326,6 +330,9 @@ namespace NoGame:
         let (erc721_owner) = IERC721.ownerOf(erc721, new_planet_id)
         IERC721.transferFrom(erc721, erc721_owner, caller, new_planet_id)
         NoGame_number_of_planets.write(new_id)
+        NoGame_metal_mine_level.write(new_planet_id, 1)
+        NoGame_crystal_mine_level.write(new_planet_id, 1)
+        NoGame_solar_plant_level.write(new_planet_id, 1)
         # Transfer resources ERC20 tokens to caller.
         _receive_resources_erc20(
             to=caller, metal_amount=500, crystal_amount=300, deuterium_amount=100
@@ -336,7 +343,6 @@ namespace NoGame:
     func collect_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ):
-        assert_not_zero(caller)
         let (metal_produced, crystal_produced, deuterium_produced, _) = _calculate_production(
             caller
         )
@@ -384,8 +390,7 @@ namespace NoGame:
         IResources.metalUpgradeComplete(resources_address, caller)
         let (planet_id) = _get_planet_id(caller)
         let (current_level) = NoGame_metal_mine_level.read(planet_id)
-        let (cur_level_not_zero) = is_not_zero(current_level)
-        _collect(caller, cur_level_not_zero)
+        collect_resources(caller)
         NoGame_metal_mine_level.write(planet_id, current_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
@@ -418,8 +423,7 @@ namespace NoGame:
         IResources.crystalUpgradeComplete(resources_address, caller)
         let (planet_id) = _get_planet_id(caller)
         let (current_level) = NoGame_crystal_mine_level.read(planet_id)
-        let (cur_level_not_zero) = is_not_zero(current_level)
-        _collect(caller, cur_level_not_zero)
+        collect_resources(caller)
         NoGame_crystal_mine_level.write(planet_id, current_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
@@ -453,8 +457,7 @@ namespace NoGame:
         IResources.deuteriumUpgradeComplete(resources_address, caller)
         let (planet_id) = _get_planet_id(caller)
         let (current_level) = NoGame_deuterium_mine_level.read(planet_id)
-        let (cur_level_not_zero) = is_not_zero(current_level)
-        _collect(caller, cur_level_not_zero)
+        collect_resources(caller)
         NoGame_deuterium_mine_level.write(planet_id, current_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
@@ -486,6 +489,7 @@ namespace NoGame:
         IResources.solarPlantUpgradeComplete(resources_address, caller)
         let (planet_id) = _get_planet_id(caller)
         let (current_metal_level) = NoGame_solar_plant_level.read(planet_id)
+        collect_resources(caller)
         NoGame_solar_plant_level.write(planet_id, current_metal_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
@@ -521,6 +525,7 @@ namespace NoGame:
         IFacilities.robotFactoryUpgradeComplete(facilities_address, caller)
         let (planet_id) = _get_planet_id(caller)
         let (current_robot_level) = NoGame_robot_factory_level.read(planet_id)
+        collect_resources(caller)
         NoGame_robot_factory_level.write(planet_id, current_robot_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
@@ -554,6 +559,7 @@ namespace NoGame:
         IFacilities.shipyardUpgradeComplete(facilities_address, caller)
         let (planet_id) = _get_planet_id(caller)
         let (current_shipyard_level) = NoGame_shipyard_level.read(planet_id)
+        collect_resources(caller)
         NoGame_shipyard_level.write(planet_id, current_shipyard_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
@@ -587,6 +593,7 @@ namespace NoGame:
         IFacilities.researchLabUpgradeComplete(facilities_address, caller)
         let (planet_id) = _get_planet_id(caller)
         let (current_lab_level) = NoGame_research_lab_level.read(planet_id)
+        collect_resources(caller)
         NoGame_research_lab_level.write(planet_id, current_lab_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
@@ -618,6 +625,7 @@ namespace NoGame:
         IFacilities.naniteFactoryUpgradeComplete(facilities_address, caller)
         let (planet_id) = _get_planet_id(caller)
         let (current_nanite_level) = NoGame_nanite_factory_level.read(planet_id)
+        collect_resources(caller)
         NoGame_nanite_factory_level.write(planet_id, current_nanite_level + 1)
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0))
         return ()
@@ -1470,6 +1478,9 @@ func _pay_resources_erc20{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
     IERC20.burn(metal_address, address, metal)
     IERC20.burn(crystal_address, address, crystal)
     IERC20.burn(deuterium_address, address, deuterium)
+    let (erc721) = IModulesManager.getERC721Address(manager)
+    let (planet_id) = IERC721.ownerToPlanet(erc721, address)
+    resources_spent.emit(planet_id, metal_amount + crystal_amount)
     return ()
 end
 
@@ -1484,15 +1495,4 @@ func _get_available_erc20s{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
     let (deuterium_available) = IERC20.balanceOf(deuterium_address, caller)
     return (metal_available.low, crystal_available.low, deuterium_available.low)
-end
-
-func _collect{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt, condition : felt
-):
-    alloc_locals
-    if condition == TRUE:
-        NoGame.collect_resources(caller)
-        return ()
-    end
-    return ()
 end
