@@ -2,8 +2,8 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256, uint256_add
-
 from starkware.starknet.common.syscalls import get_caller_address, get_contract_address
+
 from token.erc721.interfaces.IERC721 import IERC721
 
 @storage_var
