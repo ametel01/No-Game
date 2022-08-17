@@ -36,21 +36,18 @@ end
 
 @external
 func setERC721{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(address : felt):
-    Ownable.assert_only_owner()
     ModulesManager.set_erc721(address)
     return ()
 end
 
 @external
 func setMetal{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(address : felt):
-    Ownable.assert_only_owner()
     ModulesManager.set_metal(address)
     return ()
 end
 
 @external
 func setCrystal{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(address : felt):
-    Ownable.assert_only_owner()
     ModulesManager.set_crystal(address)
     return ()
 end
@@ -59,7 +56,6 @@ end
 func setDeuterium{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     address : felt
 ):
-    Ownable.assert_only_owner()
     ModulesManager.set_deuterium(address)
     return ()
 end
@@ -68,7 +64,6 @@ end
 func setResources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     address : felt
 ):
-    Ownable.assert_only_owner()
     ModulesManager.set_resources(address)
     return ()
 end
@@ -77,21 +72,18 @@ end
 func setFacilities{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     address : felt
 ):
-    Ownable.assert_only_owner()
     ModulesManager.set_facilities(address)
     return ()
 end
 
 @external
 func setShipyard{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(address : felt):
-    Ownable.assert_only_owner()
     ModulesManager.set_shipyard(address)
     return ()
 end
 
 @external
 func setResearch{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(address : felt):
-    Ownable.assert_only_owner()
     ModulesManager.set_research(address)
     return ()
 end

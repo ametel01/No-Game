@@ -1,6 +1,8 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from openzeppelin.security.reentrancyguard.library import ReentrancyGuard
+from openzeppelin.access.ownable.library import Ownable
 
 @storage_var
 func ModulesManager_erc721_token_address() -> (address : felt):
@@ -75,6 +77,8 @@ namespace ModulesManager:
     func set_erc721{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
+        Ownable.assert_only_owner()
+        ReentrancyGuard._start()
         ModulesManager_erc721_token_address.write(address)
         return ()
     end
@@ -82,6 +86,8 @@ namespace ModulesManager:
     func set_metal{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
+        Ownable.assert_only_owner()
+        ReentrancyGuard._start()
         ModulesManager_metal_address.write(address)
         return ()
     end
@@ -89,6 +95,8 @@ namespace ModulesManager:
     func set_crystal{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
+        Ownable.assert_only_owner()
+        ReentrancyGuard._start()
         ModulesManager_crystal_address.write(address)
         return ()
     end
@@ -96,6 +104,8 @@ namespace ModulesManager:
     func set_deuterium{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
+        Ownable.assert_only_owner()
+        ReentrancyGuard._start()
         ModulesManager_deuterium_address.write(address)
         return ()
     end
@@ -103,6 +113,7 @@ namespace ModulesManager:
     func set_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
+        Ownable.assert_only_owner()
         ModulesManager_resources_address.write(address)
         return ()
     end
@@ -110,6 +121,7 @@ namespace ModulesManager:
     func set_facilities{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
+        Ownable.assert_only_owner()
         ModulesManager_facilities_address.write(address)
         return ()
     end
@@ -117,6 +129,7 @@ namespace ModulesManager:
     func set_shipyard{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
+        Ownable.assert_only_owner()
         ModulesManager_shipyard_address.write(address)
         return ()
     end
@@ -124,6 +137,7 @@ namespace ModulesManager:
     func set_research{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         address : felt
     ):
+        Ownable.assert_only_owner()
         ModulesManager_research_lab_address.write(address)
         return ()
     end

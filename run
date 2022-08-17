@@ -83,6 +83,7 @@ deploy() {
     echo 'Deployed Research Lab Module...'
 }
 
+
 main() {
     case "$1" in
         "build") build ;;
