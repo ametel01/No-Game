@@ -1,7 +1,6 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from openzeppelin.security.reentrancyguard.library import ReentrancyGuard
 from openzeppelin.access.ownable.library import Ownable
 
 @storage_var
@@ -78,7 +77,6 @@ namespace ModulesManager:
         address : felt
     ):
         Ownable.assert_only_owner()
-        ReentrancyGuard._start()
         ModulesManager_erc721_token_address.write(address)
         return ()
     end
@@ -87,7 +85,6 @@ namespace ModulesManager:
         address : felt
     ):
         Ownable.assert_only_owner()
-        ReentrancyGuard._start()
         ModulesManager_metal_address.write(address)
         return ()
     end
@@ -96,7 +93,6 @@ namespace ModulesManager:
         address : felt
     ):
         Ownable.assert_only_owner()
-        ReentrancyGuard._start()
         ModulesManager_crystal_address.write(address)
         return ()
     end
@@ -105,7 +101,6 @@ namespace ModulesManager:
         address : felt
     ):
         Ownable.assert_only_owner()
-        ReentrancyGuard._start()
         ModulesManager_deuterium_address.write(address)
         return ()
     end
