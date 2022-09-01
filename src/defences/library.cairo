@@ -74,6 +74,10 @@ namespace Defence:
         return ()
     end
 
+    # ##############################################################################################
+    #                                       VIEW FUNCS                                             #
+    ################################################################################################
+
     func que_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (status : DefenceQue):
@@ -95,6 +99,139 @@ namespace Defence:
             large_dome=Cost(50000, 50000, 0)),
         )
     end
+end
+
+# ###################################################################################################
+#                                DEFENCE REQUIREMENTS CHECKS                                          #
+#####################################################################################################
+
+func _rocket_requirements_check{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (response : felt):
+    let (no_game) = Defence_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 1"):
+        assert_le(1, shipyard_level)
+    end
+    return (TRUE)
+end
+
+func _light_laser_requirements_check{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(caller : felt) -> (response : felt):
+    let (no_game) = Defence_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 2"):
+        assert_le(2, shipyard_level)
+    end
+    with_attr error_message("DEFENCES::ENERGY TECH BE AT LEVEL 2"):
+        assert_le(2, tech_levels.energy_tech)
+    end
+    with_attr error_message("DEFENCES::LASER TECH BE AT LEVEL 3"):
+        assert_le(3, tech_levels.laser_tech)
+    end
+    return (TRUE)
+end
+
+func _heavy_laser_requirements_check{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(caller : felt) -> (response : felt):
+    let (no_game) = Defence_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 4"):
+        assert_le(4, shipyard_level)
+    end
+    with_attr error_message("DEFENCES::ENERGY TECH BE AT LEVEL 3"):
+        assert_le(3, tech_levels.energy_tech)
+    end
+    with_attr error_message("DEFENCES::LASER TECH BE AT LEVEL 6"):
+        assert_le(6, tech_levels.laser_tech)
+    end
+    return (TRUE)
+end
+
+func _ion_cannon_requirements_check{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(caller : felt) -> (response : felt):
+    let (no_game) = Defence_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 4"):
+        assert_le(4, shipyard_level)
+    end
+    with_attr error_message("DEFENCES::ION TECH BE AT LEVEL 4"):
+        assert_le(4, tech_levels.ion_tech)
+    end
+    return (TRUE)
+end
+
+func _gauss_requirements_check{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (response : felt):
+    let (no_game) = Defence_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 6"):
+        assert_le(6, shipyard_level)
+    end
+    with_attr error_message("DEFENCES::ENERGY TECH BE AT LEVEL 6"):
+        assert_le(6, tech_levels.energy_tech)
+    end
+    with_attr error_message("DEFENCES::WEAPONS TECH BE AT LEVEL 3"):
+        assert_le(3, tech_levels.weapons_tech)
+    end
+    with_attr error_message("DEFENCES::SHIELDING TECH BE AT LEVEL 1"):
+        assert_le(1, tech_levels.shielding_tech)
+    end
+    return (TRUE)
+end
+
+func _plasma_turret_requirements_check{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(caller : felt) -> (response : felt):
+    let (no_game) = Defence_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 8"):
+        assert_le(8, shipyard_level)
+    end
+    with_attr error_message("DEFENCES::PLASMA TECH BE AT LEVEL 7"):
+        assert_le(7, tech_levels.plasma_tech)
+    end
+    return (TRUE)
+end
+
+func _small_dome_requirements_check{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(caller : felt) -> (response : felt):
+    let (no_game) = Defence_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 1"):
+        assert_le(1, shipyard_level)
+    end
+    with_attr error_message("DEFENCES::SHIELDING TECH BE AT LEVEL 2"):
+        assert_le(2, tech_levels.shielding_tech)
+    end
+    return (TRUE)
+end
+
+func _large_dome_requirements_check{
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(caller : felt) -> (response : felt):
+    let (no_game) = Defence_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 6"):
+        assert_le(6, shipyard_level)
+    end
+    with_attr error_message("DEFENCES::SHIELDING TECH BE AT LEVEL 6"):
+        assert_le(6, tech_levels.shielding_tech)
+    end
+    return (TRUE)
 end
 
 # ###################################################################################################
