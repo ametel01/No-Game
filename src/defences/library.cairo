@@ -45,7 +45,7 @@ struct DefenceCosts:
     member heavy_laser : Cost
     member ion_cannon : Cost
     member gauss : Cost
-    member plasma_tourette : Cost
+    member plasma_turette : Cost
     member small_dome : Cost
     member large_dome : Cost
 end
@@ -95,6 +95,114 @@ namespace Defence:
             large_dome=Cost(50000, 50000, 0)),
         )
     end
+end
+
+# ###################################################################################################
+#                                DEFENCE COST CALCULATION FUNCTIONS                                 #
+#####################################################################################################
+
+func _rocket_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let metal_required = 2000
+    let crystal_required = 0
+    let deuterium_required = 0
+    return (
+        metal_required * number_of_units,
+        crystal_required * number_of_units,
+        deuterium_required * number_of_units,
+    )
+end
+
+func _light_laser_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let metal_required = 1500
+    let crystal_required = 500
+    let deuterium_required = 0
+    return (
+        metal_required * number_of_units,
+        crystal_required * number_of_units,
+        deuterium_required * number_of_units,
+    )
+end
+
+func _heavy_laser_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let metal_required = 6000
+    let crystal_required = 2000
+    let deuterium_required = 0
+    return (
+        metal_required * number_of_units,
+        crystal_required * number_of_units,
+        deuterium_required * number_of_units,
+    )
+end
+
+func _ion_cannon_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let metal_required = 5000
+    let crystal_required = 3000
+    let deuterium_required = 0
+    return (
+        metal_required * number_of_units,
+        crystal_required * number_of_units,
+        deuterium_required * number_of_units,
+    )
+end
+
+func _gauss_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let metal_required = 20000
+    let crystal_required = 15000
+    let deuterium_required = 2000
+    return (
+        metal_required * number_of_units,
+        crystal_required * number_of_units,
+        deuterium_required * number_of_units,
+    )
+end
+
+func _plasma_turret_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let metal_required = 50000
+    let crystal_required = 50000
+    let deuterium_required = 30000
+    return (
+        metal_required * number_of_units,
+        crystal_required * number_of_units,
+        deuterium_required * number_of_units,
+    )
+end
+
+func _small_dome_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let metal_required = 10000
+    let crystal_required = 10000
+    let deuterium_required = 0
+    return (
+        metal_required * number_of_units,
+        crystal_required * number_of_units,
+        deuterium_required * number_of_units,
+    )
+end
+
+func _large_dome_cost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt):
+    let metal_required = 50000
+    let crystal_required = 50000
+    let deuterium_required = 0
+    return (
+        metal_required * number_of_units,
+        crystal_required * number_of_units,
+        deuterium_required * number_of_units,
+    )
 end
 
 #######################################################################################################
