@@ -95,6 +95,10 @@ namespace Shipyard:
         return ()
     end
 
+    # ##############################################################################################
+    #                                       VIEW FUNCS                                             #
+    ################################################################################################
+
     func que_status{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt
     ) -> (status : ShipyardQue):
@@ -115,6 +119,10 @@ namespace Shipyard:
             battle_ship=Cost(45000, 15000, 0, 0)),
         )
     end
+
+    # ##############################################################################################
+    #                                       BUILD FUNCS                                            #
+    ################################################################################################
 
     func cargo_ship_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt, number_of_units : felt
