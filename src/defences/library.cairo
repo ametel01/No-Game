@@ -20,14 +20,14 @@ from utils.formulas import Formulas
 #                                           CONSTANTS                                   #
 #########################################################################################
 
-const ROCKET_LAUNCHER = 51
-const LIGHT_LASER = 52
-const HEAVY_LASOR = 53
-const ION_CANNON = 54
-const GAUSS_CANNON = 55
-const PLASMA_TURRET = 56
-const SMALL_DOME = 57
-const LARGE_DOME = 58
+const ROCKET_LAUNCHER_ID = 51
+const LIGHT_LASER_ID = 52
+const HEAVY_LASER_ID = 53
+const ION_CANNON_ID = 54
+const GAUSS_CANNON_ID = 55
+const PLASMA_TURRET_ID = 56
+const SMALL_DOME_ID = 57
+const LARGE_DOME_ID = 58
 
 #########################################################################################
 #                                           STRUCTS                                     #
@@ -98,6 +98,197 @@ namespace Defence:
             small_dome=Cost(10000, 10000, 0),
             large_dome=Cost(50000, 50000, 0)),
         )
+    end
+
+    # ##############################################################################################
+    #                                       BUILD FUNCS                                            #
+    ################################################################################################
+
+    func rocket_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt, number_of_units : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = _rocket_cost(number_of_units)
+        _check_que_not_busy(caller)
+        _rocket_requirements_check(caller)
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, ROCKET_LAUNCHER_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
+    end
+
+    func rocket_build_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (unit_produced : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_defence(caller, ROCKET_LAUNCHER_ID)
+        let (units_produced) = _check_waited_enough(caller)
+        _reset_timelock(caller)
+        _reset_que(caller, ROCKET_LAUNCHER_ID)
+        return (units_produced)
+    end
+
+    func light_laser_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt, number_of_units : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = _light_laser_cost(
+            number_of_units
+        )
+        _check_que_not_busy(caller)
+        _light_laser_requirements_check(caller)
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, LIGHT_LASER_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
+    end
+
+    func light_laser_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (unit_produced : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_defence(caller, LIGHT_LASER_ID)
+        let (units_produced) = _check_waited_enough(caller)
+        _reset_timelock(caller)
+        _reset_que(caller, LIGHT_LASER_ID)
+        return (units_produced)
+    end
+
+    func heavy_laser_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt, number_of_units : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = _heavy_laser_cost(
+            number_of_units
+        )
+        _check_que_not_busy(caller)
+        _heavy_laser_requirements_check(caller)
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, HEAVY_LASER_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
+    end
+
+    func heavy_laser_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (unit_produced : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_defence(caller, HEAVY_LASER_ID)
+        let (units_produced) = _check_waited_enough(caller)
+        _reset_timelock(caller)
+        _reset_que(caller, HEAVY_LASER_ID)
+        return (units_produced)
+    end
+
+    func gauss_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt, number_of_units : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = _gauss_cost(number_of_units)
+        _check_que_not_busy(caller)
+        _gauss_requirements_check(caller)
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, GAUSS_CANNON_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
+    end
+
+    func gauss_laser_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (unit_produced : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_defence(caller, GAUSS_CANNON_ID)
+        let (units_produced) = _check_waited_enough(caller)
+        _reset_timelock(caller)
+        _reset_que(caller, GAUSS_CANNON_ID)
+        return (units_produced)
+    end
+
+    func plasma_turret_build_start{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt, number_of_units : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = _plasma_turret_cost(
+            number_of_units
+        )
+        _check_que_not_busy(caller)
+        _plasma_turret_requirements_check(caller)
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, PLASMA_TURRET_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
+    end
+
+    func plasma_turret_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (unit_produced : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_defence(caller, PLASMA_TURRET_ID)
+        let (units_produced) = _check_waited_enough(caller)
+        _reset_timelock(caller)
+        _reset_que(caller, PLASMA_TURRET_ID)
+        return (units_produced)
+    end
+
+    func small_dome_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt, number_of_units : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = _small_dome_cost(
+            number_of_units
+        )
+        _check_que_not_busy(caller)
+        _small_dome_requirements_check(caller)
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, SMALL_DOME_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
+    end
+
+    func small_dome_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (unit_produced : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_defence(caller, SMALL_DOME_ID)
+        let (units_produced) = _check_waited_enough(caller)
+        _reset_timelock(caller)
+        _reset_que(caller, SMALL_DOME_ID)
+        return (units_produced)
+    end
+
+    func large_dome_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt, number_of_units : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = _large_dome_cost(
+            number_of_units
+        )
+        _check_que_not_busy(caller)
+        _large_dome_requirements_check(caller)
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, LARGE_DOME_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
+    end
+
+    func large_dome_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (unit_produced : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_defence(caller, LARGE_DOME_ID)
+        let (units_produced) = _check_waited_enough(caller)
+        _reset_timelock(caller)
+        _reset_que(caller, LARGE_DOME_ID)
+        return (units_produced)
     end
 end
 
@@ -349,7 +540,7 @@ end
 func _get_available_resources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (metal : felt, crystal : felt, deuterium : felt):
-    let (no_game) = Shipyard_no_game_address.read()
+    let (no_game) = Defence_no_game_address.read()
     let (_, metal_address, crystal_address, deuterium_address) = INoGame.getTokensAddresses(no_game)
     let (metal_available) = IERC20.balanceOf(metal_address, caller)
     let (crystal_available) = IERC20.balanceOf(crystal_address, caller)
@@ -404,7 +595,7 @@ func _check_que_not_busy{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range
     return ()
 end
 
-func _check_trying_to_complete_the_right_ship{
+func _check_trying_to_complete_the_right_defence{
     syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(caller : felt, DEFENCE_ID : felt):
     let (is_qued) = Defence_qued.read(caller, DEFENCE_ID)
@@ -437,7 +628,7 @@ func _set_timelock_and_que{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
     metal_required : felt,
     crystal_required : felt,
 ) -> (time_end : felt):
-    let (no_game) = Shipyard_no_game_address.read()
+    let (no_game) = Defence_no_game_address.read()
     let (_, shipyard_level, _, nanite_level) = INoGame.getFacilitiesLevels(no_game, caller)
     let (build_time) = Formulas.buildings_production_time(
         metal_required, crystal_required, shipyard_level, nanite_level
