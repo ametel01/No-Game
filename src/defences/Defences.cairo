@@ -91,6 +91,24 @@ func heavyLaserBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
 end
 
 @external
+func ionCannonBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt, number_of_units : felt
+) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+    let (
+        metal_required, crystal_required, deuterium_required, time_end
+    ) = Defence.ion_cannon_build_start(caller, number_of_units)
+    return (metal_required, crystal_required, deuterium_required, time_end)
+end
+
+@external
+func ionCannonBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (unit_produced : felt):
+    let (units_produced) = Defence.ion_cannon_build_complete(caller)
+    return (units_produced)
+end
+
+@external
 func gaussBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt, number_of_units : felt
 ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):

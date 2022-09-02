@@ -184,6 +184,33 @@ namespace Defence:
         return (units_produced)
     end
 
+    func ion_cannon_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt, number_of_units : felt
+    ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
+        alloc_locals
+        let (metal_required, crystal_required, deuterium_required) = _ion_cannon_cost(
+            number_of_units
+        )
+        _check_que_not_busy(caller)
+        _ion_cannon_requirements_check(caller)
+        _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
+        let (time_end) = _set_timelock_and_que(
+            caller, ION_CANNON_ID, number_of_units, metal_required, crystal_required
+        )
+        return (metal_required, crystal_required, deuterium_required, time_end)
+    end
+
+    func ion_cannon_build_complete{
+        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+    }(caller : felt) -> (unit_produced : felt):
+        alloc_locals
+        _check_trying_to_complete_the_right_defence(caller, ION_CANNON_ID)
+        let (units_produced) = _check_waited_enough(caller)
+        _reset_timelock(caller)
+        _reset_que(caller, ION_CANNON_ID)
+        return (units_produced)
+    end
+
     func gauss_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         caller : felt, number_of_units : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):

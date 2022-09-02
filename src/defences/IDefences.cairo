@@ -34,6 +34,14 @@ namespace IDefences:
     func heavyLaserBuildComplete(caller : felt) -> (unit_produced : felt):
     end
 
+    func ionCannonBuildStart(caller : felt, number_of_units : felt) -> (
+        metal : felt, crystal : felt, deuterium : felt, time_end : felt
+    ):
+    end
+
+    func ionCannonBuildComplete(caller : felt) -> (unit_produced : felt):
+    end
+
     func gaussBuildStart(caller : felt, number_of_units : felt) -> (
         metal : felt, crystal : felt, deuterium : felt, time_end : felt
     ):
