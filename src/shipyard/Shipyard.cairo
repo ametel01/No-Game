@@ -27,8 +27,9 @@ func getShipsCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_
     let (costs) = Shipyard.ships_cost()
     return (costs)
 end
+
 ########################################################################################################
-#                                   SHIPS UPGRADE FUNCTION                                             #
+#                                   BUILD FUNCTION                                                     #
 # ######################################################################################################
 
 @external
