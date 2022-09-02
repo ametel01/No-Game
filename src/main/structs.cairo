@@ -75,3 +75,14 @@ struct TechCosts:
     member shielding_tech : Cost
     member weapons_tech : Cost
 end
+
+struct Fleet:
+    member cargo : felt
+    member recycler : felt
+    member espionage_probe : felt
+    member solar_satellite : felt
+    member light_fighter : felt
+    member cruiser : felt
+    member battle_ship : felt
+    member death_star : felt
+end

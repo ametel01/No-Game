@@ -1,8 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
-from main.structs import TechLevels, BuildingQue
-from shipyard.library import Fleet
+from main.structs import TechLevels, BuildingQue, Fleet
 
 @contract_interface
 namespace INoGame:
