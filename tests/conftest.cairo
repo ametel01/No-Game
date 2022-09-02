@@ -88,7 +88,7 @@ func _run_modules_manager{syscall_ptr : felt*, range_check_ptr}(addresses : Cont
     Manager.setFacilities(addresses.manager, addresses.facilities)
     Manager.setShipyard(addresses.manager, addresses.shipyard)
     Manager.setResearch(addresses.manager, addresses.research)
-    Manager.setDefences(addresses.manager, addresses.defences_address)
+    Manager.setDefences(addresses.manager, addresses.defences)
     return ()
 end
 
