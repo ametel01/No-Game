@@ -197,9 +197,9 @@ namespace Defence:
         return (metal_required, crystal_required, deuterium_required, time_end)
     end
 
-    func gauss_laser_build_complete{
-        syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt) -> (unit_produced : felt):
+    func gauss_build_complete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (unit_produced : felt):
         alloc_locals
         _check_trying_to_complete_the_right_defence(caller, GAUSS_CANNON_ID)
         let (units_produced) = _check_waited_enough(caller)
