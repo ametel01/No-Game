@@ -4,6 +4,7 @@ from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
 from resources.library import ResourcesQue
 from shipyard.library import Fleet, ShipyardQue
+from defences.library import Defence
 
 @contract_interface
 namespace NoGame:
@@ -17,32 +18,33 @@ namespace NoGame:
     ):
     end
 
-    func getResourcesBuildingsLevels(caller : felt) -> (
+    func getResourcesBuildingsLevels() -> (
         metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt
     ):
     end
 
-    func getResourcesUpgradeCost(caller : felt) -> (
+    func getResourcesUpgradeCost() -> (
         metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost
     ):
     end
 
-    func getFacilitiesLevels(caller : felt) -> (
+    func getFacilitiesLevels() -> (
         robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt
     ):
     end
 
-    func getFacilitiesUpgradeCost(caller : felt) -> (
+    func getFacilitiesUpgradeCost() -> (
         robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost
     ):
     end
 
-    func getResourcesAvailable(caller : felt) -> (
-        metal : felt, crystal : felt, deuterium : felt, energy : felt
-    ):
+    func getResourcesAvailable() -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
     end
 
-    func getFleetLevels(caller : felt) -> (levels : Fleet):
+    func getFleetLevels(address : felt) -> (levels : Fleet):
+    end
+
+    func getDefenceLevels(address : felt) -> (levels : Defence):
     end
 
     func getShipsCost() -> (
@@ -56,10 +58,10 @@ namespace NoGame:
     ):
     end
 
-    func getTechLevels(caller : felt) -> (tech_levels : TechLevels):
+    func getTechLevels() -> (tech_levels : TechLevels):
     end
 
-    func getTechUpgradeCost(caller : felt) -> (
+    func getTechUpgradeCost() -> (
         a : Cost,
         b : Cost,
         c : Cost,
@@ -77,10 +79,10 @@ namespace NoGame:
     ):
     end
 
-    func getResourcesQueStatus(caller : felt) -> (status : ResourcesQue):
+    func getResourcesQueStatus() -> (status : ResourcesQue):
     end
 
-    func getShipyardQueStatus(caller : felt) -> (status : ShipyardQue):
+    func getShipyardQueStatus() -> (status : ShipyardQue):
     end
 
     func numberOfPlanets() -> (n_planets : felt):
@@ -264,6 +266,54 @@ namespace NoGame:
     end
 
     func weaponsTechUpgradeComplete():
+    end
+
+    func rocketBuildStart(units : felt):
+    end
+
+    func rocketBuildComplete():
+    end
+
+    func lightLaserBuildStart(units : felt):
+    end
+
+    func lightLaserBuildComplete():
+    end
+
+    func heavyLaserBuildStart(units : felt):
+    end
+
+    func heavyLaserBuildComplete():
+    end
+
+    func ionCannonBuildStart(units : felt):
+    end
+
+    func ionCannonBuildComplete():
+    end
+
+    func gaussBuildStart(units : felt):
+    end
+
+    func gaussBuildComplete():
+    end
+
+    func plasmaTurretBuildStart(units : felt):
+    end
+
+    func plasmaTurretBuildComplete():
+    end
+
+    func smallDomeBuildStart():
+    end
+
+    func smallDomeBuildComplete():
+    end
+
+    func largeDomeBuildStart():
+    end
+
+    func largeDomeBuildComplete():
     end
 end
 
