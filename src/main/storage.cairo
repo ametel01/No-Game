@@ -189,3 +189,39 @@ end
 @storage_var
 func NoGame_shipyard_que_status(planet_id : Uint256) -> (status : ShipyardQue):
 end
+
+##################################################################################
+#                             DEFENCES STORAGE                                   #
+##################################################################################
+
+@storage_var
+func NoGame_rocket(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func NoGame_ligth_laser(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func NoGame_heavy_laser(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func NoGame_ion_cannon(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func NoGame_gauss(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func NoGame_plasma_turret(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func NoGame_small_dome(planet_id : Uint256) -> (res : felt):
+end
+
+@storage_var
+func NoGame_large_dome(planet_id : Uint256) -> (res : felt):
+end
