@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import TechLevels, BuildingQue
+from shipyard.library import Fleet
 
 @contract_interface
 namespace INoGame:
@@ -30,5 +31,8 @@ namespace INoGame:
     end
 
     func getTechLevels(caller : felt) -> (result : TechLevels):
+    end
+
+    func getFleetLevels(caller : felt) -> (result : Fleet):
     end
 end
