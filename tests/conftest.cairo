@@ -38,6 +38,7 @@ struct Contracts:
     member facilities : felt
     member shipyard : felt
     member research : felt
+    member defences : felt
 end
 
 struct ClassHashes:
@@ -71,6 +72,8 @@ func __setup__{syscall_ptr : felt*, range_check_ptr}():
         print("shipyard_address: ", context.shipyard_address)
         context.research_address = deploy_contract("src/research/ResearchLab.cairo", [context.game_address]).contract_address
         print("research_address: ", context.research_address)
+        context.defences_address = deploy_contract("src/defences/Defences.cairo", [context.game_address]).contract_address
+        print("defences_address: ", context.defences_address)
     %}
     return ()
 end
@@ -85,6 +88,7 @@ func _run_modules_manager{syscall_ptr : felt*, range_check_ptr}(addresses : Cont
     Manager.setFacilities(addresses.manager, addresses.facilities)
     Manager.setShipyard(addresses.manager, addresses.shipyard)
     Manager.setResearch(addresses.manager, addresses.research)
+    Manager.setDefences(addresses.manager, addresses.defences_address)
     return ()
 end
 
@@ -104,6 +108,7 @@ func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (addresses :
         ids._addresses.shipyard = context.shipyard_address
         ids._addresses.facilities = context.facilities_address
         ids._addresses.research = context.research_address
+        ids._addresses.defences = context.defences_address
 
         stop_prank_callable = start_prank(ids._addresses.owner, target_contract_address=ids._addresses.manager)
     %}
@@ -248,8 +253,8 @@ func _reset_shipyard_timelock{syscall_ptr : felt*, range_check_ptr}(shipyard : f
     return ()
 end
 
-func _reset_lab_timelock{syscall_ptr : felt*, range_check_ptr}(shipyard : felt, player : felt):
-    %{ store(ids.shipyard, "Research_timelock", [0,0], key=[ids.player]) %}
+func _reset_lab_timelock{syscall_ptr : felt*, range_check_ptr}(lab : felt, player : felt):
+    %{ store(ids.research, "Research_timelock", [0,0], key=[ids.player]) %}
 
     return ()
 end
