@@ -57,7 +57,7 @@ struct Defence:
     member heavy_laser : felt
     member ion_cannon : felt
     member gauss : felt
-    member plasma_turette : felt
+    member plasma_turret : felt
     member small_dome : felt
     member large_dome : felt
 end
