@@ -40,7 +40,7 @@ shipyard = [
     "src/shipyard/Shipyard.cairo"
 ]
 defences = [
-    "src/defences/library.cairo"
+    "src/defences/Defences.cairo"
 ]
 erc20 = [
     "src/token/erc20/ERC20_Mintable_Burnable.cairo"
