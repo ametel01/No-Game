@@ -90,14 +90,14 @@ namespace Defence:
         costs : DefenceCosts
     ):
         return (
-            DefenceCosts(rocket=Cost(2000, 0, 0),
-            light_laser=Cost(1500, 500, 0),
-            heavy_laser=Cost(6000, 2000, 0),
-            ion_cannon=Cost(5000, 3000, 0),
-            gauss=Cost(20000, 15000, 0),
-            plasma_tourette=Cost(50000, 50000, 0),
-            small_dome=Cost(10000, 10000, 0),
-            large_dome=Cost(50000, 50000, 0)),
+            DefenceCosts(rocket=Cost(2000, 0, 0, 0),
+            light_laser=Cost(1500, 500, 0, 0),
+            heavy_laser=Cost(6000, 2000, 0, 0),
+            ion_cannon=Cost(5000, 3000, 0, 0),
+            gauss=Cost(20000, 15000, 0, 0),
+            plasma_turette=Cost(50000, 50000, 0, 0),
+            small_dome=Cost(10000, 10000, 0, 0),
+            large_dome=Cost(50000, 50000, 0, 0)),
         )
     end
 
@@ -287,7 +287,7 @@ namespace Defence:
         let (units_produced) = _check_waited_enough(caller)
         _reset_timelock(caller)
         _reset_que(caller, SMALL_DOME_ID)
-        return (units_produced)
+        return ()
     end
 
     func large_dome_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -312,7 +312,7 @@ namespace Defence:
         let (units_produced) = _check_waited_enough(caller)
         _reset_timelock(caller)
         _reset_que(caller, LARGE_DOME_ID)
-        return (units_produced)
+        return ()
     end
 end
 

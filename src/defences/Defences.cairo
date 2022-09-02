@@ -26,7 +26,7 @@ end
 
 @external
 func getDefenceCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    costs : ShipsCosts
+    costs : DefenceCosts
 ):
     let (costs) = Defence.defences_cost()
     return (costs)
@@ -157,9 +157,9 @@ end
 @external
 func smallDomeBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (unit_produced : felt):
-    let (units_produced) = Defence.small_dome_build_complete(caller)
-    return (units_produced)
+):
+    Defence.small_dome_build_complete(caller)
+    return ()
 end
 
 @external
@@ -175,7 +175,7 @@ end
 @external
 func largeDomeBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
-) -> (unit_produced : felt):
-    let (units_produced) = Defence.large_dome_build_complete(caller)
-    return (units_produced)
+):
+    Defence.large_dome_build_complete(caller)
+    return ()
 end
