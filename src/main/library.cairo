@@ -1643,9 +1643,9 @@ namespace NoGame:
         let (planet_id) = _get_planet_id(caller)
         let (manager) = NoGame_modules_manager.read()
         let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager)
-        let (units_produced) = IDefences.smallDomeBuildComplete(defences, caller)
+        IDefences.smallDomeBuildComplete(defences, caller)
         let (current_units) = NoGame_small_dome.read(planet_id)
-        NoGame_small_dome.write(planet_id, current_units + units_produced)
+        NoGame_small_dome.write(planet_id, current_units + 1)
         NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
         return ()
     end
@@ -1674,9 +1674,9 @@ namespace NoGame:
         let (planet_id) = _get_planet_id(caller)
         let (manager) = NoGame_modules_manager.read()
         let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager)
-        let (units_produced) = IDefences.largeDomeBuildComplete(defences, caller)
+        IDefences.largeDomeBuildComplete(defences, caller)
         let (current_units) = NoGame_large_dome.read(planet_id)
-        NoGame_large_dome.write(planet_id, current_units + units_produced)
+        NoGame_large_dome.write(planet_id, current_units + 1)
         NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0))
         return ()
     end
