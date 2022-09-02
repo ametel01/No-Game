@@ -247,7 +247,7 @@ namespace Defence:
         _small_dome_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         let (time_end) = _set_timelock_and_que(
-            caller, SMALL_DOME_ID, number_of_units, metal_required, crystal_required
+            caller, SMALL_DOME_ID, 1, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required, time_end)
     end
@@ -272,7 +272,7 @@ namespace Defence:
         _large_dome_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
         let (time_end) = _set_timelock_and_que(
-            caller, LARGE_DOME_ID, number_of_units, metal_required, crystal_required
+            caller, LARGE_DOME_ID, 1, metal_required, crystal_required
         )
         return (metal_required, crystal_required, deuterium_required, time_end)
     end
