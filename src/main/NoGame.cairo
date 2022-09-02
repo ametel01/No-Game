@@ -631,3 +631,111 @@ func weaponsTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*
     NoGame.weapons_tech_upgrade_complete()
     return ()
 end
+
+@external
+func rocketBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.rocket_build_start(units)
+    return ()
+end
+
+@external
+func rocketBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.rocket_build_complete()
+    return ()
+end
+
+@external
+func lightLaserBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.light_laser_build_start(units)
+    return ()
+end
+
+@external
+func lightLaserBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.light_laser_build_complete()
+    return ()
+end
+
+@external
+func heavyLaserBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.heavy_laser_build_start(units)
+    return ()
+end
+
+@external
+func heavyLaserBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.heavy_laser_build_complete()
+    return ()
+end
+
+@external
+func ionCannonBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.ion_cannon_build_start(units)
+    return ()
+end
+
+@external
+func ionCannonBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.ion_cannon_build_complete()
+    return ()
+end
+
+@external
+func gaussBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.gauss_build_start(units)
+    return ()
+end
+
+@external
+func gaussBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.gauss_build_complete()
+    return ()
+end
+
+@external
+func plasmaTurretBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    units : felt
+):
+    NoGame.plasma_turret_build_start(units)
+    return ()
+end
+
+@external
+func plasmaTurretBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.plasma_turret_build_complete()
+    return ()
+end
+
+@external
+func smallDomeBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.small_dome_build_start()
+    return ()
+end
+
+@external
+func smallDomeBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.small_dome_build_complete()
+    return ()
+end
+
+@external
+func largeDomeBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.large_dome_build_start()
+    return ()
+end
+
+@external
+func largeDomeBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}():
+    NoGame.large_dome_build_complete()
+    return ()
+end
