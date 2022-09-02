@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
+from defences.library import Defence
 from facilities.IFacilities import IFacilities
 from main.library import NoGame
 from main.structs import Cost, TechLevels, TechCosts
@@ -146,6 +147,14 @@ func getFleetLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
     caller : felt
 ) -> (result : Fleet):
     let (res) = NoGame.fleet_levels(caller)
+    return (res)
+end
+
+@view
+func getDefenceLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+    caller : felt
+) -> (res : Defence):
+    let (res) = NoGame.defence_levels(caller)
     return (res)
 end
 

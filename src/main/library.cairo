@@ -101,6 +101,9 @@ from shipyard.library import (
     DEATHSTAR_ID,
 )
 from defences.library import (
+    Defence,
+    DefenceQue,
+    DefenceCosts,
     ROCKET_LAUNCHER_ID,
     LIGHT_LASER_ID,
     HEAVY_LASER_ID,
@@ -297,6 +300,24 @@ namespace NoGame:
         let (deathstar) = NoGame_ships_deathstar.read(planet_id)
         return (
             Fleet(cargo, recycler, espionage_probe, satellite, light_fighter, cruiser, battleship, deathstar),
+        )
+    end
+
+    func defence_levels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        caller : felt
+    ) -> (result : Defence):
+        let (planet_id) = _get_planet_id(caller)
+        let (rocket) = NoGame_rocket.read(planet_id)
+        let (light_laser) = NoGame_ligth_laser.read(planet_id)
+        let (heavy_laser) = NoGame_heavy_laser.read(planet_id)
+        let (ion_cannon) = NoGame_ion_cannon.read(planet_id)
+        let (gauss) = NoGame_gauss.read(planet_id)
+        let (plasma_turette) = NoGame_plasma_turret.read(planet_id)
+        let (small_dome) = NoGame_small_dome.read(planet_id)
+        let (large_dome) = NoGame_large_dome.read(planet_id)
+
+        return (
+            Defence(rocket, light_laser, heavy_laser, ion_cannon, gauss, plasma_turette, small_dome, large_dome),
         )
     end
 
