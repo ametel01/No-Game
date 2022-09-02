@@ -20,10 +20,10 @@ end
 
 @view
 func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    resources : felt, facilities : felt, shipyard : felt, research_lab : felt
+    resources : felt, facilities : felt, shipyard : felt, research_lab : felt, defences : felt
 ):
-    let (resources, facilities, shipyard, research) = ModulesManager.modules_addresses()
-    return (resources, facilities, shipyard, research)
+    let (resources, facilities, shipyard, research, defences) = ModulesManager.modules_addresses()
+    return (resources, facilities, shipyard, research, defences)
 end
 
 @view
@@ -85,5 +85,11 @@ end
 @external
 func setResearch{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(address : felt):
     ModulesManager.set_research(address)
+    return ()
+end
+
+@external
+func setDefences{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(address : felt):
+    ModulesManager.set_defences(address)
     return ()
 end

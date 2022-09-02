@@ -43,6 +43,10 @@ end
 func ModulesManager_research_lab_address() -> (address : felt):
 end
 
+@storage_var
+func ModulesManager_defences_address() -> (address : felt):
+end
+
 namespace ModulesManager:
     func erc721_address{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
         address : felt
@@ -52,13 +56,14 @@ namespace ModulesManager:
     end
 
     func modules_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-        robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt
+        resources : felt, facilities : felt, shipyard : felt, research : felt, defences : felt
     ):
         let (resources) = ModulesManager_resources_address.read()
         let (facilities) = ModulesManager_facilities_address.read()
         let (shipyard) = ModulesManager_shipyard_address.read()
         let (research) = ModulesManager_research_lab_address.read()
-        return (resources, facilities, shipyard, research)
+        let (defences) = ModulesManager_defences_address.read()
+        return (resources, facilities, shipyard, research, defences)
     end
 
     func resources_addresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
@@ -134,6 +139,14 @@ namespace ModulesManager:
     ):
         Ownable.assert_only_owner()
         ModulesManager_research_lab_address.write(address)
+        return ()
+    end
+
+    func set_defences{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        address : felt
+    ):
+        Ownable.assert_only_owner()
+        ModulesManager_defences_address.write(address)
         return ()
     end
 end
