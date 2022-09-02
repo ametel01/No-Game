@@ -13,6 +13,7 @@ from starkware.starknet.common.syscalls import get_block_timestamp
 from facilities.library import SHIPYARD_ID
 from main.INoGame import INoGame
 from main.structs import Cost
+from shipyard.library import Fleet
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 
@@ -238,12 +239,10 @@ namespace Defence:
     end
 
     func small_dome_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt, number_of_units : felt
+        caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
         alloc_locals
-        let (metal_required, crystal_required, deuterium_required) = _small_dome_cost(
-            number_of_units
-        )
+        let (metal_required, crystal_required, deuterium_required) = _small_dome_cost(1)
         _check_que_not_busy(caller)
         _small_dome_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -255,7 +254,7 @@ namespace Defence:
 
     func small_dome_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt) -> (unit_produced : felt):
+    }(caller : felt):
         alloc_locals
         _check_trying_to_complete_the_right_defence(caller, SMALL_DOME_ID)
         let (units_produced) = _check_waited_enough(caller)
@@ -265,12 +264,10 @@ namespace Defence:
     end
 
     func large_dome_build_start{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        caller : felt, number_of_units : felt
+        caller : felt
     ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
         alloc_locals
-        let (metal_required, crystal_required, deuterium_required) = _large_dome_cost(
-            number_of_units
-        )
+        let (metal_required, crystal_required, deuterium_required) = _large_dome_cost(1)
         _check_que_not_busy(caller)
         _large_dome_requirements_check(caller)
         _check_enough_resources(caller, metal_required, crystal_required, deuterium_required)
@@ -282,7 +279,7 @@ namespace Defence:
 
     func large_dome_build_complete{
         syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-    }(caller : felt) -> (unit_produced : felt):
+    }(caller : felt):
         alloc_locals
         _check_trying_to_complete_the_right_defence(caller, LARGE_DOME_ID)
         let (units_produced) = _check_waited_enough(caller)
@@ -401,6 +398,7 @@ func _small_dome_requirements_check{
     let (no_game) = Defence_no_game_address.read()
     let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    # TODO: IMPLEMENT CHECK FOR ONLY ONE DOME
     with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 1"):
         assert_le(1, shipyard_level)
     end
@@ -416,6 +414,7 @@ func _large_dome_requirements_check{
     let (no_game) = Defence_no_game_address.read()
     let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
     let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    # TODO: IMPLEMENT CHECK FOR ONLY ONE DOME
     with_attr error_message("DEFENCES::SHIPYARD MUST BE AT LEVEL 6"):
         assert_le(6, shipyard_level)
     end

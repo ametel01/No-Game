@@ -128,11 +128,11 @@ end
 
 @external
 func smallDomeBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt, number_of_units : felt
+    caller : felt
 ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
         metal_required, crystal_required, deuterium_required, time_end
-    ) = Defence.small_dome_build_start(caller, number_of_units)
+    ) = Defence.small_dome_build_start(caller)
     return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
@@ -146,11 +146,11 @@ end
 
 @external
 func largeDomeBuildStart{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-    caller : felt, number_of_units : felt
+    caller : felt
 ) -> (metal : felt, crystal : felt, deuterium : felt, time_end : felt):
     let (
         metal_required, crystal_required, deuterium_required, time_end
-    ) = Defence.large_dome_build_start(caller, number_of_units)
+    ) = Defence.large_dome_build_start(caller)
     return (metal_required, crystal_required, deuterium_required, time_end)
 end
 
