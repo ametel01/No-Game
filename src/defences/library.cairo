@@ -51,6 +51,17 @@ struct DefenceCosts:
     member large_dome : Cost
 end
 
+struct Defence:
+    member rocket : felt
+    member light_laser : felt
+    member heavy_laser : felt
+    member ion_cannon : felt
+    member gauss : felt
+    member plasma_turette : felt
+    member small_dome : felt
+    member large_dome : felt
+end
+
 #########################################################################################
 #                                           STORAGES                                    #
 #########################################################################################
@@ -67,7 +78,7 @@ end
 func Defence_qued(address : felt, id : felt) -> (res : felt):
 end
 
-namespace Defence:
+namespace Defences:
     func initializer{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         no_game_address : felt
     ):
