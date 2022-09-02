@@ -47,9 +47,7 @@ namespace IDefences:
     ):
     end
 
-    func gaussBuildComplete(caller : felt, number_of_units : felt) -> (
-        metal : felt, crystal : felt, deuterium : felt, time_end : felt
-    ):
+    func gaussBuildComplete(caller : felt) -> (unit_produced : felt):
     end
 
     func plasmaTurretBuildStart(caller : felt, number_of_units : felt) -> (
