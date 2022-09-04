@@ -6,7 +6,7 @@ authors = ["ametel01 <alex-metelli@gmx.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = ">= 3.7.2 <= 3.9"
+python = ">= 3.7.2 <= 3.9.13"
 cairo-lang = "^0.9.1"
 pre-commit = "^2.20.0"
 starknet-devnet = "^0.2.8"
