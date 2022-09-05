@@ -6,51 +6,51 @@ from manager.IModulesManager import IModulesManager as Manager
 from tests.interfaces import Minter, NoGame
 from shipyard.library import Fleet
 
-const E18 = 10 ** 18
-const ERC721_NAME = 0x4e6f47616d6520
-const ERC721_SYMBOL = 0x4f474d302e31
-const URI_LEN = 1
-const URI = 10101010
+const E18 = 10 ** 18;
+const ERC721_NAME = 0x4e6f47616d6520;
+const ERC721_SYMBOL = 0x4f474d302e31;
+const URI_LEN = 1;
+const URI = 10101010;
 
-const PK = 11111
-const PK2 = 22222
+const PK = 11111;
+const PK2 = 22222;
 
-const METAL_NAME = 0x6f67616d65206d6574616c2076302e31
-const METAL_SYMBOL = 0x4f674d455476302e31
+const METAL_NAME = 0x6f67616d65206d6574616c2076302e31;
+const METAL_SYMBOL = 0x4f674d455476302e31;
 
-const CRYSTAL_NAME = 0x6f67616d65206372797374616c2076302e31
-const CRYSTAL_SYMBOL = 0x4f6743525976302e31
+const CRYSTAL_NAME = 0x6f67616d65206372797374616c2076302e31;
+const CRYSTAL_SYMBOL = 0x4f6743525976302e31;
 
-const DEUTERIUM_NAME = 0x6f67616d652064657574657269756d2076302e31
-const DEUTERIUM_SYMBOL = 0x4f6744455576302e31
+const DEUTERIUM_NAME = 0x6f67616d652064657574657269756d2076302e31;
+const DEUTERIUM_SYMBOL = 0x4f6744455576302e31;
 
-struct Contracts:
-    member owner : felt
-    member p1 : felt
-    member minter : felt
-    member manager : felt
-    member erc721 : felt
-    member game : felt
-    member metal : felt
-    member crystal : felt
-    member deuterium : felt
-    member resources : felt
-    member facilities : felt
-    member shipyard : felt
-    member research : felt
-    member defences : felt
-end
+struct Contracts {
+    owner: felt,
+    p1: felt,
+    minter: felt,
+    manager: felt,
+    erc721: felt,
+    game: felt,
+    metal: felt,
+    crystal: felt,
+    deuterium: felt,
+    resources: felt,
+    facilities: felt,
+    shipyard: felt,
+    research: felt,
+    defences: felt,
+}
 
-struct ClassHashes:
-    member resources : felt
-    member facilities : felt
-    member shipyard : felt
-    member research : felt
-end
+struct ClassHashes {
+    resources: felt,
+    facilities: felt,
+    shipyard: felt,
+    research: felt,
+}
 
 @external
-func __setup__{syscall_ptr : felt*, range_check_ptr}():
-    alloc_locals
+func __setup__{syscall_ptr: felt*, range_check_ptr}() {
+    alloc_locals;
     %{
         context.owner_address = deploy_contract("lib/openzeppelin/account/presets/Account.cairo", [ids.PK]).contract_address
         context.p1_address = deploy_contract("lib/openzeppelin/account/presets/Account.cairo", [ids.PK2]).contract_address 
@@ -75,25 +75,25 @@ func __setup__{syscall_ptr : felt*, range_check_ptr}():
         context.defences_address = deploy_contract("src/defences/Defences.cairo", [context.game_address]).contract_address
         print("defences_address: ", context.defences_address)
     %}
-    return ()
-end
+    return ();
+}
 
-func _run_modules_manager{syscall_ptr : felt*, range_check_ptr}(addresses : Contracts):
-    Manager.setERC721(addresses.manager, addresses.erc721)
-    Manager.setMetal(addresses.manager, addresses.metal)
-    Manager.setCrystal(addresses.manager, addresses.crystal)
-    Manager.setDeuterium(addresses.manager, addresses.deuterium)
+func _run_modules_manager{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts) {
+    Manager.setERC721(addresses.manager, addresses.erc721);
+    Manager.setMetal(addresses.manager, addresses.metal);
+    Manager.setCrystal(addresses.manager, addresses.crystal);
+    Manager.setDeuterium(addresses.manager, addresses.deuterium);
 
-    Manager.setResources(addresses.manager, addresses.resources)
-    Manager.setFacilities(addresses.manager, addresses.facilities)
-    Manager.setShipyard(addresses.manager, addresses.shipyard)
-    Manager.setResearch(addresses.manager, addresses.research)
-    Manager.setDefences(addresses.manager, addresses.defences)
-    return ()
-end
+    Manager.setResources(addresses.manager, addresses.resources);
+    Manager.setFacilities(addresses.manager, addresses.facilities);
+    Manager.setShipyard(addresses.manager, addresses.shipyard);
+    Manager.setResearch(addresses.manager, addresses.research);
+    Manager.setDefences(addresses.manager, addresses.defences);
+    return ();
+}
 
-func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (addresses : Contracts):
-    tempvar _addresses : Contracts
+func _get_test_addresses{syscall_ptr: felt*, range_check_ptr}() -> (addresses: Contracts) {
+    tempvar _addresses: Contracts;
     %{
         ids._addresses.owner = context.owner_address
         ids._addresses.p1 = context.p1_address
@@ -112,22 +112,22 @@ func _get_test_addresses{syscall_ptr : felt*, range_check_ptr}() -> (addresses :
 
         stop_prank_callable = start_prank(ids._addresses.owner, target_contract_address=ids._addresses.manager)
     %}
-    return (_addresses)
-end
+    return (_addresses,);
+}
 
-func _run_minter{syscall_ptr : felt*, range_check_ptr}(addresses : Contracts, n_planets : felt):
+func _run_minter{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts, n_planets: felt) {
     %{ stop_prank_callable2 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.minter) %}
-    Minter.setNFTaddress(addresses.minter, addresses.erc721)
-    Minter.setNFTapproval(addresses.minter, addresses.game, TRUE)
-    Minter.mintAll(addresses.minter, n_planets, Uint256(1, 0))
-    return ()
-end
+    Minter.setNFTaddress(addresses.minter, addresses.erc721);
+    Minter.setNFTapproval(addresses.minter, addresses.game, TRUE);
+    Minter.mintAll(addresses.minter, n_planets, Uint256(1, 0));
+    return ();
+}
 
-func _get_class_hashes{syscall_ptr : felt*, range_check_ptr}() -> (class_hashes : ClassHashes):
-    tempvar resources : felt
-    tempvar facilities : felt
-    tempvar shipyard : felt
-    tempvar research : felt
+func _get_class_hashes{syscall_ptr: felt*, range_check_ptr}() -> (class_hashes: ClassHashes) {
+    tempvar resources: felt;
+    tempvar facilities: felt;
+    tempvar shipyard: felt;
+    tempvar research: felt;
     %{
         declared_resources = declare("src/resources/library.cairo")
                ids.resources = declared_resources
@@ -141,15 +141,15 @@ func _get_class_hashes{syscall_ptr : felt*, range_check_ptr}() -> (class_hashes 
                declared_research = declare("src/research/library.cairo")
                ids.research = declared_facilities
     %}
-    return (ClassHashes(resources, facilities, shipyard, research))
-end
+    return (ClassHashes(resources, facilities, shipyard, research),);
+}
 
-func _time_warp{syscall_ptr : felt*, range_check_ptr}(new_timestamp : felt, target : felt):
+func _time_warp{syscall_ptr: felt*, range_check_ptr}(new_timestamp: felt, target: felt) {
     %{ stop_warp = warp(ids.new_timestamp, target_contract_address=ids.target) %}
-    return ()
-end
+    return ();
+}
 
-func _warp_all{syscall_ptr : felt*, range_check_ptr}(new_timestamp : felt, addresses : Contracts):
+func _warp_all{syscall_ptr: felt*, range_check_ptr}(new_timestamp: felt, addresses: Contracts) {
     %{
         stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.game)
         stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.resources)
@@ -157,61 +157,61 @@ func _warp_all{syscall_ptr : felt*, range_check_ptr}(new_timestamp : felt, addre
         stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.shipyard)
         stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.research)
     %}
-    return ()
-end
+    return ();
+}
 
-func _set_resource_levels{syscall_ptr : felt*, range_check_ptr}(
-    resource : felt, wallet : felt, amount : felt
-):
+func _set_resource_levels{syscall_ptr: felt*, range_check_ptr}(
+    resource: felt, wallet: felt, amount: felt
+) {
     %{
         store(ids.resource, "ERC20_total_supply", [ids.amount*ids.E18, 0])
         store(ids.resource, "ERC20_balances", [ids.amount*ids.E18, 0], key=[ids.wallet])
     %}
-    return ()
-end
+    return ();
+}
 
-func _set_mines_levels{syscall_ptr : felt*, range_check_ptr}(
-    game : felt, id : felt, m : felt, c : felt, d : felt, s : felt
-):
+func _set_mines_levels{syscall_ptr: felt*, range_check_ptr}(
+    game: felt, id: felt, m: felt, c: felt, d: felt, s: felt
+) {
     %{
         store(ids.game, "NoGame_metal_mine_level", [ids.m], key=[ids.id,0])
         store(ids.game, "NoGame_crystal_mine_level", [ids.c], key=[ids.id,0])
         store(ids.game, "NoGame_deuterium_mine_level", [ids.d], key=[ids.id,0])
         store(ids.game, "NoGame_solar_plant_level", [ids.s], key=[ids.id,0])
     %}
-    return ()
-end
+    return ();
+}
 
-func _set_facilities_levels{syscall_ptr : felt*, range_check_ptr}(
-    game : felt, id : felt, robot : felt, shipyard : felt, research : felt, nanite : felt
-):
+func _set_facilities_levels{syscall_ptr: felt*, range_check_ptr}(
+    game: felt, id: felt, robot: felt, shipyard: felt, research: felt, nanite: felt
+) {
     %{
         store(ids.game, "NoGame_robot_factory_level", [ids.robot], key=[ids.id,0])
         store(ids.game, "NoGame_shipyard_level", [ids.shipyard], key=[ids.id,0])
         store(ids.game, "NoGame_research_lab_level", [ids.research], key=[ids.id,0])
         store(ids.game, "NoGame_nanite_factory_level", [ids.nanite], key=[ids.id,0])
     %}
-    return ()
-end
+    return ();
+}
 
-func _set_tech_levels{syscall_ptr : felt*, range_check_ptr}(
-    game : felt,
-    id : felt,
-    armour_tech : felt,
-    astrophysics : felt,
-    combustion_drive : felt,
-    computer_tech : felt,
-    energy_tech : felt,
-    espionage_tech : felt,
-    hyperspace_drive : felt,
-    hyperspace_tech : felt,
-    impulse_drive : felt,
-    ion_tech : felt,
-    laser_tech : felt,
-    plasma_tech : felt,
-    shielding_tech : felt,
-    weapons_tech : felt,
-):
+func _set_tech_levels{syscall_ptr: felt*, range_check_ptr}(
+    game: felt,
+    id: felt,
+    armour_tech: felt,
+    astrophysics: felt,
+    combustion_drive: felt,
+    computer_tech: felt,
+    energy_tech: felt,
+    espionage_tech: felt,
+    hyperspace_drive: felt,
+    hyperspace_tech: felt,
+    impulse_drive: felt,
+    ion_tech: felt,
+    laser_tech: felt,
+    plasma_tech: felt,
+    shielding_tech: felt,
+    weapons_tech: felt,
+) {
     %{
         store(ids.game, "NoGame_armour_tech", [ids.armour_tech], key=[ids.id,0])
         store(ids.game, "NoGame_astrophysics", [ids.astrophysics], key=[ids.id,0])
@@ -228,63 +228,61 @@ func _set_tech_levels{syscall_ptr : felt*, range_check_ptr}(
         store(ids.game, "NoGame_shielding_tech", [ids.shielding_tech], key=[ids.id,0])
         store(ids.game, "NoGame_weapons_tech", [ids.weapons_tech], key=[ids.id,0])
     %}
-    return ()
-end
+    return ();
+}
 
-func _reset_resources_timelock{syscall_ptr : felt*, range_check_ptr}(
-    resources : felt, player : felt
-):
+func _reset_resources_timelock{syscall_ptr: felt*, range_check_ptr}(resources: felt, player: felt) {
     %{ store(ids.resources, "Resources_timelock", [0,0], key=[ids.player]) %}
 
-    return ()
-end
+    return ();
+}
 
-func _reset_facilities_timelock{syscall_ptr : felt*, range_check_ptr}(
-    facilities : felt, player : felt
-):
+func _reset_facilities_timelock{syscall_ptr: felt*, range_check_ptr}(
+    facilities: felt, player: felt
+) {
     %{ store(ids.facilities, "Facilities_timelock", [0,0], key=[ids.player]) %}
 
-    return ()
-end
+    return ();
+}
 
-func _reset_shipyard_timelock{syscall_ptr : felt*, range_check_ptr}(shipyard : felt, player : felt):
+func _reset_shipyard_timelock{syscall_ptr: felt*, range_check_ptr}(shipyard: felt, player: felt) {
     %{ store(ids.shipyard, "Shipyard_timelock", [0,0,0], key=[ids.player]) %}
 
-    return ()
-end
+    return ();
+}
 
-func _reset_lab_timelock{syscall_ptr : felt*, range_check_ptr}(lab : felt, player : felt):
+func _reset_lab_timelock{syscall_ptr: felt*, range_check_ptr}(lab: felt, player: felt) {
     %{ store(ids.research, "Research_timelock", [0,0], key=[ids.player]) %}
 
-    return ()
-end
+    return ();
+}
 
-func _reset_que{syscall_ptr : felt*, range_check_ptr}(resources : felt, player : felt, id : felt):
+func _reset_que{syscall_ptr: felt*, range_check_ptr}(resources: felt, player: felt, id: felt) {
     %{ store(ids.resources, "Resources_timelock", [0], key=[ids.player, ids.id]) %}
 
-    return ()
-end
+    return ();
+}
 
-func _get_expected_cost{syscall_ptr : felt*, range_check_ptr}(
-    base_m : felt, base_c : felt, multiplier : felt, level : felt
-) -> (metal : felt, crystal : felt):
-    tempvar metal : felt
-    tempvar crystal : felt
+func _get_expected_cost{syscall_ptr: felt*, range_check_ptr}(
+    base_m: felt, base_c: felt, multiplier: felt, level: felt
+) -> (metal: felt, crystal: felt) {
+    tempvar metal: felt;
+    tempvar crystal: felt;
     %{
         ids.metal = (ids.base_m * (ids.multiplier)**(ids.level)) // 10**ids.level
         ids.crystal = (ids.base_c * (ids.multiplier)**(ids.level)) // 10**ids.level
     %}
-    return (metal, crystal)
-end
+    return (metal, crystal);
+}
 
-func _print_game_state{syscall_ptr : felt*, range_check_ptr}(addresses : Contracts):
-    let (m, c, d, s) = NoGame.getResourcesBuildingsLevels(addresses.game, addresses.owner)
-    let (ro, sh, re, na) = NoGame.getFacilitiesLevels(addresses.game, addresses.owner)
-    let (t) = NoGame.getTechLevels(addresses.game, addresses.owner)
+func _print_game_state{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts) {
+    let (m, c, d, s) = NoGame.getResourcesBuildingsLevels(addresses.game, addresses.owner);
+    let (ro, sh, re, na) = NoGame.getFacilitiesLevels(addresses.game, addresses.owner);
+    let (t) = NoGame.getTechLevels(addresses.game, addresses.owner);
     let (metal, crystal, deuterium, _) = NoGame.getResourcesAvailable(
         addresses.game, addresses.owner
-    )
-    let (f) = NoGame.getFleetLevels(addresses.game, addresses.owner)
+    );
+    let (f) = NoGame.getFleetLevels(addresses.game, addresses.owner);
     %{
         print(f"metal: {ids.metal/ids.E18}\tcrystal: {ids.crystal/ids.E18}\tdeuterium: {ids.deuterium/ids.E18}\n") 
         print(f"metal level: {ids.m}\tcrystal level: {ids.c}\tdeuterium level: {ids.d}\tsolar level: {ids.s}\n")
@@ -301,5 +299,5 @@ func _print_game_state{syscall_ptr : felt*, range_check_ptr}(addresses : Contrac
         print(f"battle_ship: {ids.f.battle_ship}")
     %}
 
-    return ()
-end
+    return ();
+}

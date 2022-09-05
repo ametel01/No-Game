@@ -48,4 +48,3 @@ erc20 = [
 erc721 = [
     "src/token/erc721/ERC721.cairo"
 ]
-

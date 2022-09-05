@@ -7,390 +7,390 @@ from shipyard.library import Fleet, ShipyardQue
 from defences.library import Defence
 
 @contract_interface
-namespace NoGame:
+namespace NoGame {
     func getTokensAddresses() -> (
-        erc721 : felt, erc20_metal : felt, erc20_crystal : felt, erc20_deuterium : felt
-    ):
-    end
+        erc721: felt, erc20_metal: felt, erc20_crystal: felt, erc20_deuterium: felt
+    ) {
+    }
 
     func getModulesAddresses() -> (
-        _resources : felt, _facilities : felt, _shipyard : felt, _research : felt
-    ):
-    end
+        _resources: felt, _facilities: felt, _shipyard: felt, _research: felt
+    ) {
+    }
 
     func getResourcesBuildingsLevels() -> (
-        metal_mine : felt, crystal_mine : felt, deuterium_mine : felt, solar_plant : felt
-    ):
-    end
+        metal_mine: felt, crystal_mine: felt, deuterium_mine: felt, solar_plant: felt
+    ) {
+    }
 
     func getResourcesUpgradeCost() -> (
-        metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost
-    ):
-    end
+        metal_mine: Cost, crystal_mine: Cost, deuterium_mine: Cost, solar_plant: Cost
+    ) {
+    }
 
     func getFacilitiesLevels() -> (
-        robot_factory : felt, shipyard : felt, research_lab : felt, nanite_factory : felt
-    ):
-    end
+        robot_factory: felt, shipyard: felt, research_lab: felt, nanite_factory: felt
+    ) {
+    }
 
     func getFacilitiesUpgradeCost() -> (
-        robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost
-    ):
-    end
+        robot_factory: Cost, shipyard: Cost, research_lab: Cost, nanite_factory: Cost
+    ) {
+    }
 
-    func getResourcesAvailable() -> (metal : felt, crystal : felt, deuterium : felt, energy : felt):
-    end
+    func getResourcesAvailable() -> (metal: felt, crystal: felt, deuterium: felt, energy: felt) {
+    }
 
-    func getFleetLevels(address : felt) -> (levels : Fleet):
-    end
+    func getFleetLevels(address: felt) -> (levels: Fleet) {
+    }
 
-    func getDefenceLevels(address : felt) -> (levels : Defence):
-    end
+    func getDefenceLevels(address: felt) -> (levels: Defence) {
+    }
 
     func getShipsCost() -> (
-        cargo : Cost,
-        recycler : Cost,
-        espionage_probe : Cost,
-        solar_satellite : Cost,
-        light_fighter : Cost,
-        cruiser : Cost,
-        battleship : Cost,
-    ):
-    end
+        cargo: Cost,
+        recycler: Cost,
+        espionage_probe: Cost,
+        solar_satellite: Cost,
+        light_fighter: Cost,
+        cruiser: Cost,
+        battleship: Cost,
+    ) {
+    }
 
-    func getTechLevels() -> (tech_levels : TechLevels):
-    end
+    func getTechLevels() -> (tech_levels: TechLevels) {
+    }
 
     func getTechUpgradeCost() -> (
-        a : Cost,
-        b : Cost,
-        c : Cost,
-        d : Cost,
-        e : Cost,
-        f : Cost,
-        g : Cost,
-        h : Cost,
-        i : Cost,
-        l : Cost,
-        m : Cost,
-        n : Cost,
-        o : Cost,
-        p : Cost,
-    ):
-    end
+        a: Cost,
+        b: Cost,
+        c: Cost,
+        d: Cost,
+        e: Cost,
+        f: Cost,
+        g: Cost,
+        h: Cost,
+        i: Cost,
+        l: Cost,
+        m: Cost,
+        n: Cost,
+        o: Cost,
+        p: Cost,
+    ) {
+    }
 
-    func getResourcesQueStatus() -> (status : ResourcesQue):
-    end
+    func getResourcesQueStatus() -> (status: ResourcesQue) {
+    }
 
-    func getShipyardQueStatus() -> (status : ShipyardQue):
-    end
+    func getShipyardQueStatus() -> (status: ShipyardQue) {
+    }
 
-    func numberOfPlanets() -> (n_planets : felt):
-    end
+    func numberOfPlanets() -> (n_planets: felt) {
+    }
 
-    func generatePlanet():
-    end
+    func generatePlanet() {
+    }
 
-    func collectResources():
-    end
+    func collectResources() {
+    }
 
-    func metalUpgradeStart():
-    end
+    func metalUpgradeStart() {
+    }
 
-    func metalUpgradeComplete():
-    end
+    func metalUpgradeComplete() {
+    }
 
-    func crystalUpgradeStart():
-    end
+    func crystalUpgradeStart() {
+    }
 
-    func crystalUpgradeComplete():
-    end
+    func crystalUpgradeComplete() {
+    }
 
-    func deuteriumUpgradeStart():
-    end
+    func deuteriumUpgradeStart() {
+    }
 
-    func deuteriumUpgradeComplete():
-    end
+    func deuteriumUpgradeComplete() {
+    }
 
-    func solarUpgradeStart():
-    end
+    func solarUpgradeStart() {
+    }
 
-    func solarUpgradeComplete():
-    end
+    func solarUpgradeComplete() {
+    }
 
-    func robotUpgradeStart():
-    end
+    func robotUpgradeStart() {
+    }
 
-    func robotUpgradeComplete():
-    end
+    func robotUpgradeComplete() {
+    }
 
-    func shipyardUpgradeStart():
-    end
+    func shipyardUpgradeStart() {
+    }
 
-    func shipyardUpgradeComplete():
-    end
+    func shipyardUpgradeComplete() {
+    }
 
-    func researchUpgradeStart():
-    end
+    func researchUpgradeStart() {
+    }
 
-    func researchUpgradeComplete():
-    end
+    func researchUpgradeComplete() {
+    }
 
-    func naniteUpgradeStart():
-    end
+    func naniteUpgradeStart() {
+    }
 
-    func naniteUpgradeComplete():
-    end
+    func naniteUpgradeComplete() {
+    }
 
-    func cargoShipBuildStart(units : felt):
-    end
+    func cargoShipBuildStart(units: felt) {
+    }
 
-    func cargoShipBuildComplete():
-    end
+    func cargoShipBuildComplete() {
+    }
 
-    func recyclerShipBuildStart(units : felt):
-    end
+    func recyclerShipBuildStart(units: felt) {
+    }
 
-    func recyclerShipBuildComplete():
-    end
+    func recyclerShipBuildComplete() {
+    }
 
-    func espionageProbeBuildStart(units : felt):
-    end
+    func espionageProbeBuildStart(units: felt) {
+    }
 
-    func espionageProbeBuildComplete():
-    end
+    func espionageProbeBuildComplete() {
+    }
 
-    func solarSatelliteBuildStart(units : felt):
-    end
+    func solarSatelliteBuildStart(units: felt) {
+    }
 
-    func solarSatelliteBuildComplete():
-    end
+    func solarSatelliteBuildComplete() {
+    }
 
-    func lightFighterBuildStart(units : felt):
-    end
+    func lightFighterBuildStart(units: felt) {
+    }
 
-    func lightFighterBuildComplete():
-    end
+    func lightFighterBuildComplete() {
+    }
 
-    func cruiserBuildStart(units : felt):
-    end
+    func cruiserBuildStart(units: felt) {
+    }
 
-    func cruiserBuildComplete():
-    end
+    func cruiserBuildComplete() {
+    }
 
-    func battleShipBuildStart(units : felt):
-    end
+    func battleShipBuildStart(units: felt) {
+    }
 
-    func battleShipBuildComplete():
-    end
+    func battleShipBuildComplete() {
+    }
 
-    func armourTechUpgradeStart():
-    end
+    func armourTechUpgradeStart() {
+    }
 
-    func armourTechUpgradeComplete():
-    end
+    func armourTechUpgradeComplete() {
+    }
 
-    func astrophysicsUpgradeStart():
-    end
+    func astrophysicsUpgradeStart() {
+    }
 
-    func astrophysicsUpgradeComplete():
-    end
+    func astrophysicsUpgradeComplete() {
+    }
 
-    func combustionDriveUpgradeStart():
-    end
+    func combustionDriveUpgradeStart() {
+    }
 
-    func combustionDriveUpgradeComplete():
-    end
+    func combustionDriveUpgradeComplete() {
+    }
 
-    func computerTechUpgradeStart():
-    end
+    func computerTechUpgradeStart() {
+    }
 
-    func computerTechUpgradeComplete():
-    end
+    func computerTechUpgradeComplete() {
+    }
 
-    func energyTechUpgradeStart():
-    end
+    func energyTechUpgradeStart() {
+    }
 
-    func energyTechUpgradeComplete():
-    end
+    func energyTechUpgradeComplete() {
+    }
 
-    func espionageTechUpgradeStart():
-    end
+    func espionageTechUpgradeStart() {
+    }
 
-    func espionageTechUpgradeComplete():
-    end
+    func espionageTechUpgradeComplete() {
+    }
 
-    func hyperspaceDriveUpgradeStart():
-    end
+    func hyperspaceDriveUpgradeStart() {
+    }
 
-    func hyperspaceDriveUpgradeComplete():
-    end
+    func hyperspaceDriveUpgradeComplete() {
+    }
 
-    func hyperspaceTechUpgradeStart():
-    end
+    func hyperspaceTechUpgradeStart() {
+    }
 
-    func hyperspaceTechUpgradeComplete():
-    end
+    func hyperspaceTechUpgradeComplete() {
+    }
 
-    func impulseDriveUpgradeStart():
-    end
+    func impulseDriveUpgradeStart() {
+    }
 
-    func impulseDriveUpgradeComplete():
-    end
+    func impulseDriveUpgradeComplete() {
+    }
 
-    func ionTechUpgradeStart():
-    end
+    func ionTechUpgradeStart() {
+    }
 
-    func ionTechUpgradeComplete():
-    end
+    func ionTechUpgradeComplete() {
+    }
 
-    func laserTechUpgradeStart():
-    end
+    func laserTechUpgradeStart() {
+    }
 
-    func laserTechUpgradeComplete():
-    end
+    func laserTechUpgradeComplete() {
+    }
 
-    func plasmaTechUpgradeStart():
-    end
+    func plasmaTechUpgradeStart() {
+    }
 
-    func plasmaTechUpgradeComplete():
-    end
+    func plasmaTechUpgradeComplete() {
+    }
 
-    func shieldingTechUpgradeStart():
-    end
+    func shieldingTechUpgradeStart() {
+    }
 
-    func shieldingTechUpgradeComplete():
-    end
+    func shieldingTechUpgradeComplete() {
+    }
 
-    func weaponsTechUpgradeStart():
-    end
+    func weaponsTechUpgradeStart() {
+    }
 
-    func weaponsTechUpgradeComplete():
-    end
+    func weaponsTechUpgradeComplete() {
+    }
 
-    func rocketBuildStart(units : felt):
-    end
+    func rocketBuildStart(units: felt) {
+    }
 
-    func rocketBuildComplete():
-    end
+    func rocketBuildComplete() {
+    }
 
-    func lightLaserBuildStart(units : felt):
-    end
+    func lightLaserBuildStart(units: felt) {
+    }
 
-    func lightLaserBuildComplete():
-    end
+    func lightLaserBuildComplete() {
+    }
 
-    func heavyLaserBuildStart(units : felt):
-    end
+    func heavyLaserBuildStart(units: felt) {
+    }
 
-    func heavyLaserBuildComplete():
-    end
+    func heavyLaserBuildComplete() {
+    }
 
-    func ionCannonBuildStart(units : felt):
-    end
+    func ionCannonBuildStart(units: felt) {
+    }
 
-    func ionCannonBuildComplete():
-    end
+    func ionCannonBuildComplete() {
+    }
 
-    func gaussBuildStart(units : felt):
-    end
+    func gaussBuildStart(units: felt) {
+    }
 
-    func gaussBuildComplete():
-    end
+    func gaussBuildComplete() {
+    }
 
-    func plasmaTurretBuildStart(units : felt):
-    end
+    func plasmaTurretBuildStart(units: felt) {
+    }
 
-    func plasmaTurretBuildComplete():
-    end
+    func plasmaTurretBuildComplete() {
+    }
 
-    func smallDomeBuildStart():
-    end
+    func smallDomeBuildStart() {
+    }
 
-    func smallDomeBuildComplete():
-    end
+    func smallDomeBuildComplete() {
+    }
 
-    func largeDomeBuildStart():
-    end
+    func largeDomeBuildStart() {
+    }
 
-    func largeDomeBuildComplete():
-    end
-end
+    func largeDomeBuildComplete() {
+    }
+}
 
 @contract_interface
-namespace ERC721:
-    func balanceOf(owner : felt) -> (balance : Uint256):
-    end
+namespace ERC721 {
+    func balanceOf(owner: felt) -> (balance: Uint256) {
+    }
 
-    func ownerOf(tokenId : Uint256) -> (owner : felt):
-    end
+    func ownerOf(tokenId: Uint256) -> (owner: felt) {
+    }
 
-    func name() -> (res : felt):
-    end
+    func name() -> (res: felt) {
+    }
 
-    func symbol() -> (res : felt):
-    end
+    func symbol() -> (res: felt) {
+    }
 
-    func owner() -> (res : felt):
-    end
+    func owner() -> (res: felt) {
+    }
 
-    func tokenURI() -> (uri_len, uri):
-    end
+    func tokenURI() -> (uri_len: felt, uri: felt) {
+    }
 
-    func ownerToPlanet(owner : felt) -> (tokenId : Uint256):
-    end
+    func ownerToPlanet(owner: felt) -> (tokenId: Uint256) {
+    }
 
-    func isApprovedForAll(owner : felt, operator : felt) -> (res : felt):
-    end
+    func isApprovedForAll(owner: felt, operator: felt) -> (res: felt) {
+    }
 
-    func transferFrom(from_ : felt, to : felt, tokenId : Uint256):
-    end
-end
-
-@contract_interface
-namespace Minter:
-    func setNFTaddress(address : felt):
-    end
-
-    func setNFTapproval(operator : felt, approved : felt):
-    end
-
-    func mintAll(n : felt, token_id : Uint256):
-    end
-end
+    func transferFrom(from_: felt, to: felt, tokenId: Uint256) {
+    }
+}
 
 @contract_interface
-namespace ERC20:
-    func name() -> (name : felt):
-    end
+namespace Minter {
+    func setNFTaddress(address: felt) {
+    }
 
-    func symbol() -> (symbol : felt):
-    end
+    func setNFTapproval(operator: felt, approved: felt) {
+    }
 
-    func decimals() -> (decimals : felt):
-    end
+    func mintAll(n: felt, token_id: Uint256) {
+    }
+}
 
-    func totalSupply() -> (totalSupply : Uint256):
-    end
+@contract_interface
+namespace ERC20 {
+    func name() -> (name: felt) {
+    }
 
-    func balanceOf(account : felt) -> (balance : Uint256):
-    end
+    func symbol() -> (symbol: felt) {
+    }
 
-    func allowance(owner : felt, spender : felt) -> (remaining : Uint256):
-    end
+    func decimals() -> (decimals: felt) {
+    }
 
-    func transfer(recipient : felt, amount : Uint256) -> (success : felt):
-    end
+    func totalSupply() -> (totalSupply: Uint256) {
+    }
 
-    func transferFrom(sender : felt, recipient : felt, amount : Uint256) -> (success : felt):
-    end
+    func balanceOf(account: felt) -> (balance: Uint256) {
+    }
 
-    func approve(spender : felt, amount : Uint256) -> (success : felt):
-    end
+    func allowance(owner: felt, spender: felt) -> (remaining: Uint256) {
+    }
 
-    func mint(recipient : felt, amount : Uint256):
-    end
+    func transfer(recipient: felt, amount: Uint256) -> (success: felt) {
+    }
 
-    func burn(account : felt, amount : Uint256):
-    end
-end
+    func transferFrom(sender: felt, recipient: felt, amount: Uint256) -> (success: felt) {
+    }
+
+    func approve(spender: felt, amount: Uint256) -> (success: felt) {
+    }
+
+    func mint(recipient: felt, amount: Uint256) {
+    }
+
+    func burn(account: felt, amount: Uint256) {
+    }
+}
