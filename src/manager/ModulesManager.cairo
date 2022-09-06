@@ -87,3 +87,11 @@ func setResearch{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
     ModulesManager.set_research(address)
     return ()
 end
+
+@external
+func setDefences{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    address : felt):
+    ModulesManager.set_defences(address)
+    return()
+end
+    

@@ -4,6 +4,7 @@ from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
 from resources.library import ResourcesQue
 from shipyard.library import Fleet, ShipyardQue
+from defences.library import Defence
 
 @contract_interface
 namespace NoGame:
@@ -43,6 +44,9 @@ namespace NoGame:
     end
 
     func getFleetLevels(caller : felt) -> (levels : Fleet):
+    end
+
+    func getDefenceLevels(caller : felt) -> (levels : Defence):
     end
 
     func getShipsCost() -> (
@@ -264,6 +268,54 @@ namespace NoGame:
     end
 
     func weaponsTechUpgradeComplete():
+    end
+
+    func rocketBuildStart(units : felt):
+    end
+
+    func rocketBuildComplete():
+    end
+
+    func lightLaserBuildStart(units : felt):
+    end 
+
+    func lightLaserBuildComplete():
+    end
+
+    func heavyLaserBuildStart(units : felt):
+    end
+
+    func heavyLaserBuildComplete():
+    end
+
+    func ionCannonBuildStart(units : felt):
+    end
+
+    func ionCannonBuildComplete():
+    end
+
+    func gaussBuildStart(units : felt):
+    end
+
+    func gaussBuildComplete():
+    end
+
+    func plasmaTurretBuildStart(units : felt):
+    end
+
+    func plasmaTurretBuildComplete():
+    end
+
+    func smallDomeBuildStart():
+    end
+
+    func smallDomeBuildComplete():
+    end
+
+    func largeDomeBuildStart():
+    end
+
+    func largeDomeBuildComplete():
     end
 end
 

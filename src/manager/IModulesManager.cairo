@@ -6,7 +6,7 @@ namespace IModulesManager:
     end
 
     func getModulesAddresses() -> (
-        resources : felt, facilities : felt, shipyard : felt, research_lab : felt
+        resources : felt, facilities : felt, shipyard : felt, research_lab : felt, defences : felt
     ):
     end
 
@@ -35,5 +35,8 @@ namespace IModulesManager:
     end
 
     func setResearch(address : felt):
+    end
+
+    func setDefences(address : felt):
     end
 end

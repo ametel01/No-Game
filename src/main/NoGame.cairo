@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_caller_address
+from defences.library import Defence
 from facilities.IFacilities import IFacilities
 from main.library import NoGame
 from main.structs import Cost, TechLevels, TechCosts
@@ -38,10 +39,10 @@ end
 
 @view
 func getModulesAddresses{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
-    _resources : felt, _facilities : felt, _shipyard : felt, _research : felt
+    _resources : felt, _facilities : felt, _shipyard : felt, _research : felt, _defences : felt
 ):
-    let (resources, facilities, shipyard, research) = NoGame.modules_addresses()
-    return (resources, facilities, shipyard, research)
+    let (resources, facilities, shipyard, research, defences) = NoGame.modules_addresses()
+    return (resources, facilities, shipyard, research, defences)
 end
 
 @view
@@ -72,7 +73,7 @@ end
 func getResourcesUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (metal_mine : Cost, crystal_mine : Cost, deuterium_mine : Cost, solar_plant : Cost):
-    let (resources, _, _, _) = NoGame.modules_addresses()
+    let (resources, _, _, _, _) = NoGame.modules_addresses()
     let (metal, crystal, deuterium, solar_plant) = IResources.getUpgradeCost(resources, caller)
     return (metal, crystal, deuterium, solar_plant)
 end
@@ -89,7 +90,7 @@ end
 func getFacilitiesUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (robot_factory : Cost, shipyard : Cost, research_lab : Cost, nanite_factory : Cost):
-    let (_, facilities, _, _) = NoGame.modules_addresses()
+    let (_, facilities, _, _, _) = NoGame.modules_addresses()
     let (robot, shipyard, research, nanite) = IFacilities.getUpgradeCost(facilities, caller)
     return (robot, shipyard, research, nanite)
 end
@@ -121,7 +122,7 @@ func getTechUpgradeCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_
     shielding_tech : Cost,
     weapons_tech : Cost,
 ):
-    let (_, _, _, lab) = NoGame.modules_addresses()
+    let (_, _, _, lab, _) = NoGame.modules_addresses()
     let (costs : TechCosts) = IResearchLab.getUpgradesCost(lab, caller)
     return (
         costs.armour_tech,
@@ -150,6 +151,15 @@ func getFleetLevels{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_chec
 end
 
 @view
+func getDefenceLevels{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt
+) -> (res: Defence):
+    let (res) = NoGame.defence_levels(caller)
+    return (res,)
+end
+
+
+@view
 func getShipsCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}() -> (
     cargo : Cost,
     recycler : Cost,
@@ -159,7 +169,7 @@ func getShipsCost{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_
     cruiser : Cost,
     battleship : Cost,
 ):
-    let (_, _, shipyard, _) = NoGame.modules_addresses()
+    let (_, _, shipyard, _, _) = NoGame.modules_addresses()
     let (costs) = IShipyard.getShipsCost(shipyard)
     return (
         costs.cargo,
@@ -194,7 +204,7 @@ end
 func getShipyardQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (status : ShipyardQue):
-    let (_, _, shipyard, _) = getModulesAddresses()
+    let (_, _, shipyard, _, _) = getModulesAddresses()
     let (que_details) = IShipyard.getQueStatus(shipyard, caller)
     return (que_details)
 end
@@ -203,7 +213,7 @@ end
 func getResearchQueStatus{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     caller : felt
 ) -> (status : ResearchQue):
-    let (_, _, _, lab) = getModulesAddresses()
+    let (_, _, _, lab, _) = getModulesAddresses()
     let (que_details) = IResearchLab.getQueStatus(lab, caller)
     return (que_details)
 end
@@ -227,7 +237,7 @@ func collectResources{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_ch
 end
 
 # ##############################################################################################
-# #                               RESOURCES EXTERNALS FUNCS                                    #
+# #                                        RESOURCES                                           #
 # ##############################################################################################
 
 @external
@@ -279,7 +289,7 @@ func solarUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, rang
 end
 
 ##############################################################################################
-#                              FACILITIES UPGRADES FUNCS                                     #
+#                                   FACILITIES                                               #
 ##############################################################################################
 
 @external
@@ -331,7 +341,7 @@ func naniteUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, ran
 end
 
 #########################################################################################################
-#                                           SHIPYARD FUNCTIONS                                          #
+#                                           SHIPYARD                                                    #
 #########################################################################################################
 
 @external
@@ -435,7 +445,7 @@ func battleShipBuildComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, r
 end
 
 ##############################################################################################
-#                              RESEARCH UPGRADES FUNCTIONS                                      #
+#                                          RESEARCH                                          #
 ##############################################################################################
 
 @external
@@ -620,5 +630,115 @@ end
 func weaponsTechUpgradeComplete{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
     ):
     NoGame.weapons_tech_upgrade_complete()
+    return ()
+end
+
+##########################################################################################
+#                                      DEFENCES                                          #
+##########################################################################################
+
+@external
+func rocketBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    units: felt
+):
+    NoGame.rocket_build_start(units)
+    return ()
+end
+
+@external
+func rocketBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.rocket_build_complete()
+    return ()
+end
+
+@external
+func lightLaserBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    units: felt
+):
+    NoGame.light_laser_build_start(units)
+    return ()
+end
+
+@external
+func lightLaserBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.light_laser_build_complete()
+    return ()
+end
+
+@external
+func heavyLaserBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    units: felt
+):
+    NoGame.heavy_laser_build_start(units)
+    return ()
+end
+
+@external
+func heavyLaserBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.heavy_laser_build_complete()
+    return ()
+end
+
+@external
+func ionCannonBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    units: felt
+):
+    NoGame.ion_cannon_build_start(units)
+    return ()
+end
+
+@external
+func ionCannonBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.ion_cannon_build_complete()
+    return ()
+end
+
+@external
+func gaussBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(units: felt):
+    NoGame.gauss_build_start(units)
+    return ()
+end
+
+@external
+func gaussBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.gauss_build_complete()
+    return ()
+end
+
+@external
+func plasmaTurretBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    units: felt
+):
+    NoGame.plasma_turret_build_start(units)
+    return ()
+end
+
+@external
+func plasmaTurretBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.plasma_turret_build_complete()
+    return ()
+end
+
+@external
+func smallDomeBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.small_dome_build_start()
+    return ()
+end
+
+@external
+func smallDomeBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.small_dome_build_complete()
+    return ()
+end
+
+@external
+func largeDomeBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.large_dome_build_start()
+    return ()
+end
+
+@external
+func largeDomeBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}():
+    NoGame.large_dome_build_complete()
     return ()
 end
