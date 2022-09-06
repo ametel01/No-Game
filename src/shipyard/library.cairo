@@ -336,22 +336,22 @@ func _cargo_ship_requirements_check{
 }
 
 func _recycler_ship_requirements_check{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(caller: felt) -> (response: felt) {
-    let (no_game) = Shipyard_no_game_address.read();
-    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller);
-    let (tech_levels) = INoGame.getTechLevels(no_game, caller);
-    with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 4") {
-        assert_le(4, shipyard_level);
-    }
-    with_attr error_message("SHIPYARD::COMBUSTION DRIVE MUST BE AT LEVEL 2 6") {
-        assert_le(6, tech_levels.combustion_drive);
-    }
-    with_attr error_message("SHIPYARD::SHIELDING TECHNOLOGY MUST BE AT LEVEL 2") {
-        assert_le(2, tech_levels.shielding_tech);
-    }
-    return (TRUE,);
-}
+    syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(caller : felt) -> (response : felt):
+    let (no_game) = Shipyard_no_game_address.read()
+    let (_, shipyard_level, _, _) = INoGame.getFacilitiesLevels(no_game, caller)
+    let (tech_levels) = INoGame.getTechLevels(no_game, caller)
+    with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 4"):
+        assert_le(4, shipyard_level)
+    end
+    with_attr error_message("SHIPYARD::COMBUSTION DRIVE MUST BE AT LEVEL 6"):
+        assert_le(6, tech_levels.combustion_drive)
+    end
+    with_attr error_message("SHIPYARD::SHIELDING TECHNOLOGY MUST BE AT LEVEL 2"):
+        assert_le(2, tech_levels.shielding_tech)
+    end
+    return (TRUE)
+end
 
 func _espionage_probe_requirements_check{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr

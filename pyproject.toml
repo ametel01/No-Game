@@ -7,7 +7,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = ">= 3.7.2 <= 3.9.13"
-cairo-lang = "^0.10.0"
+cairo-lang = "^0.9.1"
 pre-commit = "^2.20.0"
 
 [tool.poetry.dev-dependencies]
