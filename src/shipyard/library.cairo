@@ -340,7 +340,7 @@ func _recycler_ship_requirements_check{
     with_attr error_message("SHIPYARD::SHIPYARD MUST BE AT LEVEL 4"):
         assert_le(4, shipyard_level)
     end
-    with_attr error_message("SHIPYARD::COMBUSTION DRIVE MUST BE AT LEVEL 2 6"):
+    with_attr error_message("SHIPYARD::COMBUSTION DRIVE MUST BE AT LEVEL 6"):
         assert_le(6, tech_levels.combustion_drive)
     end
     with_attr error_message("SHIPYARD::SHIELDING TECHNOLOGY MUST BE AT LEVEL 2"):
