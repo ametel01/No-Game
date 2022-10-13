@@ -1,4 +1,4 @@
-# %lang starknet
+%lang starknet
 
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin

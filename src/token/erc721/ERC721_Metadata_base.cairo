@@ -3,6 +3,7 @@
 %lang starknet
 
 from starkware.cairo.common.alloc import alloc
+from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
 from starkware.cairo.common.uint256 import Uint256
 from openzeppelin.token.erc721.library import ERC721
@@ -37,7 +38,7 @@ func ERC721_Metadata_tokenURI{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ra
 ) -> (token_uri_len: felt, token_uri: felt*) {
     alloc_locals;
 
-    let (exists) = ERC721._exists(token_id);
+    let exists = ERC721._exists(token_id);
     assert exists = 1;
 
     let (local base_token_uri) = alloc();
