@@ -3,7 +3,7 @@
 from starkware.cairo.common.bool import FALSE, TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
-from starkware.cairo.common.math_cmp import is_le, is_not_zero
+from starkware.cairo.common.math_cmp import is_le_felt, is_not_zero
 from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_block_timestamp, get_caller_address
 from openzeppelin.access.ownable.library import Ownable
@@ -1738,7 +1738,7 @@ func _get_net_energy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     let (energy_from_plant) = Formulas.solar_plant_production(solar_plant_level);
     let energy_from_satellites = 52 * satellites;
     let energy_available = energy_from_plant + energy_from_satellites;
-    let not_negative_energy = is_le(total_energy_required, energy_available);
+    let not_negative_energy = is_le_felt(total_energy_required, energy_available);
     if (not_negative_energy == FALSE) {
         return (0, total_energy_required);
     } else {

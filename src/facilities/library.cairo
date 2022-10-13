@@ -4,7 +4,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_block_timestamp
 from starkware.cairo.common.math import assert_not_zero
 from starkware.cairo.common.pow import pow
-from starkware.cairo.common.math_cmp import is_le
+from starkware.cairo.common.math_cmp import is_le_felt
 from starkware.cairo.common.math import assert_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from main.INoGame import INoGame
@@ -343,11 +343,11 @@ func _check_enough_resources{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
         caller
     );
     with_attr error_message("FACILITIES::NOT ENOUGH RESOURCES!!!") {
-        let enough_metal = is_le(metal_required, metal_available);
+        let enough_metal = is_le_felt(metal_required, metal_available);
         assert enough_metal = TRUE;
-        let enough_crystal = is_le(crystal_required, crystal_available);
+        let enough_crystal = is_le_felt(crystal_required, crystal_available);
         assert enough_crystal = TRUE;
-        let enough_deuterium = is_le(deuterium_required, deuterium_available);
+        let enough_deuterium = is_le_felt(deuterium_required, deuterium_available);
         assert enough_deuterium = TRUE;
     }
     return ();
@@ -397,7 +397,7 @@ func _check_waited_enough{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
     let (time_now) = get_block_timestamp();
     let (que_details) = Facilities_timelock.read(caller);
     let timelock_end = que_details.lock_end;
-    let waited_enough = is_le(timelock_end, time_now);
+    let waited_enough = is_le_felt(timelock_end, time_now);
     with_attr error_message("FACILITIES::TIMELOCK NOT YET EXPIRED!!!") {
         assert waited_enough = TRUE;
     }

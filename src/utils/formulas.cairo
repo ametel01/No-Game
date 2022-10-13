@@ -3,7 +3,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.starknet.common.syscalls import get_block_timestamp
 from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero, assert_lt
-from starkware.cairo.common.math_cmp import is_le
+from starkware.cairo.common.math_cmp import is_le_felt
 from starkware.cairo.common.pow import pow
 from starkware.cairo.common.bool import TRUE, FALSE
 
@@ -100,7 +100,7 @@ namespace Formulas {
         let (fact2) = pow(11, mine_level);
         local fact3 = fact1 * fact2;
         let (fact4) = pow(10, mine_level);
-        let level_in_bound = is_le(mine_level, 25);
+        let level_in_bound = is_le_felt(mine_level, 25);
         if (level_in_bound == TRUE) {
             let (res, _) = unsigned_div_rem(fact3, fact4);
             return (res,);
@@ -116,7 +116,7 @@ namespace Formulas {
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(mine_level: felt) -> (consumption: felt) {
         alloc_locals;
-        let level_in_bound = is_le(mine_level, 25);
+        let level_in_bound = is_le_felt(mine_level, 25);
         if (level_in_bound == TRUE) {
             let fact1 = 20 * mine_level;
             let (fact2) = pow(11, mine_level);
@@ -151,7 +151,7 @@ namespace Formulas {
         syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
     }(mine_factor: felt, mine_level: felt) -> (production_hour: felt) {
         alloc_locals;
-        local max_level = is_le(25, mine_level);
+        local max_level = is_le_felt(25, mine_level);
         let fact1 = mine_factor * mine_level;
         let (fact2) = pow(11, mine_level);
         local fact3 = fact1 * fact2;
@@ -176,12 +176,12 @@ namespace Formulas {
             assert_lt(plant_level, 55);
         }
         let fact1 = 20 * plant_level;
-        let level_in_bound = is_le(plant_level, 25);
+        let level_in_bound = is_le_felt(plant_level, 25);
         if (level_in_bound == TRUE) {
             let (local fact2) = pow(11, plant_level);
             local fact3 = fact1 * fact2;
             let (fact4) = pow(10, plant_level);
-            let level_in_bound = is_le(plant_level, 25);
+            let level_in_bound = is_le_felt(plant_level, 25);
             let (res, _) = unsigned_div_rem(fact3, fact4);
             return (res,);
         } else {
