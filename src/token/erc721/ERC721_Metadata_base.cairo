@@ -39,7 +39,7 @@ func ERC721_Metadata_tokenURI{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ra
     alloc_locals;
 
     let exists = ERC721._exists(token_id);
-    assert exists = 1;
+    assert exists = TRUE;
 
     let (local base_token_uri) = alloc();
     let (local base_token_uri_len) = ERC721_base_token_uri_len.read();
