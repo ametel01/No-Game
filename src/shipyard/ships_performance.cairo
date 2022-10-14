@@ -1,6 +1,6 @@
 %lang starknet
 
-namespace Fleet {
+namespace FleetPerformance {
     namespace Cargo {
         const structural_intergrity = 4000;
         const shield_power = 10;
