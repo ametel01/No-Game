@@ -7,9 +7,11 @@ from resources.library import (
     _deuterium_building_cost,
     _solar_plant_building_cost,
 )
+from fleet_movements.library import _calculate_distance, _calculate_travel_time
+from shipyard.ships_performance import Fleet
 from utils.formulas import Formulas
 from facilities.library import _set_timelock_and_que
-from tests.conftest import _get_expected_cost
+from tests.setup import _get_expected_cost
 
 @external
 func test_metal{syscall_ptr: felt*, range_check_ptr}() {
@@ -186,5 +188,21 @@ func test_production_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
     );
     %{ print(ids.actual_time, ids.expected_time) %}
     assert actual_time = expected_time;
+    return ();
+}
+
+@external
+func test_calculate_distance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+    let res = _calculate_distance(1, 100);
+    assert res = 0;
+    return ();
+}
+
+@external
+func test_calculate_travel_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+    let distance = _calculate_distance(1, 2);
+    let speed = Fleet.EspionageProbe.base_speed;
+    let res = _calculate_travel_time(distance, speed);
+    assert res = 0;
     return ();
 }
