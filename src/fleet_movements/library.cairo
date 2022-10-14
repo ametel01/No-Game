@@ -7,16 +7,115 @@ from starkware.cairo.common.math_cmp import is_not_zero
 from starkware.cairo.common.uint256 import Uint256
 from shipyard.ships_performance import FleetPerformance
 from shipyard.library import Fleet
+from main.INoGame import INoGame
+from main.structs import TechLevels
+from token.erc721.interfaces.IERC721 import IERC721
 
 const SCALER = 10 ** 9;
+const NO_RESOURCES = PlanetResources(0, 0, 0);
+const NO_BUILDINGS = ResourcesBuildings(0, 0, 0, 0);
+const NO_FLEET = Fleet(0, 0, 0, 0, 0, 0, 0, 0);
+const NO_FACILITIES = FacilitiesBuildings(0, 0, 0, 0);
+const NO_TECH = TechLevels(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-// func send_spy_mission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-//     planet_id : Uint256, number_of_probes: felt, destination: Uint256
-// ) {
-//     let distance = _calculate_distance(planet_id.low, destination.low);
-//     let
-//     let travel_time = _calculate_travel_time(distance)
-// }
+struct PlanetResources {
+    metal: felt,
+    crystal: felt,
+    deuterium: felt,
+}
+
+struct ResourcesBuildings {
+    metal_mine: felt,
+    crystal_mine: felt,
+    deuterium_mine: felt,
+    solar_plant: felt,
+}
+
+struct FacilitiesBuildings {
+    robot_factory: felt,
+    shipyard: felt,
+    research_lab: felt,
+    nanite: felt,
+}
+
+struct EspionageReport {
+    resources_available: PlanetResources,
+    resources_buildings: ResourcesBuildings,
+    fleet: Fleet,
+    facilities: FacilitiesBuildings,
+    research: TechLevels,
+}
+
+@storage_var
+func FleetMovements_no_game_address() -> (address: felt) {
+}
+
+func send_spy_mission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    planet_id: Uint256, fleet: Fleet, destination: Uint256
+) -> (report: EspionageReport) {
+    alloc_locals;
+    let distance = _calculate_distance(planet_id.low, destination.low);
+    let speed = _calculate_speed(fleet);
+    let travel_time = _calculate_travel_time(distance);
+
+    let (game) = FleetMovements_no_game_address.read();
+    let (erc721, _, _, _) = INoGame.getTokensAddresses();
+
+    let (target_addr) = IERC721.ownerOf(erc721, destination);
+    let (attacker_addr) = IERC721.ownerOf(erc721, planet_id);
+
+    let espionage_difference = _get_espionage_power_difference(planet_id, destination);
+
+    if (espionage_difference == 0) {
+        let report = EspionageReport(NO_RESOURCES, NO_BUILDINGS, NO_FLEET, NO_FACILITIES, NO_TECH);
+        return (report,);
+    }
+
+    if (espionage_difference == 1) {
+        let (report) = _spy_report_1();
+        return (report,);
+    }
+    if (espionage_difference == 2) {
+        let (report) = _spy_report_2();
+        return (report,);
+    }
+    if (espionage_difference == 3) {
+        let (report) = _spy_report_3();
+        return (report,);
+    }
+    if (espionage_difference == 4) {
+        let (report) = _spy_report_4();
+        return (report,);
+    } else {
+        let (report) = _spy_report_5();
+        return (report,);
+    }
+}
+
+func _get_espionage_power_difference{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(attacker_addr: felt, defender_addr: felt) -> felt {
+    let (target_tech_levels: TechLevels) = INoGame.getTechLevels(game, target_addr);
+    let target_espionage_level = target_tech_levels.espionage_tech;
+    let target_fleet: Fleet = INoGame.getFleetLevels(game, target_addr);
+    let target_probes_num = target_fleet.espionage_probe;
+    let target_espionage_power = target_espionage_level * target_probes_num;
+
+    let (attacker_tech_level: TechLevels) = INoGame.getTechLevels(game, attacker_addr);
+    let attacker_espionage_level = attacker_tech_level.espionage_tech;
+    let attacker_fleet: Fleet = INoGame.getFleetLevels(game, attacker_addr);
+    let attacker_probes_num = attacker_fleet.espionage_probe;
+    let attacker_espionage_power = attacker_espionage_level * attacker_probes_num;
+
+    let diff = attacker_espionage_power - target_espionage_power;
+    let cond_1 = is_nn(diff);
+    let cond_2 = is_not_zero(diff);
+    if (cond_1 * cond_2 == FALSE) {
+        return 0;
+    } else {
+        return diff;
+    }
+}
 
 func _calculate_distance{range_check_ptr}(p1_position: felt, p2_position: felt) -> felt {
     let zero_check_1 = is_not_zero(p1_position);
@@ -69,4 +168,96 @@ func _calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
     } else {
         return FleetPerformance.EspionageProbe.base_speed;
     }
+}
+
+func _spy_report_1{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
+    res: EspionageReport
+) {
+    let (
+        metal_available, crystal_available, deuterium_available, _
+    ) = INoGame.getResourcesAvailable(game, defender_addr);
+    let planet_resources = PlanetResources(metal_available, crystal_available, deuterium_available);
+    let report = EspionageReport(planet_resources, NO_BUILDINGS, NO_FLEET, NO_FACILITIES, NO_TECH);
+    return (report,);
+}
+
+func _spy_report_2{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
+    res: EspionageReport
+) {
+    let (
+        metal_available, crystal_available, deuterium_available, _
+    ) = INoGame.getResourcesAvailable(game, defender_addr);
+    let planet_resources = PlanetResources(metal_available, crystal_available, deuterium_available);
+    let (
+        metal_level, crystal_level, deuterium_level, solar_plant_level
+    ) = INoGame.getResourcesBuildingsLevels(game, defender_addr);
+    let resources_buildings = ResourcesBuildings(
+        metal_level, crystal_level, deuterium_level, solar_plant_level
+    );
+
+    let report = EspionageReport(
+        planet_resources, resources_buildings, NO_FLEET, NO_FACILITIES, NO_TECH
+    );
+    return (report,);
+}
+
+func _spy_report_3{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+    let (
+        metal_available, crystal_available, deuterium_available, _
+    ) = INoGame.getResourcesAvailable(game, defender_addr);
+    let planet_resources = PlanetResources(metal_available, crystal_available, deuterium_available);
+    let (
+        metal_level, crystal_level, deuterium_level, solar_plant_level
+    ) = INoGame.getResourcesBuildingsLevels(game, defender_addr);
+    let resources_buildings = ResourcesBuildings(
+        metal_level, crystal_level, deuterium_level, solar_plant_level
+    );
+    let (fleet_on_the_planet) = INoGame.getFleetLevels(game, defender_addr);
+    let fleet = fleet_on_the_planet;
+    let report = EspionageReport(
+        planet_resources, resources_buildings, fleet, NO_FACILITIES, NO_TECH
+    );
+    return (report,);
+}
+
+func _spy_report_4{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+    let (
+        metal_available, crystal_available, deuterium_available, _
+    ) = INoGame.getResourcesAvailable(game, defender_addr);
+    let planet_resources = PlanetResources(metal_available, crystal_available, deuterium_available);
+    let (
+        metal_level, crystal_level, deuterium_level, solar_plant_level
+    ) = INoGame.getResourcesBuildingsLevels(game, defender_addr);
+    let resources_buildings = ResourcesBuildings(
+        metal_level, crystal_level, deuterium_level, solar_plant_level
+    );
+    let (fleet_on_the_planet) = INoGame.getFleetLevels(game, defender_addr);
+    let fleet = fleet_on_the_planet;
+    let (facilities_levels) = INoGame.getFacilitiesLevels(game, defender_addr);
+    let facilities = facilities_levels;
+    let report = EspionageReport(planet_resources, resources_buildings, fleet, facilities, NO_TECH);
+    return (report,);
+}
+
+func _spy_report_5{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+    let (
+        metal_available, crystal_available, deuterium_available, _
+    ) = INoGame.getResourcesAvailable(game, defender_addr);
+    let planet_resources = PlanetResources(metal_available, crystal_available, deuterium_available);
+    let (
+        metal_level, crystal_level, deuterium_level, solar_plant_level
+    ) = INoGame.getResourcesBuildingsLevels(game, defender_addr);
+    let resources_buildings = ResourcesBuildings(
+        metal_level, crystal_level, deuterium_level, solar_plant_level
+    );
+    let (fleet_on_the_planet) = INoGame.getFleetLevels(game, defender_addr);
+    let fleet = fleet_on_the_planet;
+    let (facilities_levels) = INoGame.getFacilitiesLevels(game, defender_addr);
+    let facilities = facilities_levels;
+    let (tech_on_planet) = INoGame.getTechLevels(game, defender_addr);
+    let tech_levels = tech_on_planet;
+    let report = EspionageReport(
+        planet_resources, resources_buildings, facilities, fleet, tech_levels
+    );
+    return (report,);
 }
