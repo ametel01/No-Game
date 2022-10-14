@@ -42,9 +42,13 @@ shipyard = [
 defences = [
     "src/defences/Defences.cairo"
 ]
+fleet_movements = [
+    "src/fleet_movements/FleetMovements.cairo"
+]
 erc20 = [
     "src/token/erc20/ERC20_Mintable_Burnable.cairo"
 ]
 erc721 = [
     "src/token/erc721/ERC721.cairo"
 ]
+
