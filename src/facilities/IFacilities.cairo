@@ -1,7 +1,7 @@
 %lang starknet
 
 from facilities.library import FacilitiesQue
-from main.structs import Cost
+from main.library import Cost
 
 @contract_interface
 namespace IFacilities {

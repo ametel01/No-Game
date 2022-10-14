@@ -56,7 +56,7 @@ from main.storage import (
     NoGame_small_dome,
     NoGame_large_dome,
 )
-from main.structs import TechLevels, Cost, TechCosts, E18
+from main.library import Cost, E18
 from facilities.IFacilities import IFacilities
 from manager.IModulesManager import IModulesManager
 from resources.IResources import IResources
@@ -70,6 +70,8 @@ from resources.library import (
 from facilities.library import ROBOT_FACTORY_ID, SHIPYARD_ID, RESEARCH_LAB_ID, NANITE_FACTORY_ID
 from research.IResearchLab import IResearchLab
 from research.library import (
+    TechLevels,
+    TechCosts,
     ResearchQue,
     ARMOUR_TECH_ID,
     ASTROPHYSICS_TECH_ID,
@@ -115,6 +117,18 @@ from defences.library import (
 )
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
+
+struct BuildingQue {
+    id: felt,
+    lock_end: felt,
+}
+
+struct Cost {
+    metal: felt,
+    crystal: felt,
+    deuterium: felt,
+    energy_cost: felt,
+}
 
 @event
 func resources_spent(planet_id: Uint256, spent: felt) {

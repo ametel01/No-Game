@@ -1,6 +1,6 @@
 %lang starknet
 
-from main.structs import TechCosts
+from main.library import TechCosts
 from research.library import ResearchQue
 
 @contract_interface

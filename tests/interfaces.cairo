@@ -1,8 +1,9 @@
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
-from main.structs import Cost, TechLevels, TechCosts
+from main.library import Cost
 from resources.library import ResourcesQue
+from research.library import TechLevels, TechCosts
 from shipyard.library import Fleet, ShipyardQue
 from defences.library import Defence
 

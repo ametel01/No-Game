@@ -19,7 +19,7 @@ from tests.conftest import (
 )
 from tests.interfaces import NoGame, ERC20
 from utils.formulas import Formulas
-from main.structs import TechLevels
+from research.library import TechLevels
 
 @external
 func test_main_views{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {

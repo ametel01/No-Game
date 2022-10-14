@@ -16,7 +16,7 @@ from tests.conftest import (
     _reset_facilities_timelock,
     _reset_que,
 )
-from main.structs import TechLevels
+from research.library import TechLevels
 
 @external
 func test_structures_levels_after_transfer{

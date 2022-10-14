@@ -12,7 +12,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from facilities.library import SHIPYARD_ID
 from main.INoGame import INoGame
-from main.structs import Cost
+from main.library import Cost
 from shipyard.library import Fleet
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas

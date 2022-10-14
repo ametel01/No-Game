@@ -8,8 +8,9 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from facilities.library import RESEARCH_LAB_ID
 from main.INoGame import INoGame
+from research.library import TechLevels, TechCosts
 from token.erc20.interfaces.IERC20 import IERC20
-from main.structs import TechLevels, Cost, TechCosts
+from main.library import Cost
 from utils.formulas import Formulas
 
 //#######################################################################################
@@ -19,6 +20,40 @@ from utils.formulas import Formulas
 struct ResearchQue {
     tech_id: felt,
     lock_end: felt,
+}
+
+struct TechLevels {
+    armour_tech: felt,
+    astrophysics: felt,
+    combustion_drive: felt,
+    computer_tech: felt,
+    energy_tech: felt,
+    espionage_tech: felt,
+    hyperspace_drive: felt,
+    hyperspace_tech: felt,
+    impulse_drive: felt,
+    ion_tech: felt,
+    laser_tech: felt,
+    plasma_tech: felt,
+    shielding_tech: felt,
+    weapons_tech: felt,
+}
+
+struct TechCosts {
+    armour_tech: Cost,
+    astrophysics: Cost,
+    combustion_drive: Cost,
+    computer_tech: Cost,
+    energy_tech: Cost,
+    espionage_tech: Cost,
+    hyperspace_drive: Cost,
+    hyperspace_tech: Cost,
+    impulse_drive: Cost,
+    ion_tech: Cost,
+    laser_tech: Cost,
+    plasma_tech: Cost,
+    shielding_tech: Cost,
+    weapons_tech: Cost,
 }
 
 //########################################################################################

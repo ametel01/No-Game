@@ -3,6 +3,7 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
 from research.library import (
+    TechLevels,
     _energy_tech_upgrade_cost,
     _computer_tech_upgrade_cost,
     _laser_tech_upgrade_cost,
@@ -32,7 +33,6 @@ from tests.conftest import (
 )
 from tests.interfaces import NoGame, ERC20
 from utils.formulas import Formulas
-from main.structs import TechLevels
 
 @external
 func test_base{syscall_ptr: felt*, range_check_ptr}() {

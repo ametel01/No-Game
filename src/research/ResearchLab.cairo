@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from main.structs import TechCosts
+from main.library import TechCosts
 from research.library import ResearchLab, ResearchQue
 
 @constructor

@@ -1,6 +1,6 @@
 %lang starknet
 
-from main.structs import Cost
+from main.library import Cost
 from resources.library import ResourcesQue
 
 @contract_interface
