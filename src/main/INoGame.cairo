@@ -21,6 +21,11 @@ namespace INoGame {
     ) {
     }
 
+    func getResourcesAvailable(caller: felt) -> (
+        metal: felt, crystal: felt, deuterium: felt, energy: felt
+    ) {
+    }
+
     func getFacilitiesLevels(caller: felt) -> (
         robot_factory: felt, shipyard: felt, research_lab: felt, nanite_factory: felt
     ) {
