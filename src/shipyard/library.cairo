@@ -33,15 +33,6 @@ const DEATHSTAR_ID = 38;
 //                                           STRUCTS                                     #
 //########################################################################################
 
-struct Performance {
-    structural_intergrity: felt,
-    shield_power: felt,
-    weapon_power: felt,
-    cargo_capacity: felt,
-    base_speed: felt,
-    fuel_consumption: felt,
-}
-
 struct ShipyardQue {
     ship_id: felt,
     units: felt,
