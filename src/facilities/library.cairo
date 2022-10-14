@@ -8,18 +8,9 @@ from starkware.cairo.common.math_cmp import is_le_felt
 from starkware.cairo.common.math import assert_le
 from starkware.cairo.common.bool import TRUE, FALSE
 from main.INoGame import INoGame
-from main.library import Cost
+from main.structs import Cost, FacilitiesQue
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
-
-//#############################################################################################
-//                                   STRUCTS                                                  #
-// ############################################################################################
-
-struct FacilitiesQue {
-    facility_id: felt,
-    lock_end: felt,
-}
 
 //#############################################################################################
 //                                   STORAGE                                                  #

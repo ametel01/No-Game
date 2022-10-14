@@ -12,7 +12,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from facilities.library import SHIPYARD_ID
 from main.INoGame import INoGame
-from main.library import Cost
+from main.structs import Cost, Fleet, ShipsCosts, ShipyardQue
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 
@@ -29,36 +29,6 @@ const CRUISER_ID = 36;
 const BATTLESHIP_ID = 37;
 const DEATHSTAR_ID = 38;
 
-//########################################################################################
-//                                           STRUCTS                                     #
-//########################################################################################
-
-struct ShipyardQue {
-    ship_id: felt,
-    units: felt,
-    lock_end: felt,
-}
-
-struct Fleet {
-    cargo: felt,
-    recycler: felt,
-    espionage_probe: felt,
-    solar_satellite: felt,
-    light_fighter: felt,
-    cruiser: felt,
-    battle_ship: felt,
-    death_star: felt,
-}
-
-struct ShipsCosts {
-    cargo: Cost,
-    recycler: Cost,
-    espionage_probe: Cost,
-    solar_satellite: Cost,
-    light_fighter: Cost,
-    cruiser: Cost,
-    battle_ship: Cost,
-}
 //########################################################################################
 //                                           STORAGES                                    #
 //########################################################################################

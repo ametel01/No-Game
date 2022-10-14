@@ -12,7 +12,7 @@ from starkware.cairo.common.bool import TRUE, FALSE
 from starkware.starknet.common.syscalls import get_block_timestamp
 from facilities.library import SHIPYARD_ID
 from main.INoGame import INoGame
-from main.library import Cost
+from main.structs import Cost, DefenceQue, DefenceCosts, Defence
 from shipyard.library import Fleet
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
@@ -29,38 +29,6 @@ const GAUSS_CANNON_ID = 55;
 const PLASMA_TURRET_ID = 56;
 const SMALL_DOME_ID = 57;
 const LARGE_DOME_ID = 58;
-
-//########################################################################################
-//                                           STRUCTS                                     #
-//########################################################################################
-
-struct DefenceQue {
-    defence_id: felt,
-    units: felt,
-    lock_end: felt,
-}
-
-struct DefenceCosts {
-    rocket: Cost,
-    light_laser: Cost,
-    heavy_laser: Cost,
-    ion_cannon: Cost,
-    gauss: Cost,
-    plasma_turette: Cost,
-    small_dome: Cost,
-    large_dome: Cost,
-}
-
-struct Defence {
-    rocket: felt,
-    light_laser: felt,
-    heavy_laser: felt,
-    ion_cannon: felt,
-    gauss: felt,
-    plasma_turret: felt,
-    small_dome: felt,
-    large_dome: felt,
-}
 
 //########################################################################################
 //                                           STORAGES                                    #

@@ -1,9 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.uint256 import Uint256
-from resources.library import ResourcesQue
-from shipyard.library import ShipyardQue
-from research.library import ResearchQue
+from main.structs import ResearchQue, ResourcesQue, ShipyardQue
 
 @storage_var
 func NoGame_modules_manager() -> (address: felt) {

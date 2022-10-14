@@ -1,7 +1,6 @@
 %lang starknet
 
-from main.library import TechCosts
-from research.library import ResearchQue
+from main.structs import ResearchQue, TechCosts
 
 @contract_interface
 namespace IResearchLab {

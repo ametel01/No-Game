@@ -1,7 +1,6 @@
 %lang starknet
 
-from main.library import Cost
-from resources.library import ResourcesQue
+from main.structs import Cost, ResourcesQue
 
 @contract_interface
 namespace IResources {

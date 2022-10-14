@@ -56,23 +56,13 @@ from main.storage import (
     NoGame_small_dome,
     NoGame_large_dome,
 )
-from main.library import Cost, E18
 from facilities.IFacilities import IFacilities
 from manager.IModulesManager import IModulesManager
 from resources.IResources import IResources
-from resources.library import (
-    METAL_MINE_ID,
-    CRYSTAL_MINE_ID,
-    DEUTERIUM_MINE_ID,
-    SOLAR_PLANT_ID,
-    ResourcesQue,
-)
+from resources.library import METAL_MINE_ID, CRYSTAL_MINE_ID, DEUTERIUM_MINE_ID, SOLAR_PLANT_ID
 from facilities.library import ROBOT_FACTORY_ID, SHIPYARD_ID, RESEARCH_LAB_ID, NANITE_FACTORY_ID
 from research.IResearchLab import IResearchLab
 from research.library import (
-    TechLevels,
-    TechCosts,
-    ResearchQue,
     ARMOUR_TECH_ID,
     ASTROPHYSICS_TECH_ID,
     COMBUSTION_DRIVE_ID,
@@ -90,9 +80,6 @@ from research.library import (
 )
 from shipyard.IShipyard import IShipyard
 from shipyard.library import (
-    Fleet,
-    ShipyardQue,
-    ShipsCosts,
     CARGO_SHIP_ID,
     RECYCLER_SHIP_ID,
     ESPIONAGE_PROBE_ID,
@@ -103,9 +90,6 @@ from shipyard.library import (
     DEATHSTAR_ID,
 )
 from defences.library import (
-    Defence,
-    DefenceQue,
-    DefenceCosts,
     ROCKET_LAUNCHER_ID,
     LIGHT_LASER_ID,
     HEAVY_LASER_ID,
@@ -117,18 +101,22 @@ from defences.library import (
 )
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
+from main.structs import (
+    BuildingQue,
+    Cost,
+    TechLevels,
+    TechCosts,
+    ResearchQue,
+    Defence,
+    DefenceQue,
+    DefenceCosts,
+    Fleet,
+    ShipyardQue,
+    ShipsCosts,
+    ResourcesQue,
+)
 
-struct BuildingQue {
-    id: felt,
-    lock_end: felt,
-}
-
-struct Cost {
-    metal: felt,
-    crystal: felt,
-    deuterium: felt,
-    energy_cost: felt,
-}
+const E18 = 10 ** 18;
 
 @event
 func resources_spent(planet_id: Uint256, spent: felt) {

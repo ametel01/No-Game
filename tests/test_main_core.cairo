@@ -2,8 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
-from main.library import Cost
-from research.library import TechLevels, TechCosts
+from main.structs import Cost, TechLevels, TechCosts
 from utils.formulas import Formulas
 from tests.conftest import (
     E18,

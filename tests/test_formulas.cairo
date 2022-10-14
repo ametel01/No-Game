@@ -9,7 +9,7 @@ from resources.library import (
 )
 from fleet_movements.library import _calculate_distance, _calculate_travel_time, _calculate_speed
 from shipyard.ships_performance import FleetPerformance
-from shipyard.library import Fleet
+from main.structs import Fleet
 from utils.formulas import Formulas
 from facilities.library import _set_timelock_and_que
 from tests.setup import _get_expected_cost

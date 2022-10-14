@@ -5,12 +5,9 @@ from starkware.starknet.common.syscalls import get_caller_address
 from defences.library import Defence
 from facilities.IFacilities import IFacilities
 from main.library import NoGame
-from main.library import Cost
 from resources.IResources import IResources
-from resources.library import ResourcesQue
 from research.IResearchLab import IResearchLab
-from research.library import ResearchQue, TechLevels, TechCosts
-from shipyard.library import Fleet, ShipyardQue
+from main.structs import Cost, ResearchQue, TechLevels, TechCosts, ResourcesQue, Fleet, ShipyardQue
 from shipyard.IShipyard import IShipyard
 
 //########################################################################################

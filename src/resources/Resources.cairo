@@ -2,8 +2,8 @@
 
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from main.structs import Cost
 from resources.library import Resources
-from main.library import Cost
 
 @constructor
 func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(

@@ -7,7 +7,7 @@ from starkware.cairo.common.math_cmp import is_le_felt
 from starkware.cairo.common.pow import pow
 from starkware.starknet.common.syscalls import get_block_timestamp
 from main.INoGame import INoGame
-from main.library import Cost
+from main.structs import Cost, ResearchQue, ResourcesQue
 from token.erc20.interfaces.IERC20 import IERC20
 from utils.formulas import Formulas
 
@@ -21,15 +21,6 @@ const METAL_MINE_ID = 41;
 const CRYSTAL_MINE_ID = 42;
 const DEUTERIUM_MINE_ID = 43;
 const SOLAR_PLANT_ID = 44;
-
-//########################################################################################
-//                                           STRUCTS                                     #
-//########################################################################################
-
-struct ResourcesQue {
-    building_id: felt,
-    lock_end: felt,
-}
 
 //########################################################################################
 //                                           STORAGES                                    #
