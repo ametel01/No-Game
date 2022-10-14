@@ -18,27 +18,29 @@ namespace NoGame {
     ) {
     }
 
-    func getResourcesBuildingsLevels() -> (
+    func getResourcesBuildingsLevels(caller: felt) -> (
         metal_mine: felt, crystal_mine: felt, deuterium_mine: felt, solar_plant: felt
     ) {
     }
 
-    func getResourcesUpgradeCost() -> (
+    func getResourcesUpgradeCost(caller: felt) -> (
         metal_mine: Cost, crystal_mine: Cost, deuterium_mine: Cost, solar_plant: Cost
     ) {
     }
 
-    func getFacilitiesLevels() -> (
+    func getFacilitiesLevels(caller: felt) -> (
         robot_factory: felt, shipyard: felt, research_lab: felt, nanite_factory: felt
     ) {
     }
 
-    func getFacilitiesUpgradeCost() -> (
+    func getFacilitiesUpgradeCost(caller: felt) -> (
         robot_factory: Cost, shipyard: Cost, research_lab: Cost, nanite_factory: Cost
     ) {
     }
 
-    func getResourcesAvailable() -> (metal: felt, crystal: felt, deuterium: felt, energy: felt) {
+    func getResourcesAvailable(caller: felt) -> (
+        metal: felt, crystal: felt, deuterium: felt, energy: felt
+    ) {
     }
 
     func getFleetLevels(address: felt) -> (levels: Fleet) {
@@ -58,10 +60,10 @@ namespace NoGame {
     ) {
     }
 
-    func getTechLevels() -> (tech_levels: TechLevels) {
+    func getTechLevels(caller: felt) -> (tech_levels: TechLevels) {
     }
 
-    func getTechUpgradeCost() -> (
+    func getTechUpgradeCost(caller: felt) -> (
         a: Cost,
         b: Cost,
         c: Cost,
@@ -79,10 +81,10 @@ namespace NoGame {
     ) {
     }
 
-    func getResourcesQueStatus() -> (status: ResourcesQue) {
+    func getBuildingQueStatus(caller: felt) -> (status: ResourcesQue) {
     }
 
-    func getShipyardQueStatus() -> (status: ShipyardQue) {
+    func getShipyardQueStatus(caller: felt) -> (status: ShipyardQue) {
     }
 
     func numberOfPlanets() -> (n_planets: felt) {

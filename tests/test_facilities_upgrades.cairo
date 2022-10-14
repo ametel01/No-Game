@@ -2,9 +2,9 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
-from tests.conftest import (
+from tests.setup import (
     Contracts,
-    _get_test_addresses,
+    deploy_game,
     _run_modules_manager,
     _run_minter,
     _time_warp,
@@ -28,11 +28,12 @@ from facilities.library import (
 )
 
 from facilities.IFacilities import IFacilities
+
 @external
 func test_upgrade_facilities_base{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     ) {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
+    let (addresses: Contracts) = deploy_game();
     _run_modules_manager(addresses);
     _run_minter(addresses, 10);
     %{
@@ -101,7 +102,7 @@ func test_upgrade_facilities_base{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
 @external
 func test_upgrades_costs{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
+    let (addresses: Contracts) = deploy_game();
     _run_modules_manager(addresses);
     _run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
@@ -125,7 +126,7 @@ func test_upgrades_costs{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_upgrades_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
+    let (addresses: Contracts) = deploy_game();
     _run_modules_manager(addresses);
     _run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
@@ -149,7 +150,7 @@ func test_upgrades_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 @external
 func test_busy_que_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
+    let (addresses: Contracts) = deploy_game();
     _run_modules_manager(addresses);
     _run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
@@ -185,7 +186,7 @@ func test_busy_que_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_wrong_resource_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
+    let (addresses: Contracts) = deploy_game();
     _run_modules_manager(addresses);
     _run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
@@ -225,7 +226,7 @@ func test_wrong_resource_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_enough_resources_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
+    let (addresses: Contracts) = deploy_game();
     _run_modules_manager(addresses);
     _run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
@@ -251,7 +252,7 @@ func test_enough_resources_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_timelock_expired_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
+    let (addresses: Contracts) = deploy_game();
     _run_modules_manager(addresses);
     _run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
@@ -412,7 +413,7 @@ func _test_robot_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
     NoGame.robotUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, input, 0);
-    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner);
+    let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
     _reset_facilities_timelock(addresses.facilities, addresses.owner);
@@ -438,7 +439,7 @@ func _test_shipyard_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     NoGame.shipyardUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 2, 0);
-    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner);
+    let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
     _reset_facilities_timelock(addresses.facilities, addresses.owner);
@@ -463,7 +464,7 @@ func _test_lab_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ra
     NoGame.researchUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0);
-    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner);
+    let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
     _reset_facilities_timelock(addresses.facilities, addresses.owner);
@@ -490,7 +491,7 @@ func _test_nanite_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
     NoGame.naniteUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 10, input);
-    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner);
+    let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
     _reset_facilities_timelock(addresses.facilities, addresses.owner);
