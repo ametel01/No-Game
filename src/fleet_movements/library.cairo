@@ -2,7 +2,13 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.bool import FALSE, TRUE
-from starkware.cairo.common.math import abs_value, assert_not_zero, sqrt, unsigned_div_rem
+from starkware.cairo.common.math import (
+    abs_value,
+    assert_not_zero,
+    sqrt,
+    unsigned_div_rem,
+    assert_lt_felt,
+)
 from starkware.cairo.common.math_cmp import is_not_zero, is_nn
 from starkware.cairo.common.uint256 import Uint256
 from shipyard.ships_performance import FleetPerformance
@@ -41,6 +47,7 @@ struct EspionageReport {
 }
 
 struct FleetQue {
+    mission_id: felt,
     time_end: felt,
     destination: felt,
 }
@@ -51,6 +58,14 @@ func FleetMovements_no_game_address() -> (address: felt) {
 
 @storage_var
 func FleetMovements_timelock(address: felt) -> (res: FleetQue) {
+}
+
+@storage_var
+func FleetMovements_max_slots() -> (res: felt) {
+}
+
+@storage_var
+func FleetMovements_active_missions() -> (res: felt) {
 }
 
 namespace FleetMovements {
@@ -65,6 +80,7 @@ namespace FleetMovements {
         planet_id: Uint256, fleet: Fleet, destination: Uint256
     ) -> EspionageReport {
         alloc_locals;
+        _check_slots_available();
         let distance = _calculate_distance(planet_id.low, destination.low);
         let speed = _calculate_speed(fleet);
         let travel_time = _calculate_travel_time(distance, speed);
@@ -174,6 +190,15 @@ func _calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
     } else {
         return FleetPerformance.EspionageProbe.base_speed;
     }
+}
+
+func _check_slots_available{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+    let (max_slots) = FleetMovements_max_slots.read();
+    let (active_missions) = FleetMovements.active_missions.raed();
+    with_attr error_message("FLEET MOVEMENTS::all fleet slots are full") {
+        assert_lt_felt(active_missions, max_slots);
+    }
+    return ();
 }
 
 func _spy_report_0{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
