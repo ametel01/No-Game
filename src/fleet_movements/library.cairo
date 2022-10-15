@@ -40,8 +40,17 @@ struct EspionageReport {
     research: TechLevels,
 }
 
+struct FleetQue {
+    time_end: felt,
+    destination: felt,
+}
+
 @storage_var
 func FleetMovements_no_game_address() -> (address: felt) {
+}
+
+@storage_var
+func FleetMovements_timelock(address: felt) -> (res: FleetQue) {
 }
 
 namespace FleetMovements {
