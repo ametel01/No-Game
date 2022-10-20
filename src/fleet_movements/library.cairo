@@ -11,6 +11,7 @@ from starkware.cairo.common.math import (
 )
 from starkware.cairo.common.math_cmp import is_not_zero, is_nn
 from starkware.cairo.common.uint256 import Uint256
+from starkware.starknet.common.syscalls import get_block_timestamp
 from shipyard.ships_performance import FleetPerformance
 from main.INoGame import INoGame
 from main.structs import Fleet, TechLevels
@@ -47,6 +48,7 @@ struct EspionageReport {
 }
 
 struct FleetQue {
+    caller: felt,
     mission_id: felt,
     time_end: felt,
     destination: felt,
@@ -57,7 +59,7 @@ func FleetMovements_no_game_address() -> (address: felt) {
 }
 
 @storage_var
-func FleetMovements_timelock(address: felt) -> (res: FleetQue) {
+func FleetMovements_que_details(address: felt, mission_id: felt) -> (res: FleetQue) {
 }
 
 @storage_var
@@ -77,14 +79,27 @@ namespace FleetMovements {
     }
 
     func send_spy_mission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        planet_id: Uint256, fleet: Fleet, destination: Uint256
-    ) -> EspionageReport {
+        caller: felt, fleet: Fleet, destination: Uint256
+    ) {
         alloc_locals;
         _check_slots_available();
+        let planet_id = _get_planet_id(caller);
         let distance = _calculate_distance(planet_id.low, destination.low);
         let speed = _calculate_speed(fleet);
         let travel_time = _calculate_travel_time(distance, speed);
+        _set_fleet_que(caller, planet_id, destination, travel_time);
+        return ();
+    }
 
+    func read_espionage_report{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        caller: felt, mission_id: felt
+    ) -> EspionageReport {
+        alloc_locals;
+        let (que_details) = FleetMovements_que_details.read(caller, mission_id);
+        _check_timelock_expired(que_details);
+        let planet_id = _get_planet_id(caller);
+        let (que_details) = FleetMovements_que_details.read(caller, mission_id);
+        let destination = Uint256(que_details.destination, 0);
         let espionage_difference = _get_espionage_power_difference(planet_id, destination);
 
         if (espionage_difference == 0) {
@@ -107,15 +122,22 @@ namespace FleetMovements {
     }
 }
 
+func _get_owners_from_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    planet_id: Uint256
+) -> felt {
+    let (game) = FleetMovements_no_game_address.read();
+    let (erc721, _, _, _) = INoGame.getTokensAddresses(game);
+    let (res) = IERC721.ownerOf(erc721, planet_id);
+    return res;
+}
+
 func _get_espionage_power_difference{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(planet_id: Uint256, destination: Uint256) -> felt {
     alloc_locals;
+    let attacker_addr = _get_owners_from_planet_id(planet_id);
+    let target_addr = _get_owners_from_planet_id(destination);
     let (game) = FleetMovements_no_game_address.read();
-    let (erc721, _, _, _) = INoGame.getTokensAddresses(game);
-    let (target_addr) = IERC721.ownerOf(erc721, destination);
-    let (attacker_addr) = IERC721.ownerOf(erc721, planet_id);
-
     let (target_tech_levels: TechLevels) = INoGame.getTechLevels(game, target_addr);
     let target_espionage_level = target_tech_levels.espionage_tech;
 
@@ -194,10 +216,48 @@ func _calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
 
 func _check_slots_available{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     let (max_slots) = FleetMovements_max_slots.read();
-    let (active_missions) = FleetMovements.active_missions.raed();
-    with_attr error_message("FLEET MOVEMENTS::all fleet slots are full") {
+    let (active_missions) = FleetMovements_active_missions.read();
+    with_attr error_message("FLEET MOVEMENTS::All fleet slots are full") {
         assert_lt_felt(active_missions, max_slots);
     }
+    return ();
+}
+
+func _check_timelock_expired{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    que_details: FleetQue
+) {
+    let (time_now) = get_block_timestamp();
+    with_attr error_message("FLEET MOVEMENTS::Timelock not yet expired") {
+        let time_end = que_details.time_end;
+        assert_lt_felt(time_end, time_now);
+    }
+    return ();
+}
+
+func _get_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt
+) -> Uint256 {
+    let (game) = FleetMovements_no_game_address.read();
+    let (erc721, _, _, _) = INoGame.getTokensAddresses(game);
+    let (planet_id) = IERC721.ownerToPlanet(erc721, caller);
+    return planet_id;
+}
+
+func _set_fleet_que{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt, starting_planet: Uint256, destination: Uint256, travel_time: felt
+) {
+    let (time_now) = get_block_timestamp();
+    let time_end = time_now + travel_time;
+    let (active_missions) = FleetMovements_active_missions.read();
+    let new_que_point = FleetQue(
+        caller=caller,
+        mission_id=active_missions + 1,
+        time_end=time_end,
+        destination=destination.low,
+    );
+    let sender_addr = _get_owners_from_planet_id(starting_planet);
+    FleetMovements_que_details.write(sender_addr, active_missions + 1, new_que_point);
+    FleetMovements_active_missions.write(active_missions + 1);
     return ();
 }
 
