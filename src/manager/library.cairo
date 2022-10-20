@@ -47,6 +47,10 @@ func ModulesManager_research_lab_address() -> (address: felt) {
 func ModulesManager_defences_address() -> (address: felt) {
 }
 
+@storage_var
+func ModulesManager_fleet_movements_address() -> (address: felt) {
+}
+
 namespace ModulesManager {
     func erc721_address{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
         address: felt
@@ -56,14 +60,20 @@ namespace ModulesManager {
     }
 
     func modules_addresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
-        resources: felt, facilities: felt, shipyard: felt, research: felt, defences: felt
+        resources: felt,
+        facilities: felt,
+        shipyard: felt,
+        research: felt,
+        defences: felt,
+        fleet_movements: felt,
     ) {
         let (resources) = ModulesManager_resources_address.read();
         let (facilities) = ModulesManager_facilities_address.read();
         let (shipyard) = ModulesManager_shipyard_address.read();
         let (research) = ModulesManager_research_lab_address.read();
         let (defences) = ModulesManager_defences_address.read();
-        return (resources, facilities, shipyard, research, defences);
+        let (fleet) = ModulesManager_fleet_movements_address.read();
+        return (resources, facilities, shipyard, research, defences, fleet);
     }
 
     func resources_addresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
@@ -146,6 +156,12 @@ namespace ModulesManager {
     ) {
         Ownable.assert_only_owner();
         ModulesManager_defences_address.write(address);
+        return ();
+    }
+
+    func set_fleet{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) {
+        Ownable.assert_only_owner();
+        ModulesManager_fleet_movements_address.write(address);
         return ();
     }
 }
