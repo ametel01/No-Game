@@ -44,10 +44,16 @@ func getTokensAddresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 // @return the addresses of the game's module currently in use.
 @view
 func getModulesAddresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
-    _resources: felt, _facilities: felt, _shipyard: felt, _research: felt
+    _resources: felt,
+    _facilities: felt,
+    _shipyard: felt,
+    _research: felt,
+    _defences: felt,
+    _fleet: felt,
 ) {
-    let (resources, facilities, shipyard, research) = NoGame.modules_addresses();
-    return (resources, facilities, shipyard, research);
+    let (resources, facilities, shipyard, research, defences, fleet) = NoGame.modules_addresses();
+
+    return (resources, facilities, shipyard, research, defences, fleet);
 }
 
 // Gets the total number of planets currently in the game.
@@ -89,7 +95,7 @@ func getResourcesBuildingsLevels{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
 func getResourcesUpgradeCost{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
 ) -> (metal_mine: Cost, crystal_mine: Cost, deuterium_mine: Cost, solar_plant: Cost) {
-    let (resources, _, _, _) = NoGame.modules_addresses();
+    let (resources, _, _, _, _, _) = NoGame.modules_addresses();
     let (metal, crystal, deuterium, solar_plant) = IResources.getUpgradeCost(resources, caller);
     return (metal, crystal, deuterium, solar_plant);
 }
@@ -109,7 +115,7 @@ func getFacilitiesLevels{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_c
 func getFacilitiesUpgradeCost{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
 ) -> (robot_factory: Cost, shipyard: Cost, research_lab: Cost, nanite_factory: Cost) {
-    let (_, facilities, _, _) = NoGame.modules_addresses();
+    let (_, facilities, _, _, _, _) = NoGame.modules_addresses();
     let (robot, shipyard, research, nanite) = IFacilities.getUpgradeCost(facilities, caller);
     return (robot, shipyard, research, nanite);
 }
@@ -141,7 +147,7 @@ func getTechUpgradeCost{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     shielding_tech: Cost,
     weapons_tech: Cost,
 ) {
-    let (_, _, _, lab) = NoGame.modules_addresses();
+    let (_, _, _, lab, _, _) = NoGame.modules_addresses();
     let (costs: TechCosts) = IResearchLab.getUpgradesCost(lab, caller);
     return (
         costs.armour_tech,
@@ -187,7 +193,7 @@ func getShipsCost{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
     cruiser: Cost,
     battleship: Cost,
 ) {
-    let (_, _, shipyard, _) = NoGame.modules_addresses();
+    let (_, _, shipyard, _, _, _) = NoGame.modules_addresses();
     let (costs) = IShipyard.getShipsCost(shipyard);
     return (
         costs.cargo,
@@ -222,7 +228,7 @@ func getBuildingQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 func getShipyardQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
 ) -> (status: ShipyardQue) {
-    let (_, _, shipyard, _) = getModulesAddresses();
+    let (_, _, shipyard, _, _, _) = getModulesAddresses();
     let (que_details) = IShipyard.getQueStatus(shipyard, caller);
     return (que_details,);
 }
@@ -231,7 +237,7 @@ func getShipyardQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 func getResearchQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
 ) -> (status: ResearchQue) {
-    let (_, _, _, lab) = getModulesAddresses();
+    let (_, _, _, lab, _, _) = getModulesAddresses();
     let (que_details) = IResearchLab.getQueStatus(lab, caller);
     return (que_details,);
 }

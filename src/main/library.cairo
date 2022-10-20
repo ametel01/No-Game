@@ -2,12 +2,13 @@
 
 from starkware.cairo.common.bool import FALSE, TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
+from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero, assert_lt_felt
 from starkware.cairo.common.math_cmp import is_le_felt, is_not_zero
 from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_block_timestamp, get_caller_address
 from token.erc721.interfaces.IERC721 import IERC721
 from defences.IDefences import IDefences
+from fleet_movements.IFleetMovements import IFleetMovements
 from main.storage import (
     NoGame_modules_manager,
     NoGame_resources_timer,
@@ -54,6 +55,8 @@ from main.storage import (
     NoGame_plasma_turret,
     NoGame_small_dome,
     NoGame_large_dome,
+    NoGame_max_slots,
+    NoGame_active_missions,
 )
 from facilities.IFacilities import IFacilities
 from manager.IModulesManager import IModulesManager
@@ -162,13 +165,18 @@ namespace NoGame {
     }
 
     func modules_addresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
-        _resources: felt, _facilities: felt, _shipyard: felt, _research: felt
+        _resources: felt,
+        _facilities: felt,
+        _shipyard: felt,
+        _research: felt,
+        _defences: felt,
+        _fleet: felt,
     ) {
         let (modules_manager) = NoGame_modules_manager.read();
         let (
-            resources, facilities, shipyard, research_lab, defences
+            resources, facilities, shipyard, research_lab, defences, fleet
         ) = IModulesManager.getModulesAddresses(modules_manager);
-        return (resources, facilities, shipyard, research_lab);
+        return (resources, facilities, shipyard, research_lab, defences, fleet);
     }
 
     func player_points{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -383,6 +391,7 @@ namespace NoGame {
         IERC721.transferFrom(erc721, erc721_owner, caller, new_planet_id);
         NoGame_number_of_planets.write(new_id);
         NoGame_solar_plant_level.write(new_planet_id, 1);
+        NoGame_max_slots.write(new_planet_id, 1);
         // Transfer resources ERC20 tokens to caller.
         _receive_resources_erc20(
             to=caller, metal_amount=500, crystal_amount=300, deuterium_amount=100
@@ -418,7 +427,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (resources_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (resources_address, _, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal_spent, crystal_spent, time_unlocked) = IResources.metalUpgradeStart(
             resources_address, caller
         );
@@ -435,7 +444,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (resources_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (resources_address, _, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         IResources.metalUpgradeComplete(resources_address, caller);
         let (planet_id) = _get_planet_id(caller);
         let (current_level) = NoGame_metal_mine_level.read(planet_id);
@@ -449,7 +458,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (resources_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (resources_address, _, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal_spent, crystal_spent, time_unlocked) = IResources.crystalUpgradeStart(
             resources_address, caller
         );
@@ -467,7 +476,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (resources_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (resources_address, _, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         IResources.crystalUpgradeComplete(resources_address, caller);
         let (planet_id) = _get_planet_id(caller);
         let (current_level) = NoGame_crystal_mine_level.read(planet_id);
@@ -482,7 +491,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (resources_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (resources_address, _, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal_spent, crystal_spent, time_unlocked) = IResources.deuteriumUpgradeStart(
             resources_address, caller
         );
@@ -503,7 +512,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (resources_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (resources_address, _, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         IResources.deuteriumUpgradeComplete(resources_address, caller);
         let (planet_id) = _get_planet_id(caller);
         let (current_level) = NoGame_deuterium_mine_level.read(planet_id);
@@ -517,7 +526,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (resources_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (resources_address, _, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal_spent, crystal_spent, time_unlocked) = IResources.solarPlantUpgradeStart(
             resources_address, caller
         );
@@ -534,7 +543,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (resources_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (resources_address, _, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         IResources.solarPlantUpgradeComplete(resources_address, caller);
         let (planet_id) = _get_planet_id(caller);
         let (current_metal_level) = NoGame_solar_plant_level.read(planet_id);
@@ -552,7 +561,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (_, facilities_address, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, facilities_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (
             metal_spent, crystal_spent, deuterium_spent, time_unlocked
         ) = IFacilities.robotFactoryUpgradeStart(facilities_address, caller);
@@ -569,7 +578,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (_, facilities_address, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, facilities_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         IFacilities.robotFactoryUpgradeComplete(facilities_address, caller);
         let (planet_id) = _get_planet_id(caller);
         let (current_robot_level) = NoGame_robot_factory_level.read(planet_id);
@@ -583,7 +592,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (_, facilities_address, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, facilities_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (
             metal_spent, crystal_spent, deuterium_spent, time_unlocked
         ) = IFacilities.shipyardUpgradeStart(facilities_address, caller);
@@ -601,7 +610,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (_, facilities_address, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, facilities_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         IFacilities.shipyardUpgradeComplete(facilities_address, caller);
         let (planet_id) = _get_planet_id(caller);
         let (current_shipyard_level) = NoGame_shipyard_level.read(planet_id);
@@ -615,7 +624,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (_, facilities_address, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, facilities_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (
             metal_spent, crystal_spent, deuterium_spent, time_unlocked
         ) = IFacilities.researchLabUpgradeStart(facilities_address, caller);
@@ -633,7 +642,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (_, facilities_address, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, facilities_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         IFacilities.researchLabUpgradeComplete(facilities_address, caller);
         let (planet_id) = _get_planet_id(caller);
         let (current_lab_level) = NoGame_research_lab_level.read(planet_id);
@@ -647,7 +656,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (_, facilities_address, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, facilities_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (
             metal_spent, crystal_spent, deuterium_spent, time_unlocked
         ) = IFacilities.naniteFactoryUpgradeStart(facilities_address, caller);
@@ -667,7 +676,7 @@ namespace NoGame {
         alloc_locals;
         let (caller) = get_caller_address();
         let (manager) = NoGame_modules_manager.read();
-        let (_, facilities_address, _, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, facilities_address, _, _, _, _) = IModulesManager.getModulesAddresses(manager);
         IFacilities.naniteFactoryUpgradeComplete(facilities_address, caller);
         let (planet_id) = _get_planet_id(caller);
         let (current_nanite_level) = NoGame_nanite_factory_level.read(planet_id);
@@ -688,7 +697,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IShipyard.cargoShipBuildStart(
             shipyard, caller, number_of_units
         );
@@ -709,7 +718,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IShipyard.cargoShipBuildComplete(shipyard, caller);
         let (current_units) = NoGame_ships_cargo.read(planet_id);
         NoGame_ships_cargo.write(planet_id, current_units + units_produced);
@@ -724,7 +733,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IShipyard.recyclerShipBuildStart(
             shipyard, caller, number_of_units
         );
@@ -746,7 +755,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IShipyard.recyclerShipBuildComplete(shipyard, caller);
         let (current_units) = NoGame_ships_recycler.read(planet_id);
         NoGame_ships_recycler.write(planet_id, current_units + units_produced);
@@ -761,7 +770,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IShipyard.espionageProbeBuildStart(
             shipyard, caller, number_of_units
         );
@@ -783,7 +792,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IShipyard.espionageProbeBuildComplete(shipyard, caller);
         let (current_units) = NoGame_ships_espionage_probe.read(planet_id);
         NoGame_ships_espionage_probe.write(planet_id, current_units + units_produced);
@@ -798,7 +807,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IShipyard.solarSatelliteBuildStart(
             shipyard, caller, number_of_units
         );
@@ -820,7 +829,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IShipyard.solarSatelliteBuildComplete(shipyard, caller);
         let (current_units) = NoGame_ships_solar_satellite.read(planet_id);
         NoGame_ships_solar_satellite.write(planet_id, current_units + units_produced);
@@ -835,7 +844,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IShipyard.lightFighterBuildStart(
             shipyard, caller, number_of_units
         );
@@ -857,7 +866,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IShipyard.lightFighterBuildComplete(shipyard, caller);
         let (current_units) = NoGame_ships_light_fighter.read(planet_id);
         NoGame_ships_light_fighter.write(planet_id, current_units + units_produced);
@@ -872,7 +881,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IShipyard.cruiserBuildStart(
             shipyard, caller, number_of_units
         );
@@ -892,7 +901,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IShipyard.cruiserBuildComplete(shipyard, caller);
         let (current_units) = NoGame_ships_cruiser.read(planet_id);
         NoGame_ships_cruiser.write(planet_id, current_units + units_produced);
@@ -907,7 +916,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IShipyard.battleshipBuildStart(
             shipyard, caller, number_of_units
         );
@@ -928,7 +937,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, shipyard, _, _) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, shipyard, _, _, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IShipyard.battleshipBuildComplete(shipyard, caller);
         let (current_units) = NoGame_ships_battleship.read(planet_id);
         NoGame_ships_battleship.write(planet_id, current_units + units_produced);
@@ -947,7 +956,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_armour_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.armourTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -967,7 +976,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.armourTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_armour_tech.read(planet_id);
         NoGame_armour_tech.write(planet_id, current_tech_level + 1);
@@ -982,7 +991,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_astrophysics.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.astrophysicsUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1002,7 +1011,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.astrophysicsUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_astrophysics.read(planet_id);
         NoGame_astrophysics.write(planet_id, current_tech_level + 1);
@@ -1017,7 +1026,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_combustion_drive.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.combustionDriveUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1037,7 +1046,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.combustionDriveUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_combustion_drive.read(planet_id);
         NoGame_combustion_drive.write(planet_id, current_tech_level + 1);
@@ -1052,7 +1061,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_computer_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.computerTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1072,10 +1081,12 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.computerTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_computer_tech.read(planet_id);
         NoGame_computer_tech.write(planet_id, current_tech_level + 1);
+        let (current_slots) = NoGame_max_slots.read(planet_id);
+        NoGame_max_slots.write(planet_id, current_slots + 1);
         return ();
     }
 
@@ -1086,7 +1097,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_energy_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.energyTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1106,7 +1117,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.energyTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_energy_tech.read(planet_id);
         NoGame_energy_tech.write(planet_id, current_tech_level + 1);
@@ -1121,7 +1132,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_espionage_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.espionageTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1141,7 +1152,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.espionageTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_espionage_tech.read(planet_id);
         NoGame_espionage_tech.write(planet_id, current_tech_level + 1);
@@ -1156,7 +1167,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_hyperspace_drive.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.hyperspaceDriveUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1176,7 +1187,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.hyperspaceDriveUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_hyperspace_drive.read(planet_id);
         NoGame_hyperspace_drive.write(planet_id, current_tech_level + 1);
@@ -1191,7 +1202,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_hyperspace_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.hyperspaceTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1211,7 +1222,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.hyperspaceTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_hyperspace_tech.read(planet_id);
         NoGame_hyperspace_tech.write(planet_id, current_tech_level + 1);
@@ -1226,7 +1237,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_impulse_drive.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.impulseDriveUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1246,7 +1257,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.impulseDriveUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_impulse_drive.read(planet_id);
         NoGame_impulse_drive.write(planet_id, current_tech_level + 1);
@@ -1259,7 +1270,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_ion_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.ionTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1278,7 +1289,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.ionTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_ion_tech.read(planet_id);
         NoGame_ion_tech.write(planet_id, current_tech_level + 1);
@@ -1292,7 +1303,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_laser_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.laserTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1312,7 +1323,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.laserTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_laser_tech.read(planet_id);
         NoGame_laser_tech.write(planet_id, current_tech_level + 1);
@@ -1326,7 +1337,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_plasma_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.plasmaTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1346,7 +1357,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.plasmaTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_plasma_tech.read(planet_id);
         NoGame_plasma_tech.write(planet_id, current_tech_level + 1);
@@ -1361,7 +1372,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_shielding_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.shieldingTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1381,7 +1392,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.shieldingTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_shielding_tech.read(planet_id);
         NoGame_shielding_tech.write(planet_id, current_tech_level + 1);
@@ -1396,7 +1407,7 @@ namespace NoGame {
         let (planet_id) = _get_planet_id(caller);
         let (current_tech_level) = NoGame_weapons_tech.read(planet_id);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IResearchLab.weaponsTechUpgradeStart(
             lab, caller, current_tech_level
         );
@@ -1416,7 +1427,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, lab) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, lab, _, _) = IModulesManager.getModulesAddresses(manager);
         IResearchLab.weaponsTechUpgradeComplete(lab, caller);
         let (current_tech_level) = NoGame_weapons_tech.read(planet_id);
         NoGame_weapons_tech.write(planet_id, current_tech_level + 1);
@@ -1434,7 +1445,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IDefences.rocketBuildStart(
             defences, caller, number_of_units
         );
@@ -1454,7 +1465,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IDefences.rocketBuildComplete(defences, caller);
         let (current_units) = NoGame_rocket.read(planet_id);
         NoGame_rocket.write(planet_id, current_units + units_produced);
@@ -1469,7 +1480,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IDefences.lightLaserBuildStart(
             defences, caller, number_of_units
         );
@@ -1491,7 +1502,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IDefences.lightLaserBuildComplete(defences, caller);
         let (current_units) = NoGame_ligth_laser.read(planet_id);
         NoGame_ligth_laser.write(planet_id, current_units + units_produced);
@@ -1506,7 +1517,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IDefences.heavyLaserBuildStart(
             defences, caller, number_of_units
         );
@@ -1528,7 +1539,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IDefences.heavyLaserBuildComplete(defences, caller);
         let (current_units) = NoGame_heavy_laser.read(planet_id);
         NoGame_heavy_laser.write(planet_id, current_units + units_produced);
@@ -1543,7 +1554,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IDefences.ionCannonBuildStart(
             defences, caller, number_of_units
         );
@@ -1564,7 +1575,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IDefences.ionCannonBuildComplete(defences, caller);
         let (current_units) = NoGame_ion_cannon.read(planet_id);
         NoGame_ion_cannon.write(planet_id, current_units + units_produced);
@@ -1579,7 +1590,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IDefences.gaussBuildStart(
             defences, caller, number_of_units
         );
@@ -1599,7 +1610,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IDefences.gaussBuildComplete(defences, caller);
         let (current_units) = NoGame_gauss.read(planet_id);
         NoGame_gauss.write(planet_id, current_units + units_produced);
@@ -1614,7 +1625,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IDefences.plasmaTurretBuildStart(
             defences, caller, number_of_units
         );
@@ -1636,7 +1647,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (units_produced) = IDefences.plasmaTurretBuildComplete(defences, caller);
         let (current_units) = NoGame_plasma_turret.read(planet_id);
         NoGame_plasma_turret.write(planet_id, current_units + units_produced);
@@ -1649,7 +1660,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IDefences.smallDomeBuildStart(defences, caller);
         _pay_resources_erc20(caller, metal, crystal, deuterium);
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id);
@@ -1666,7 +1677,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         IDefences.smallDomeBuildComplete(defences, caller);
         let (current_units) = NoGame_small_dome.read(planet_id);
         NoGame_small_dome.write(planet_id, current_units + 1);
@@ -1679,7 +1690,7 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         let (metal, crystal, deuterium, time_end) = IDefences.largeDomeBuildStart(defences, caller);
         _pay_resources_erc20(caller, metal, crystal, deuterium);
         let (spent_so_far) = NoGame_planets_spent_resources.read(planet_id);
@@ -1696,15 +1707,36 @@ namespace NoGame {
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
-        let (_, _, _, _, defences) = IModulesManager.getModulesAddresses(manager);
+        let (_, _, _, _, defences, _) = IModulesManager.getModulesAddresses(manager);
         IDefences.largeDomeBuildComplete(defences, caller);
         let (current_units) = NoGame_large_dome.read(planet_id);
         NoGame_large_dome.write(planet_id, current_units + 1);
         NoGame_shipyard_que_status.write(planet_id, ShipyardQue(0, 0, 0));
         return ();
     }
-}
 
+    //#########################################################################################
+    //                                      FLEET MOVEMENTS FUNCTIONS                         #
+    //#########################################################################################
+
+    func send_spy_mission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        fleet: Fleet, destination: Uint256
+    ) {
+        alloc_locals;
+        let (caller) = get_caller_address();
+        let (planet_id) = _get_planet_id(caller);
+        let (manager) = NoGame_modules_manager.read();
+        let (_, _, _, _, _, fleet) = IModulesManager.getModulesAddresses(manager);
+        _check_slots_available(planet_id);
+        IFleetMovements.sendSpyMission(fleet, caller, fleet, destination);
+    }
+
+    @external
+    func read_espionage_report{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        arguments
+    ) {
+    }
+}
 //#########################################################################################
 //                                      PRIVATE FUNCTIONS                                 #
 //#########################################################################################
@@ -1762,6 +1794,18 @@ func _calculate_production{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range
         let deuterium = deuterium_produced;
         return (metal, crystal, deuterium, energy_available);
     }
+}
+
+func _check_slots_available{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    planet_id: Uint256
+) {
+    let (max_slots) = NoGame_max_slots.read(planet_id);
+    let (active_missions) = NoGame_active_missions.read(planet_id);
+    with_attr error_message("FLEET MOVEMENTS::All fleet slots are full") {
+        assert_lt_felt(active_missions, max_slots);
+    }
+    NoGame_active_missions.write(planet_id, active_missions + 1);
+    return ();
 }
 
 func _get_net_energy{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
