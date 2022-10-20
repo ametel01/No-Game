@@ -14,11 +14,15 @@ from shipyard.IShipyard import IShipyard
 //                                   Constructor                                         #
 //########################################################################################
 
+// Initialize the contract writing the addresses of the owner and
+// the module manager to storage.
+// @param modules_manager: the address of the contract responsible setting.
+// the modules addresses.
 @constructor
 func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    owner: felt, modules_manager: felt
+    modules_manager: felt
 ) {
-    NoGame.initializer(owner, modules_manager);
+    NoGame.initializer(modules_manager);
     return ();
 }
 
@@ -26,6 +30,8 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 //                                       Getters                                         #
 //########################################################################################
 
+// Gets the addresses of the games tokens.
+// @return ERC721 address, ERC20 addresses for metal, crystal, deuterium.
 @view
 func getTokensAddresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
     erc721: felt, erc20_metal: felt, erc20_crystal: felt, erc20_deuterium: felt
@@ -34,6 +40,8 @@ func getTokensAddresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
     return (erc721, metal, crystal, deuterium);
 }
 
+// Gets the address of the game modules.
+// @return the addresses of the game's module currently in use.
 @view
 func getModulesAddresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
     _resources: felt, _facilities: felt, _shipyard: felt, _research: felt
@@ -42,6 +50,8 @@ func getModulesAddresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_c
     return (resources, facilities, shipyard, research);
 }
 
+// Gets the total number of planets currently in the game.
+// @return number of planets.
 @view
 func numberOfPlanets{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
     n_planets: felt
@@ -50,6 +60,9 @@ func numberOfPlanets{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     return (n_planets=n);
 }
 
+// Gets the points of the player (1 point every 1000 metal or crystal spent).
+// @param caller the address of the player we are quering.
+// @return points.
 @view
 func getPlayerPoints{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
@@ -58,6 +71,9 @@ func getPlayerPoints{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check
     return (points,);
 }
 
+// Gets the level of the resources producing buildings.
+// @param caller the address of the player we are quering.
+// @return level of metal, crystal, deuterium mines + solar_plant level.
 @view
 func getResourcesBuildingsLevels{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
@@ -66,6 +82,9 @@ func getResourcesBuildingsLevels{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
     return (metal, crystal, deuterium, solar_plant);
 }
 
+// Gets the cost of the next upgrade for each resources building.
+// @param caller the address of the player we are quering.
+// @return the cost of type Cost for each building.
 @view
 func getResourcesUpgradeCost{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
@@ -75,6 +94,9 @@ func getResourcesUpgradeCost{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
     return (metal, crystal, deuterium, solar_plant);
 }
 
+// Gets the level of each facilitel building.
+// @param caller the address of the player we are quering.
+// @return the level for robot factory, shiyard, research lab, nanite factory.
 @view
 func getFacilitiesLevels{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
