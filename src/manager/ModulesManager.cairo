@@ -20,10 +20,17 @@ func getERC721Address{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_chec
 
 @view
 func getModulesAddresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
-    resources: felt, facilities: felt, shipyard: felt, research_lab: felt, defences: felt
+    resources: felt,
+    facilities: felt,
+    shipyard: felt,
+    research_lab: felt,
+    defences: felt,
+    fleet: felt,
 ) {
-    let (resources, facilities, shipyard, research, defences) = ModulesManager.modules_addresses();
-    return (resources, facilities, shipyard, research, defences);
+    let (
+        resources, facilities, shipyard, research, defences, fleet
+    ) = ModulesManager.modules_addresses();
+    return (resources, facilities, shipyard, research, defences, fleet);
 }
 
 @view
@@ -85,5 +92,11 @@ func setResearch{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 @external
 func setDefences{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) {
     ModulesManager.set_defences(address);
+    return ();
+}
+
+@external
+func setFleet{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) {
+    ModulesManager.set_fleet(address);
     return ();
 }
