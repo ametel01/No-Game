@@ -15,8 +15,16 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 
 @external
 func sendSpyMission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    planet_id: Uint256, fleet: Fleet, destination: Uint256
+    caller: felt, fleet: Fleet, destination: Uint256
+) {
+    FleetMovements.send_spy_mission(caller, fleet, destination);
+    return ();
+}
+
+@external
+func readEspionageReport{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt, mission_id: felt
 ) -> (res: EspionageReport) {
-    let report = FleetMovements.send_spy_mission(planet_id, fleet, destination);
-    return (report,);
+    let res = FleetMovements.read_espionage_report(caller, mission_id);
+    return (res,);
 }
