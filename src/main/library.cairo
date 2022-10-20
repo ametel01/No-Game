@@ -6,7 +6,6 @@ from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero
 from starkware.cairo.common.math_cmp import is_le_felt, is_not_zero
 from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_block_timestamp, get_caller_address
-from openzeppelin.access.ownable.library import Ownable
 from token.erc721.interfaces.IERC721 import IERC721
 from defences.IDefences import IDefences
 from main.storage import (
@@ -119,14 +118,17 @@ from main.structs import (
 const E18 = 10 ** 18;
 
 @event
-func resources_spent(planet_id: Uint256, spent: felt) {
+func resourcesSpent(planet_id: Uint256, spent: felt) {
+}
+
+@event
+func resourcesBuildingUpgrade(planet_id: Uint256, building_id: felt, level: felt) {
 }
 
 namespace NoGame {
     func initializer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        owner: felt, modules_manager: felt
+        modules_manager: felt
     ) {
-        Ownable.initializer(owner);
         NoGame_modules_manager.write(modules_manager);
         return ();
     }
@@ -432,6 +434,7 @@ namespace NoGame {
         collect_resources(caller);
         NoGame_metal_mine_level.write(planet_id, current_level + 1);
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0));
+        resourcesBuildingUpgrade.emit(planet_id, METAL_MINE_ID, current_level + 1);
         return ();
     }
 
@@ -464,6 +467,7 @@ namespace NoGame {
         collect_resources(caller);
         NoGame_crystal_mine_level.write(planet_id, current_level + 1);
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0));
+        resourcesBuildingUpgrade.emit(planet_id, CRYSTAL_MINE_ID, current_level + 1);
         return ();
     }
 
@@ -500,6 +504,7 @@ namespace NoGame {
         collect_resources(caller);
         NoGame_deuterium_mine_level.write(planet_id, current_level + 1);
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0));
+        resourcesBuildingUpgrade.emit(planet_id, DEUTERIUM_MINE_ID, current_level + 1);
         return ();
     }
 
@@ -531,6 +536,7 @@ namespace NoGame {
         collect_resources(caller);
         NoGame_solar_plant_level.write(planet_id, current_metal_level + 1);
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0));
+        resourcesBuildingUpgrade.emit(planet_id, SOLAR_PLANT_ID, current_level + 1);
         return ();
     }
 
@@ -1780,7 +1786,7 @@ func _pay_resources_erc20{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
     IERC20.burn(deuterium_address, address, deuterium);
     let (erc721) = IModulesManager.getERC721Address(manager);
     let (planet_id) = IERC721.ownerToPlanet(erc721, address);
-    resources_spent.emit(planet_id, metal_amount + crystal_amount);
+    resourcesSpent.emit(planet_id, metal_amount + crystal_amount);
     return ();
 }
 
