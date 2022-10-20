@@ -122,7 +122,15 @@ func resourcesSpent(planet_id: Uint256, spent: felt) {
 }
 
 @event
-func resourcesBuildingUpgrade(planet_id: Uint256, building_id: felt, level: felt) {
+func techSpent(planet_id: Uint256, spent: felt) {
+}
+
+@event
+func fleetSpent(planet_id: Uint256, spent: felt) {
+}
+
+@event
+func defenceSpent(planet_id: Uint256, spent: felt) {
 }
 
 namespace NoGame {
@@ -434,7 +442,6 @@ namespace NoGame {
         collect_resources(caller);
         NoGame_metal_mine_level.write(planet_id, current_level + 1);
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0));
-        resourcesBuildingUpgrade.emit(planet_id, METAL_MINE_ID, current_level + 1);
         return ();
     }
 
@@ -467,7 +474,6 @@ namespace NoGame {
         collect_resources(caller);
         NoGame_crystal_mine_level.write(planet_id, current_level + 1);
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0));
-        resourcesBuildingUpgrade.emit(planet_id, CRYSTAL_MINE_ID, current_level + 1);
         return ();
     }
 
@@ -504,7 +510,6 @@ namespace NoGame {
         collect_resources(caller);
         NoGame_deuterium_mine_level.write(planet_id, current_level + 1);
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0));
-        resourcesBuildingUpgrade.emit(planet_id, DEUTERIUM_MINE_ID, current_level + 1);
         return ();
     }
 
@@ -536,7 +541,6 @@ namespace NoGame {
         collect_resources(caller);
         NoGame_solar_plant_level.write(planet_id, current_metal_level + 1);
         NoGame_resources_que_status.write(planet_id, ResourcesQue(0, 0));
-        resourcesBuildingUpgrade.emit(planet_id, SOLAR_PLANT_ID, current_level + 1);
         return ();
     }
 
@@ -695,6 +699,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(CARGO_SHIP_ID, number_of_units, time_end)
         );
+        fleetSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -730,6 +735,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(CARGO_SHIP_ID, number_of_units, time_end)
         );
+        fleetSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -766,6 +772,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(ESPIONAGE_PROBE_ID, number_of_units, time_end)
         );
+        fleetSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -802,6 +809,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(SOLAR_SATELLITE_ID, number_of_units, time_end)
         );
+        fleetSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -838,6 +846,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(LIGHT_FIGHTER_ID, number_of_units, time_end)
         );
+        fleetSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -874,6 +883,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(CRUISER_ID, number_of_units, time_end)
         );
+        fleetSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -908,6 +918,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(BATTLESHIP_ID, number_of_units, time_end)
         );
+        fleetSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -945,6 +956,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(ARMOUR_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -979,6 +991,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(ASTROPHYSICS_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1013,6 +1026,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(COMBUSTION_DRIVE_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1047,6 +1061,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(COMPUTER_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1080,6 +1095,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(ENERGY_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1114,6 +1130,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(ESPIONAGE_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1148,6 +1165,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(HYPERSPACE_DRIVE_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1182,6 +1200,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(HYPERSPACE_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1216,6 +1235,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(IMPULSE_DRIVE_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1248,6 +1268,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(ION_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1280,6 +1301,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(LASER_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1313,6 +1335,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(PLASMA_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1347,6 +1370,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(SHIELDING_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1381,6 +1405,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_research_que_status.write(planet_id, ResearchQue(WEAPONS_TECH_ID, time_end));
+        techSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1420,6 +1445,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(ROCKET_LAUNCHER_ID, number_of_units, time_end)
         );
+        defenceSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1454,6 +1480,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(LIGHT_LASER_ID, number_of_units, time_end)
         );
+        defenceSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1490,6 +1517,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(HEAVY_LASER_ID, number_of_units, time_end)
         );
+        defenceSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1526,6 +1554,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(ION_CANNON_ID, number_of_units, time_end)
         );
+        defenceSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1561,6 +1590,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(GAUSS_CANNON_ID, number_of_units, time_end)
         );
+        defenceSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1595,6 +1625,7 @@ namespace NoGame {
         NoGame_shipyard_que_status.write(
             planet_id, ShipyardQue(PLASMA_TURRET_ID, number_of_units, time_end)
         );
+        defenceSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1625,6 +1656,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_shipyard_que_status.write(planet_id, ShipyardQue(SMALL_DOME_ID, 1, time_end));
+        defenceSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
@@ -1654,6 +1686,7 @@ namespace NoGame {
         let new_total_spent = spent_so_far + metal + crystal;
         NoGame_planets_spent_resources.write(planet_id, new_total_spent);
         NoGame_shipyard_que_status.write(planet_id, ShipyardQue(LARGE_DOME_ID, 1, time_end));
+        defenceSpent.emit(planet_id, metal + crystal);
         return ();
     }
 
