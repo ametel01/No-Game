@@ -223,3 +223,14 @@ func NoGame_small_dome(planet_id: Uint256) -> (res: felt) {
 @storage_var
 func NoGame_large_dome(planet_id: Uint256) -> (res: felt) {
 }
+
+//#################################################################################
+//                             FLEET STORAGE                                      #
+//#################################################################################
+@storage_var
+func NoGame_max_slots(planet_id: Uint256) -> (res: felt) {
+}
+
+@storage_var
+func NoGame_active_missions(planet_id: Uint256) -> (res: felt) {
+}
