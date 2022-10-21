@@ -12,16 +12,13 @@ from shipyard.library import (
     _cruiser_cost,
     _battleship_cost,
 )
-from tests.conftest import (
+from tests.setup import (
     Contracts,
-    _get_test_addresses,
-    _run_modules_manager,
-    _run_minter,
-    _time_warp,
-    _set_facilities_levels,
+    deploy_game,
+    run_modules_manager,
+    run_minter,
     _set_resource_levels,
-    _reset_shipyard_timelock,
-    _reset_que,
+    reset_shipyard_timelock,
 )
 from tests.interfaces import NoGame, ERC20
 from utils.formulas import Formulas
@@ -29,9 +26,9 @@ from utils.formulas import Formulas
 @external
 func test_build_base{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 10);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 10);
     %{
         stop_prank_callable1 = start_prank(
                    ids.addresses.owner, target_contract_address=ids.addresses.game)
@@ -98,9 +95,9 @@ func test_build_base{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_upgrades_costs{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
     %{
@@ -138,9 +135,9 @@ func test_upgrades_costs{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_c
 @external
 func test_upgrades_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
     %{
@@ -177,9 +174,9 @@ func test_upgrades_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 @external
 func test__reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -201,12 +198,12 @@ func test__reverts{syscall_ptr: felt*, range_check_ptr}() {
     NoGame.cargoShipBuildStart(addresses.game, 1);
     %{ expect_revert(error_message="SHIPYARD::QUE IS BUSY") %}
     NoGame.battleShipBuildStart(addresses.game, 1);
-    _reset_shipyard_timelock(addresses.facilities, addresses.owner);
+    reset_shipyard_timelock(addresses.facilities, addresses.owner);
 
     NoGame.espionageProbeBuildStart(addresses.game, 1);
     %{ expect_revert(error_message="SHIPYARD::TRIED TO COMPLETE THE WRONG SHIP") %}
     NoGame.cruiserBuildStart(addresses.game, 1);
-    _reset_shipyard_timelock(addresses.facilities, addresses.owner);
+    reset_shipyard_timelock(addresses.facilities, addresses.owner);
 
     NoGame.solarSatelliteBuildStart(addresses.game, 1);
     %{ expect_revert(error_message="SHIPYARD::TIMELOCK NOT YET EXPIRED") %}
@@ -239,7 +236,7 @@ func _test_cargo_cost_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_cargo_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -265,7 +262,7 @@ func _test_recycler_cost_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_recycler_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -291,7 +288,7 @@ func _test_espionage_cost_recursive{
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_espionage_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -317,7 +314,7 @@ func _test_satellite_cost_recursive{
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_satellite_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -343,7 +340,7 @@ func _test_light_fighter_cost_recursive{
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_light_fighter_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -369,7 +366,7 @@ func _test_cruiser_cost_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_cruiser_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -395,7 +392,7 @@ func _test_battleship_cost_recursive{
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_battleship_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -420,7 +417,7 @@ func _test_cargo_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
     let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
     assert expected_time = que_details.lock_end;
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_cargo_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -445,7 +442,7 @@ func _test_recycler_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
     assert expected_time = que_details.lock_end;
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_recycler_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -470,7 +467,7 @@ func _test_espionage_time_recursive{
     let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
     assert expected_time = que_details.lock_end;
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_espionage_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -495,7 +492,7 @@ func _test_satellite_time_recursive{
     let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
     assert expected_time = que_details.lock_end;
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_satellite_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -520,7 +517,7 @@ func _test_fighter_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
     assert expected_time = que_details.lock_end;
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_fighter_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -545,7 +542,7 @@ func _test_cruiser_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
     assert expected_time = que_details.lock_end;
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_cruiser_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -570,7 +567,7 @@ func _test_battleship_time_recursive{
     let (que_details) = NoGame.getShipyardQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}") %}
     assert expected_time = que_details.lock_end;
-    _reset_shipyard_timelock(addresses.shipyard, addresses.owner);
+    reset_shipyard_timelock(addresses.shipyard, addresses.owner);
 
     _test_battleship_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
