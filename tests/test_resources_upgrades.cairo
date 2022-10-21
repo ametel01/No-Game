@@ -8,16 +8,16 @@ from resources.library import (
     _deuterium_building_cost,
     _solar_plant_building_cost,
 )
-from tests.conftest import (
+from tests.setup import (
     Contracts,
-    _get_test_addresses,
-    _run_modules_manager,
-    _run_minter,
-    _time_warp,
-    _set_mines_levels,
+    deploy_game,
+    run_modules_manager,
+    run_minter,
+    time_warp,
+    set_mines_levels,
     _set_resource_levels,
-    _reset_resources_timelock,
-    _reset_que,
+    reset_buildings_timelock,
+    reset_que,
 )
 from tests.interfaces import NoGame, ERC20
 from utils.formulas import Formulas
@@ -32,9 +32,9 @@ from resources.library import (
 @external
 func test_upgrade_mines_base{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 10);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 10);
     %{
         stop_prank_callable1 = start_prank(
                 ids.addresses.owner, target_contract_address=ids.addresses.game)
@@ -44,19 +44,19 @@ func test_upgrade_mines_base{syscall_ptr: felt*, range_check_ptr}() {
         addresses.game, addresses.owner
     );
     NoGame.metalUpgradeStart(addresses.game);
-    _time_warp(1000, addresses.resources);
+    time_warp(1000, addresses.resources);
     NoGame.metalUpgradeComplete(addresses.game);
 
     NoGame.crystalUpgradeStart(addresses.game);
-    _time_warp(2000, addresses.resources);
+    time_warp(2000, addresses.resources);
     NoGame.crystalUpgradeComplete(addresses.game);
 
     NoGame.deuteriumUpgradeStart(addresses.game);
-    _time_warp(3000, addresses.resources);
+    time_warp(3000, addresses.resources);
     NoGame.deuteriumUpgradeComplete(addresses.game);
 
     NoGame.solarUpgradeStart(addresses.game);
-    _time_warp(4000, addresses.resources);
+    time_warp(4000, addresses.resources);
     NoGame.solarUpgradeComplete(addresses.game);
 
     let (new_metal, new_crystal, new_deuterium, new_solar) = NoGame.getResourcesBuildingsLevels(
@@ -72,9 +72,9 @@ func test_upgrade_mines_base{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_upgrades_costs{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -96,9 +96,9 @@ func test_upgrades_costs{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_upgrades_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -120,31 +120,31 @@ func test_upgrades_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 @external
 func test_busy_que_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
     NoGame.metalUpgradeStart(addresses.game);
     %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
     NoGame.crystalUpgradeStart(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.crystalUpgradeStart(addresses.game);
     %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
     NoGame.metalUpgradeStart(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.deuteriumUpgradeStart(addresses.game);
     %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
     NoGame.solarUpgradeStart(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.solarUpgradeStart(addresses.game);
     %{ expect_revert(error_message="RESOURCES::QUE IS BUSY!!!") %}
     NoGame.deuteriumUpgradeStart(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     return ();
 }
@@ -152,9 +152,9 @@ func test_busy_que_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_wrong_resource_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -162,25 +162,25 @@ func test_wrong_resource_reverts{syscall_ptr: felt*, range_check_ptr}() {
     %{ stop_warp = warp(1000) %}
     %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
     NoGame.crystalUpgradeComplete(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.crystalUpgradeStart(addresses.game);
     %{ stop_warp = warp(2000) %}
     %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
     NoGame.metalUpgradeComplete(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.deuteriumUpgradeStart(addresses.game);
     %{ stop_warp = warp(3000) %}
     %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
     NoGame.solarUpgradeComplete(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.solarUpgradeStart(addresses.game);
     %{ stop_warp = warp(4000) %}
     %{ expect_revert(error_message="RESOURCES::TRIED TO COMPLETE THE WRONG RESOURCE!!!") %}
     NoGame.deuteriumUpgradeComplete(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     return ();
 }
@@ -188,9 +188,9 @@ func test_wrong_resource_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_enough_resources_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -214,35 +214,35 @@ func test_enough_resources_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_timelock_expired_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
     NoGame.metalUpgradeStart(addresses.game);
     %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.metalUpgradeComplete(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
-    _reset_que(addresses.resources, addresses.owner, METAL_MINE_ID);
+    reset_buildings_timelock(addresses.game);
+    reset_que(addresses.resources, addresses.owner, METAL_MINE_ID);
 
     NoGame.crystalUpgradeStart(addresses.game);
     %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.crystalUpgradeComplete(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
-    _reset_que(addresses.resources, addresses.owner, CRYSTAL_MINE_ID);
+    reset_buildings_timelock(addresses.game);
+    reset_que(addresses.resources, addresses.owner, CRYSTAL_MINE_ID);
 
     NoGame.deuteriumUpgradeStart(addresses.game);
     %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.deuteriumUpgradeComplete(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
-    _reset_que(addresses.resources, addresses.owner, DEUTERIUM_MINE_ID);
+    reset_buildings_timelock(addresses.game);
+    reset_que(addresses.resources, addresses.owner, DEUTERIUM_MINE_ID);
 
     NoGame.solarUpgradeStart(addresses.game);
     %{ expect_revert(error_message="RESOURCES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.solarUpgradeComplete(addresses.game);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
-    _reset_que(addresses.resources, addresses.owner, SOLAR_PLANT_ID);
+    reset_buildings_timelock(addresses.game);
+    reset_que(addresses.resources, addresses.owner, SOLAR_PLANT_ID);
 
     return ();
 }
@@ -262,14 +262,14 @@ func _test_metal_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
-    _set_mines_levels(addresses.game, id=1, m=input, c=0, d=0, s=0);
+    set_mines_levels(addresses.game, id=1, m=input, c=0, d=0, s=0);
     NoGame.metalUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0);
-    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner);
+    let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -286,14 +286,14 @@ func _test_crystal_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
-    _set_mines_levels(addresses.game, id=1, m=0, c=input, d=0, s=0);
+    set_mines_levels(addresses.game, id=1, m=0, c=input, d=0, s=0);
     NoGame.crystalUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0);
-    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner);
+    let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -310,14 +310,14 @@ func _test_deuterium_time_recursive{
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
-    _set_mines_levels(addresses.game, id=1, m=0, c=0, d=input, s=0);
+    set_mines_levels(addresses.game, id=1, m=0, c=0, d=input, s=0);
     NoGame.deuteriumUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0);
-    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner);
+    let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -334,14 +334,14 @@ func _test_solar_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
-    _set_mines_levels(addresses.game, id=1, m=0, c=0, d=0, s=input);
+    set_mines_levels(addresses.game, id=1, m=0, c=0, d=0, s=input);
     NoGame.solarUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0);
-    let (que_details) = NoGame.getResourcesQueStatus(addresses.game, addresses.owner);
+    let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\t actual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_metal_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -358,13 +358,13 @@ func _test_metal_recursive{syscall_ptr: felt*, range_check_ptr}(
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
-    _set_mines_levels(addresses.game, id=1, m=input, c=0, d=0, s=0);
+    set_mines_levels(addresses.game, id=1, m=input, c=0, d=0, s=0);
     NoGame.metalUpgradeStart(addresses.game);
     let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner);
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner);
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_metal_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -381,13 +381,13 @@ func _test_crystal_recursive{syscall_ptr: felt*, range_check_ptr}(
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
-    _set_mines_levels(addresses.game, id=1, m=0, c=input, d=0, s=0);
+    set_mines_levels(addresses.game, id=1, m=0, c=input, d=0, s=0);
     NoGame.crystalUpgradeStart(addresses.game);
     let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner);
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner);
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_crystal_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -404,13 +404,13 @@ func _test_deuterium_recursive{syscall_ptr: felt*, range_check_ptr}(
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
-    _set_mines_levels(addresses.game, id=1, m=0, c=0, d=input, s=0);
+    set_mines_levels(addresses.game, id=1, m=0, c=0, d=input, s=0);
     NoGame.deuteriumUpgradeStart(addresses.game);
     let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner);
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner);
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_deuterium_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -427,13 +427,13 @@ func _test_solar_recursive{syscall_ptr: felt*, range_check_ptr}(
     %{ print(f"Cost_level {ids.input}: {ids.cost_metal}\t {ids.cost_crystal}") %}
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
-    _set_mines_levels(addresses.game, id=1, m=0, c=0, d=0, s=input);
+    set_mines_levels(addresses.game, id=1, m=0, c=0, d=0, s=input);
     NoGame.solarUpgradeStart(addresses.game);
     let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner);
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner);
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
-    _reset_resources_timelock(addresses.resources, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_solar_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
