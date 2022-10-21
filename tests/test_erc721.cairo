@@ -5,7 +5,7 @@ from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.uint256 import Uint256
 from tests.interfaces import ERC721, Minter, NoGame
 from token.erc721.interfaces.IERC721 import IERC721
-from tests.conftest import Contracts, _get_test_addresses, _run_modules_manager
+from tests.setup import Contracts, deploy_game, run_modules_manager
 
 const ERC721_NAME = 0x4e6f47616d6520;
 const ERC721_SYMBOL = 0x4f474d302e31;
@@ -13,8 +13,8 @@ const ERC721_SYMBOL = 0x4f474d302e31;
 @external
 func test_erc721_constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
     let (name) = ERC721.name(addresses.erc721);
     assert name = ERC721_NAME;
 
@@ -30,8 +30,8 @@ func test_erc721_constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
 @external
 func test_minter{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
     %{ stop_prank_callable = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.minter) %}
     Minter.setNFTaddress(addresses.minter, addresses.erc721);
     Minter.setNFTapproval(addresses.minter, addresses.owner, TRUE);
@@ -56,8 +56,8 @@ func test_minter{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 @external
 func test_erc721_transfer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
 
     %{
         stop_prank_callable1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game)
