@@ -5,13 +5,14 @@ from starkware.cairo.common.uint256 import Uint256
 from tests.setup import (
     Contracts,
     deploy_game,
-    _run_modules_manager,
-    _run_minter,
-    _time_warp,
-    _set_facilities_levels,
+    run_modules_manager,
+    run_minter,
+    time_warp,
+    set_facilities_levels,
     _set_resource_levels,
-    _reset_facilities_timelock,
-    _reset_que,
+    reset_facilities_timelock,
+    reset_que,
+    reset_buildings_timelock,
 )
 from tests.interfaces import NoGame, ERC20
 from utils.formulas import Formulas
@@ -33,9 +34,9 @@ from facilities.IFacilities import IFacilities
 func test_upgrade_facilities_base{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     ) {
     alloc_locals;
-    let (addresses: Contracts) = deploy_game();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 10);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{
         stop_prank_callable1 = start_prank(
                    ids.addresses.owner, target_contract_address=ids.addresses.game)
@@ -53,26 +54,26 @@ func test_upgrade_facilities_base{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     _set_resource_levels(addresses.deuterium, addresses.owner, robot.deuterium);
     let (robot_time) = Formulas.buildings_production_time(robot.metal, robot.crystal, 0, 0);
     NoGame.robotUpgradeStart(addresses.game);
-    _time_warp(robot_time, addresses.facilities);
+    time_warp(robot_time, addresses.facilities);
     NoGame.robotUpgradeComplete(addresses.game);
 
     _set_resource_levels(addresses.metal, addresses.owner, shipyard.metal);
     _set_resource_levels(addresses.crystal, addresses.owner, shipyard.crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, shipyard.deuterium);
     %{ store(ids.addresses.game, "NoGame_robot_factory_level", [2], [1,0]) %}
-    _time_warp(0, addresses.facilities);
+    time_warp(0, addresses.facilities);
     let (shipyard_time) = Formulas.buildings_production_time(nanite.metal, nanite.crystal, 2, 0);
     NoGame.shipyardUpgradeStart(addresses.game);
-    _time_warp(shipyard_time, addresses.facilities);
+    time_warp(shipyard_time, addresses.facilities);
     NoGame.shipyardUpgradeComplete(addresses.game);
 
     _set_resource_levels(addresses.metal, addresses.owner, lab.metal);
     _set_resource_levels(addresses.crystal, addresses.owner, lab.crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, lab.deuterium);
-    _time_warp(0, addresses.facilities);
+    time_warp(0, addresses.facilities);
     let (lab_time) = Formulas.buildings_production_time(nanite.metal, nanite.crystal, 2, 0);
     NoGame.researchUpgradeStart(addresses.game);
-    _time_warp(lab_time, addresses.facilities);
+    time_warp(lab_time, addresses.facilities);
     NoGame.researchUpgradeComplete(addresses.game);
 
     _set_resource_levels(addresses.metal, addresses.owner, nanite.metal);
@@ -80,10 +81,10 @@ func test_upgrade_facilities_base{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     _set_resource_levels(addresses.deuterium, addresses.owner, nanite.deuterium);
     %{ store(ids.addresses.game, "NoGame_computer_tech", [10], [1,0]) %}
     %{ store(ids.addresses.game, "NoGame_robot_factory_level", [10], [1,0]) %}
-    _time_warp(0, addresses.facilities);
+    time_warp(0, addresses.facilities);
     let (nanite_time) = Formulas.buildings_production_time(nanite.metal, nanite.crystal, 10, 0);
     NoGame.naniteUpgradeStart(addresses.game);
-    _time_warp(nanite_time, addresses.facilities);
+    time_warp(nanite_time, addresses.facilities);
     NoGame.naniteUpgradeComplete(addresses.game);
     %{ store(ids.addresses.game, "NoGame_robot_factory_level", [10], [1,0]) %}
 
@@ -102,9 +103,9 @@ func test_upgrade_facilities_base{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
 @external
 func test_upgrades_costs{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = deploy_game();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -126,9 +127,9 @@ func test_upgrades_costs{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_upgrades_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = deploy_game();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -150,9 +151,9 @@ func test_upgrades_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_ch
 @external
 func test_busy_que_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = deploy_game();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -163,22 +164,21 @@ func test_busy_que_reverts{syscall_ptr: felt*, range_check_ptr}() {
     NoGame.robotUpgradeStart(addresses.game);
     %{ expect_revert(error_message="FACILITIES::QUE IS BUSY!!!") %}
     NoGame.shipyardUpgradeStart(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
-
+    reset_buildings_timelock(addresses.game);
     NoGame.shipyardUpgradeStart(addresses.game);
     %{ expect_revert(error_message="FACILITIES::QUE IS BUSY!!!") %}
     NoGame.robotUpgradeStart(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.researchUpgradeStart(addresses.game);
     %{ expect_revert(error_message="FACILITIES::QUE IS BUSY!!!") %}
     NoGame.naniteUpgradeStart(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.naniteUpgradeStart(addresses.game);
     %{ expect_revert(error_message="FACILITIES::QUE IS BUSY!!!") %}
     NoGame.researchUpgradeStart(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     return ();
 }
@@ -186,9 +186,9 @@ func test_busy_que_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_wrong_resource_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = deploy_game();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -200,25 +200,25 @@ func test_wrong_resource_reverts{syscall_ptr: felt*, range_check_ptr}() {
     %{ stop_warp = warp(1000) %}
     %{ expect_revert(error_message="FACILITIES::TRIED TO COMPLETE THE WRONG FACILITY!!!") %}
     NoGame.shipyardUpgradeComplete(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.shipyardUpgradeStart(addresses.game);
     %{ stop_warp = warp(2000) %}
     %{ expect_revert(error_message="FACILITIES::TRIED TO COMPLETE THE WRONG FACILITY!!!") %}
     NoGame.robotUpgradeComplete(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.researchUpgradeStart(addresses.game);
     %{ stop_warp = warp(3000) %}
     %{ expect_revert(error_message="FACILITIES::TRIED TO COMPLETE THE WRONG FACILITY!!!") %}
     NoGame.naniteUpgradeComplete(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     NoGame.naniteUpgradeStart(addresses.game);
     %{ stop_warp = warp(40000) %}
     %{ expect_revert(error_message="FACILITIES::TRIED TO COMPLETE THE WRONG FACILITY!!!") %}
     NoGame.researchUpgradeComplete(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     return ();
 }
@@ -226,9 +226,9 @@ func test_wrong_resource_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_enough_resources_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = deploy_game();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -252,9 +252,9 @@ func test_enough_resources_reverts{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_timelock_expired_reverts{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = deploy_game();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{ callable_1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
@@ -265,26 +265,26 @@ func test_timelock_expired_reverts{syscall_ptr: felt*, range_check_ptr}() {
     NoGame.robotUpgradeStart(addresses.game);
     %{ expect_revert(error_message="FACILITIES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.robotUpgradeComplete(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
-    _reset_que(addresses.facilities, addresses.owner, ROBOT_FACTORY_ID);
+    reset_buildings_timelock(addresses.game);
+    reset_que(addresses.facilities, addresses.owner, ROBOT_FACTORY_ID);
 
     NoGame.shipyardUpgradeStart(addresses.game);
     %{ expect_revert(error_message="FACILITIES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.shipyardUpgradeComplete(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
-    _reset_que(addresses.facilities, addresses.owner, SHIPYARD_ID);
+    reset_buildings_timelock(addresses.game);
+    reset_que(addresses.facilities, addresses.owner, SHIPYARD_ID);
 
     NoGame.researchUpgradeStart(addresses.game);
     %{ expect_revert(error_message="FACILITIES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.researchUpgradeComplete(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
-    _reset_que(addresses.facilities, addresses.owner, RESEARCH_LAB_ID);
+    reset_buildings_timelock(addresses.game);
+    reset_que(addresses.facilities, addresses.owner, RESEARCH_LAB_ID);
 
     NoGame.naniteUpgradeStart(addresses.game);
     %{ expect_revert(error_message="FACILITIES::TIMELOCK NOT YET EXPIRED!!!") %}
     NoGame.naniteUpgradeComplete(addresses.game);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
-    _reset_que(addresses.facilities, addresses.owner, NANITE_FACTORY_ID);
+    reset_buildings_timelock(addresses.game);
+    reset_que(addresses.facilities, addresses.owner, NANITE_FACTORY_ID);
 
     return ();
 }
@@ -304,7 +304,7 @@ func _test_robot_cost_recursive{syscall_ptr: felt*, range_check_ptr}(
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium);
-    _set_facilities_levels(addresses.game, id=1, robot=input, shipyard=0, research=0, nanite=0);
+    set_facilities_levels(addresses.game, id=1, robot=input, shipyard=0, research=0, nanite=0);
     NoGame.robotUpgradeStart(addresses.game);
     let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner);
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner);
@@ -312,7 +312,7 @@ func _test_robot_cost_recursive{syscall_ptr: felt*, range_check_ptr}(
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_robot_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -330,7 +330,7 @@ func _test_shipyard_cost_recursive{syscall_ptr: felt*, range_check_ptr}(
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium);
-    _set_facilities_levels(addresses.game, id=1, robot=2, shipyard=input, research=0, nanite=0);
+    set_facilities_levels(addresses.game, id=1, robot=2, shipyard=input, research=0, nanite=0);
     NoGame.shipyardUpgradeStart(addresses.game);
     let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner);
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner);
@@ -338,7 +338,7 @@ func _test_shipyard_cost_recursive{syscall_ptr: felt*, range_check_ptr}(
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_shipyard_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -356,7 +356,7 @@ func _test_lab_cost_recursive{syscall_ptr: felt*, range_check_ptr}(
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium);
-    _set_facilities_levels(addresses.game, id=1, robot=0, shipyard=0, research=input, nanite=0);
+    set_facilities_levels(addresses.game, id=1, robot=0, shipyard=0, research=input, nanite=0);
     NoGame.researchUpgradeStart(addresses.game);
     let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner);
     let (crystal_balance) = ERC20.balanceOf(addresses.crystal, addresses.owner);
@@ -364,7 +364,7 @@ func _test_lab_cost_recursive{syscall_ptr: felt*, range_check_ptr}(
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_lab_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -382,7 +382,7 @@ func _test_nanite_cost_recursive{syscall_ptr: felt*, range_check_ptr}(
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium);
-    _set_facilities_levels(addresses.game, id=1, robot=10, shipyard=0, research=0, nanite=input);
+    set_facilities_levels(addresses.game, id=1, robot=10, shipyard=0, research=0, nanite=input);
     %{ store(ids.addresses.game, "NoGame_computer_tech", [10], [1,0]) %}
     NoGame.naniteUpgradeStart(addresses.game);
     let (metal_balance) = ERC20.balanceOf(addresses.metal, addresses.owner);
@@ -391,7 +391,7 @@ func _test_nanite_cost_recursive{syscall_ptr: felt*, range_check_ptr}(
     assert metal_balance = Uint256(0, 0);
     assert crystal_balance = Uint256(0, 0);
     assert deuterium_balance = Uint256(0, 0);
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_nanite_cost_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -409,14 +409,14 @@ func _test_robot_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium);
-    _set_facilities_levels(addresses.game, id=1, robot=input, shipyard=0, research=0, nanite=0);
+    set_facilities_levels(addresses.game, id=1, robot=input, shipyard=0, research=0, nanite=0);
     NoGame.robotUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, input, 0);
     let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_robot_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -434,7 +434,7 @@ func _test_shipyard_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium);
-    _set_facilities_levels(addresses.game, id=1, robot=2, shipyard=input, research=0, nanite=0);
+    set_facilities_levels(addresses.game, id=1, robot=2, shipyard=input, research=0, nanite=0);
     // %{ store(ids.addresses.game, "NoGame_robot_factory_level", [2], [1,0]) %}
     NoGame.shipyardUpgradeStart(addresses.game);
 
@@ -442,7 +442,7 @@ func _test_shipyard_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
     let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_shipyard_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -460,14 +460,14 @@ func _test_lab_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ra
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium);
-    _set_facilities_levels(addresses.game, id=1, robot=0, shipyard=0, research=input, nanite=0);
+    set_facilities_levels(addresses.game, id=1, robot=0, shipyard=0, research=input, nanite=0);
     NoGame.researchUpgradeStart(addresses.game);
 
     let (expected_time) = Formulas.buildings_production_time(cost_metal, cost_crystal, 0, 0);
     let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_lab_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
@@ -485,7 +485,7 @@ func _test_nanite_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
     _set_resource_levels(addresses.metal, addresses.owner, cost_metal);
     _set_resource_levels(addresses.crystal, addresses.owner, cost_crystal);
     _set_resource_levels(addresses.deuterium, addresses.owner, cost_deuterium);
-    _set_facilities_levels(addresses.game, id=1, robot=10, shipyard=0, research=0, nanite=input);
+    set_facilities_levels(addresses.game, id=1, robot=10, shipyard=0, research=0, nanite=input);
     %{ store(ids.addresses.game, "NoGame_computer_tech", [10], [1,0]) %}
 
     NoGame.naniteUpgradeStart(addresses.game);
@@ -494,7 +494,7 @@ func _test_nanite_time_recursive{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*,
     let (que_details) = NoGame.getBuildingQueStatus(addresses.game, addresses.owner);
     %{ print(f"expected_time: {ids.expected_time}\tactual_time: {ids.que_details.lock_end}\n") %}
     assert expected_time = que_details.lock_end;
-    _reset_facilities_timelock(addresses.facilities, addresses.owner);
+    reset_buildings_timelock(addresses.game);
 
     _test_nanite_time_recursive(inputs_len - 1, inputs + 1, addresses);
     return ();
