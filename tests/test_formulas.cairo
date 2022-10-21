@@ -12,42 +12,42 @@ from shipyard.ships_performance import FleetPerformance
 from main.structs import Fleet
 from utils.formulas import Formulas
 from facilities.library import _set_timelock_and_que
-from tests.setup import _get_expected_cost
+from tests.setup import get_expected_cost
 
 @external
 func test_metal{syscall_ptr: felt*, range_check_ptr}() {
     let (metal, crystal) = _metal_building_cost(1);
-    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 1);
+    let (exp_metal, exp_crystal) = get_expected_cost(60, 15, 15, 1);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _metal_building_cost(5);
-    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 5);
+    let (exp_metal, exp_crystal) = get_expected_cost(60, 15, 15, 5);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _metal_building_cost(10);
-    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 10);
+    let (exp_metal, exp_crystal) = get_expected_cost(60, 15, 15, 10);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _metal_building_cost(15);
-    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 15);
+    let (exp_metal, exp_crystal) = get_expected_cost(60, 15, 15, 15);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _metal_building_cost(20);
-    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 20);
+    let (exp_metal, exp_crystal) = get_expected_cost(60, 15, 15, 20);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _metal_building_cost(30);
-    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 30);
+    let (exp_metal, exp_crystal) = get_expected_cost(60, 15, 15, 30);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _metal_building_cost(45);
-    let (exp_metal, exp_crystal) = _get_expected_cost(60, 15, 15, 45);
+    let (exp_metal, exp_crystal) = get_expected_cost(60, 15, 15, 45);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
@@ -57,37 +57,37 @@ func test_metal{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_crystal{syscall_ptr: felt*, range_check_ptr}() {
     let (metal, crystal) = _crystal_building_cost(1);
-    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 1);
+    let (exp_metal, exp_crystal) = get_expected_cost(48, 24, 16, 1);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _crystal_building_cost(5);
-    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 5);
+    let (exp_metal, exp_crystal) = get_expected_cost(48, 24, 16, 5);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _crystal_building_cost(10);
-    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 10);
+    let (exp_metal, exp_crystal) = get_expected_cost(48, 24, 16, 10);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _crystal_building_cost(15);
-    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 15);
+    let (exp_metal, exp_crystal) = get_expected_cost(48, 24, 16, 15);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _crystal_building_cost(20);
-    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 20);
+    let (exp_metal, exp_crystal) = get_expected_cost(48, 24, 16, 20);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _crystal_building_cost(30);
-    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 30);
+    let (exp_metal, exp_crystal) = get_expected_cost(48, 24, 16, 30);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _crystal_building_cost(45);
-    let (exp_metal, exp_crystal) = _get_expected_cost(48, 24, 16, 45);
+    let (exp_metal, exp_crystal) = get_expected_cost(48, 24, 16, 45);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
@@ -97,37 +97,37 @@ func test_crystal{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_deuterium{syscall_ptr: felt*, range_check_ptr}() {
     let (metal, crystal) = _deuterium_building_cost(1);
-    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 1);
+    let (exp_metal, exp_crystal) = get_expected_cost(225, 75, 15, 1);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _deuterium_building_cost(5);
-    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 5);
+    let (exp_metal, exp_crystal) = get_expected_cost(225, 75, 15, 5);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _deuterium_building_cost(10);
-    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 10);
+    let (exp_metal, exp_crystal) = get_expected_cost(225, 75, 15, 10);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _deuterium_building_cost(15);
-    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 15);
+    let (exp_metal, exp_crystal) = get_expected_cost(225, 75, 15, 15);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _deuterium_building_cost(20);
-    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 20);
+    let (exp_metal, exp_crystal) = get_expected_cost(225, 75, 15, 20);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _deuterium_building_cost(30);
-    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 30);
+    let (exp_metal, exp_crystal) = get_expected_cost(225, 75, 15, 30);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _deuterium_building_cost(45);
-    let (exp_metal, exp_crystal) = _get_expected_cost(225, 75, 15, 45);
+    let (exp_metal, exp_crystal) = get_expected_cost(225, 75, 15, 45);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
@@ -137,37 +137,37 @@ func test_deuterium{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_solar{syscall_ptr: felt*, range_check_ptr}() {
     let (metal, crystal) = _solar_plant_building_cost(1);
-    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 1);
+    let (exp_metal, exp_crystal) = get_expected_cost(75, 30, 15, 1);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _solar_plant_building_cost(5);
-    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 5);
+    let (exp_metal, exp_crystal) = get_expected_cost(75, 30, 15, 5);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _solar_plant_building_cost(10);
-    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 10);
+    let (exp_metal, exp_crystal) = get_expected_cost(75, 30, 15, 10);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _solar_plant_building_cost(15);
-    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 15);
+    let (exp_metal, exp_crystal) = get_expected_cost(75, 30, 15, 15);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _solar_plant_building_cost(20);
-    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 20);
+    let (exp_metal, exp_crystal) = get_expected_cost(75, 30, 15, 20);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _solar_plant_building_cost(30);
-    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 30);
+    let (exp_metal, exp_crystal) = get_expected_cost(75, 30, 15, 30);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
     let (metal, crystal) = _solar_plant_building_cost(46);
-    let (exp_metal, exp_crystal) = _get_expected_cost(75, 30, 15, 46);
+    let (exp_metal, exp_crystal) = get_expected_cost(75, 30, 15, 46);
     assert metal = exp_metal;
     assert crystal = exp_crystal;
 
@@ -195,7 +195,7 @@ func test_production_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 @external
 func test_calculate_distance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     let res = _calculate_distance(1, 100);
-    assert res = 0;
+    assert res = 1495;
     return ();
 }
 
@@ -204,7 +204,7 @@ func test_calculate_travel_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
     let distance = _calculate_distance(1, 2);
     let speed = FleetPerformance.EspionageProbe.base_speed;
     let res = _calculate_travel_time(distance, speed);
-    assert res = 0;
+    assert res = 50;
     return ();
 }
 
@@ -212,6 +212,6 @@ func test_calculate_travel_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
 func test_calculate_speed{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     let fleet = Fleet(0, 0, 1, 0, 0, 0, 0, 0);
     let res = _calculate_speed(fleet);
-    assert res = 0;
+    assert res = 100000000;
     return ();
 }
