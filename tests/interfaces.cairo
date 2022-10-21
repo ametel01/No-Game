@@ -15,7 +15,12 @@ namespace NoGame {
     }
 
     func getModulesAddresses() -> (
-        _resources: felt, _facilities: felt, _shipyard: felt, _research: felt
+        _resources: felt,
+        _facilities: felt,
+        _shipyard: felt,
+        _research: felt,
+        _defences: felt,
+        _fleet: felt,
     ) {
     }
 
