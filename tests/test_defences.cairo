@@ -13,33 +13,32 @@ from defences.library import (
     _small_dome_cost,
     _large_dome_cost,
 )
-from tests.conftest import (
+from tests.setup import (
     Contracts,
-    _get_test_addresses,
-    _run_modules_manager,
-    _run_minter,
-    _time_warp,
-    _set_facilities_levels,
-    _set_resource_levels,
-    _reset_shipyard_timelock,
-    _reset_que,
+    deploy_game,
+    run_modules_manager,
+    run_minter,
+    time_warp,
+    set_facilities_levels,
+    set_resources_levels,
+    reset_shipyard_timelock,
+    reset_que,
 )
 
-from tests.interfaces import NoGame, ERC20
+from tests.interfaces import NoGame, ERC20, ERC721
 from utils.formulas import Formulas
 
 @external
 func test_build_base{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{
         stop_prank_callable1 = start_prank(
                    ids.addresses.owner, target_contract_address=ids.addresses.game)
     %}
     NoGame.generatePlanet(addresses.game);
-
     let (current_levels: Defence) = NoGame.getDefenceLevels(addresses.game, addresses.owner);
     assert current_levels = Defence(0, 0, 0, 0, 0, 0, 0, 0);
 
@@ -52,9 +51,7 @@ func test_build_base{syscall_ptr: felt*, range_check_ptr}() {
         store(ids.addresses.game, "NoGame_plasma_tech", [7], [1,0])
         store(ids.addresses.game, "NoGame_laser_tech", [6], [1,0])
     %}
-    _set_resource_levels(addresses.metal, addresses.owner, 2000000);
-    _set_resource_levels(addresses.crystal, addresses.owner, 2000000);
-    _set_resource_levels(addresses.deuterium, addresses.owner, 2000000);
+    set_resources_levels(addresses, addresses.owner, 2000000);
 
     NoGame.rocketBuildStart(addresses.game, 1);
     %{ stop_warp = warp(1000, target_contract_address=ids.addresses.defences) %}
