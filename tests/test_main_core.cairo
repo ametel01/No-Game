@@ -4,22 +4,22 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
 from main.structs import Cost, TechLevels, TechCosts
 from utils.formulas import Formulas
-from tests.conftest import (
+from tests.setup import (
     E18,
     Contracts,
-    _get_test_addresses,
-    _run_modules_manager,
-    _run_minter,
-    _set_mines_levels,
-    _time_warp,
+    deploy_game,
+    run_modules_manager,
+    run_minter,
+    set_mines_levels,
+    time_warp,
 )
 from tests.interfaces import NoGame, ERC721, ERC20
 
 @external
-func test_game_setup{syscall_ptr: felt*, range_check_ptr}() {
+func test_game_setup{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
 
     let (_erc721, _metal, _crystal, _deuterium) = NoGame.getTokensAddresses(addresses.game);
     assert _erc721 = addresses.erc721;
@@ -27,13 +27,14 @@ func test_game_setup{syscall_ptr: felt*, range_check_ptr}() {
     assert _crystal = addresses.crystal;
     assert _deuterium = addresses.deuterium;
 
-    let (_resources, _facilities, _shipyard, _research) = NoGame.getModulesAddresses(
-        addresses.game
-    );
+    let (
+        _resources, _facilities, _shipyard, _research, _defences, _fleet
+    ) = NoGame.getModulesAddresses(addresses.game);
     assert _resources = addresses.resources;
     assert _facilities = addresses.facilities;
     assert _shipyard = addresses.shipyard;
     assert _research = addresses.research;
+    assert _defences = addresses.defences;
 
     return ();
 }
@@ -41,9 +42,9 @@ func test_game_setup{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_generate_planet{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 10);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 10);
     %{ stop_prank_callable1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     // Testing the 'generate_planet' call.
     let (planet_before) = NoGame.numberOfPlanets(addresses.game);
@@ -72,18 +73,18 @@ func test_generate_planet{syscall_ptr: felt*, range_check_ptr}() {
 @external
 func test_collect_resources{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 10);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 10);
     %{ stop_prank_callable1 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.game) %}
     NoGame.generatePlanet(addresses.game);
 
-    _set_mines_levels(game=addresses.game, id=1, m=1, c=1, d=1, s=5);
-    _time_warp(3600, addresses.game);
+    set_mines_levels(game=addresses.game, id=1, m=1, c=1, d=1, s=5);
+    time_warp(3600, addresses.game);
 
-    let (exp_metal) = Formulas.metal_mine_production(0, 3600, 1);
-    let (exp_crystal) = Formulas.crystal_mine_production(0, 3600, 1);
-    let (exp_deuterium) = Formulas.deuterium_mine_production(0, 3600, 1);
+    let (exp_metal) = Formulas.metal_mine_production(3600, 1);
+    let (exp_crystal) = Formulas.crystal_mine_production(3600, 1);
+    let (exp_deuterium) = Formulas.deuterium_mine_production(3600, 1);
 
     NoGame.collectResources(addresses.game);
     let (actual_metal, actual_crystal, actual_deuterium, _) = NoGame.getResourcesAvailable(
@@ -100,9 +101,9 @@ func test_collect_resources{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, rang
 @external
 func test_views_base_levels{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 10);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 10);
 
     // Testing levels for initialized planet
     let (metal, crystal, deuterium, solar_plant) = NoGame.getResourcesBuildingsLevels(
@@ -142,42 +143,57 @@ func test_views_base_levels{syscall_ptr: felt*, range_check_ptr}() {
 
 func test_views_base_costs{syscall_ptr: felt*, range_check_ptr}() {
     alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     // Testing the base buildings costs.
     let (metal_1, crystal_1, deuterium_1, solar_plant_1) = NoGame.getResourcesUpgradeCost(
         addresses.game, addresses.owner
     );
-    assert metal_1 = Cost(60, 15, 0);
-    assert crystal_1 = Cost(48, 24, 0);
-    assert deuterium_1 = Cost(225, 75, 0);
-    assert solar_plant_1 = Cost(75, 30, 0);
+    assert metal_1 = Cost(60, 15, 0, 0);
+    assert crystal_1 = Cost(48, 24, 0, 0);
+    assert deuterium_1 = Cost(225, 75, 0, 0);
+    assert solar_plant_1 = Cost(75, 30, 0, 0);
 
     // Testing the base facilities costs.
     let (robot_1, shipyard_1, research_1, nanite_1) = NoGame.getFacilitiesUpgradeCost(
         addresses.game, addresses.owner
     );
-    assert robot_1 = Cost(400, 120, 200);
-    assert shipyard_1 = Cost(400, 200, 100);
-    assert research_1 = Cost(200, 400, 200);
-    assert nanite_1 = Cost(1000000, 500000, 100000);
+    assert robot_1 = Cost(400, 120, 200, 0);
+    assert shipyard_1 = Cost(400, 200, 100, 0);
+    assert research_1 = Cost(200, 400, 200, 0);
+    assert nanite_1 = Cost(1000000, 500000, 100000, 0);
 
-    let (tech_costs: TechCosts) = NoGame.getTechUpgradeCost(addresses.game, addresses.owner);
-    assert tech_costs.armour_tech = Cost(1000, 0, 0);
-    assert tech_costs.astrophysics = Cost(4000, 8000, 4000);
-    assert tech_costs.combustion_drive = Cost(400, 0, 600);
-    assert tech_costs.computer_tech = Cost(0, 400, 600);
-    assert tech_costs.energy_tech = Cost(0, 800, 400);
-    assert tech_costs.espionage_tech = Cost(200, 1000, 200);
-    assert tech_costs.hyperspace_drive = Cost(10000, 20000, 6000);
-    assert tech_costs.hyperspace_tech = Cost(0, 4000, 2000);
-    assert tech_costs.impulse_drive = Cost(2000, 4000, 600);
-    assert tech_costs.ion_tech = Cost(1000, 300, 100);
-    assert tech_costs.laser_tech = Cost(200, 100, 0);
-    assert tech_costs.plasma_tech = Cost(2000, 4000, 1000);
-    assert tech_costs.shielding_tech = Cost(200, 600, 0);
-    assert tech_costs.weapons_tech = Cost(800, 200, 0);
+    let (
+        armour_tech,
+        astrophysics,
+        combustion_drive,
+        computer_tech,
+        energy_tech,
+        espionage_tech,
+        hyperspace_drive,
+        hyperspace_tech,
+        impulse_drive,
+        ion_tech,
+        laser_tech,
+        plasma_tech,
+        shielding_tech,
+        weapons_tech,
+    ) = NoGame.getTechUpgradeCost(addresses.game, addresses.owner);
+    assert armour_tech = Cost(1000, 0, 0, 0);
+    assert astrophysics = Cost(4000, 8000, 4000, 0);
+    assert combustion_drive = Cost(400, 0, 600, 0);
+    assert computer_tech = Cost(0, 400, 600, 0);
+    assert energy_tech = Cost(0, 800, 400, 0);
+    assert espionage_tech = Cost(200, 1000, 200, 0);
+    assert hyperspace_drive = Cost(10000, 20000, 6000, 0);
+    assert hyperspace_tech = Cost(0, 4000, 2000, 0);
+    assert impulse_drive = Cost(2000, 4000, 600, 0);
+    assert ion_tech = Cost(1000, 300, 100, 0);
+    assert laser_tech = Cost(200, 100, 0, 0);
+    assert plasma_tech = Cost(2000, 4000, 1000, 0);
+    assert shielding_tech = Cost(200, 600, 0, 0);
+    assert weapons_tech = Cost(800, 200, 0, 0);
 
     return ();
 }
