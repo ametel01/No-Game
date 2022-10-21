@@ -2,6 +2,7 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from openzeppelin.access.ownable.library import Ownable
+from openzeppelin.security.reentrancyguard.library import ReentrancyGuard
 from manager.library import ModulesManager
 
 @constructor
@@ -43,24 +44,28 @@ func getResourcesAddresses{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range
 
 @external
 func setERC721{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) {
+    ReentrancyGuard.start();
     ModulesManager.set_erc721(address);
     return ();
 }
 
 @external
 func setMetal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) {
+    ReentrancyGuard.start();
     ModulesManager.set_metal(address);
     return ();
 }
 
 @external
 func setCrystal{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) {
+    ReentrancyGuard.start();
     ModulesManager.set_crystal(address);
     return ();
 }
 
 @external
 func setDeuterium{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(address: felt) {
+    ReentrancyGuard.start();
     ModulesManager.set_deuterium(address);
     return ();
 }
