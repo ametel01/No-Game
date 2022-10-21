@@ -3,18 +3,16 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
 from tests.interfaces import NoGame, ERC721
-from tests.conftest import (
+from tests.setup import (
     Contracts,
-    _get_test_addresses,
-    _run_modules_manager,
-    _run_minter,
-    _time_warp,
-    _set_mines_levels,
-    _set_facilities_levels,
-    _set_resource_levels,
-    _set_tech_levels,
-    _reset_facilities_timelock,
-    _reset_que,
+    deploy_game,
+    run_modules_manager,
+    run_minter,
+    time_warp,
+    set_mines_levels,
+    set_facilities_levels,
+    set_resources_levels,
+    set_tech_levels,
 )
 from research.library import TechLevels
 
@@ -22,18 +20,17 @@ from research.library import TechLevels
 func test_structures_levels_after_transfer{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }() {
-    alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     %{
         stop_prank_callable1 = start_prank(
                    ids.addresses.owner, target_contract_address=ids.addresses.game)
     %}
     NoGame.generatePlanet(addresses.game);
-    _set_mines_levels(addresses.game, 1, 2, 2, 2, 2);
-    _set_facilities_levels(addresses.game, 1, 2, 2, 2, 2);
-    _set_tech_levels(addresses.game, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
+    set_mines_levels(addresses.game, 1, 2, 2, 2, 2);
+    set_facilities_levels(addresses.game, 1, 2, 2, 2, 2);
+    set_tech_levels(addresses.game, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
 
     let (metal, crystal, deuterium, solar_plant) = NoGame.getResourcesBuildingsLevels(
         addresses.game, addresses.owner
@@ -111,10 +108,9 @@ func test_structures_levels_after_transfer{
 @external
 func test_upgrades_after_transfer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     ) {
-    alloc_locals;
-    let (addresses: Contracts) = _get_test_addresses();
-    _run_modules_manager(addresses);
-    _run_minter(addresses, 1);
+    let addresses: Contracts = deploy_game();
+    run_modules_manager(addresses);
+    run_minter(addresses, 1);
     let planet_id = Uint256(1, 0);
     %{
         stop_prank_callable1 = start_prank(
@@ -122,12 +118,12 @@ func test_upgrades_after_transfer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     %}
     NoGame.generatePlanet(addresses.game);
     NoGame.solarUpgradeStart(addresses.game);
-    _time_warp(1000, addresses.resources);
+    time_warp(1000, addresses.resources);
     NoGame.solarUpgradeComplete(addresses.game);
     let (metal, crystal, deuterium, solar_plant) = NoGame.getResourcesBuildingsLevels(
         addresses.game, addresses.owner
     );
-    assert solar_plant = 1;
+    assert solar_plant = 2;
 
     %{
         stop_prank_callable2 = start_prank(
@@ -148,11 +144,9 @@ func test_upgrades_after_transfer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
         stop_prank_callable1 = start_prank(
                    ids.addresses.p1, target_contract_address=ids.addresses.game)
     %}
-    _set_resource_levels(addresses.metal, addresses.p1, 1000);
-    _set_resource_levels(addresses.crystal, addresses.p1, 1000);
-    _set_resource_levels(addresses.deuterium, addresses.p1, 1000);
+    set_resources_levels(addresses, addresses.p1, 1000);
     NoGame.solarUpgradeStart(addresses.game);
-    _time_warp(2000, addresses.resources);
+    time_warp(2000, addresses.resources);
     NoGame.solarUpgradeComplete(addresses.game);
     let (
         new_p1_metal, new_p1_crystal, new_p1_deuterium, new_p1_solar_plant
