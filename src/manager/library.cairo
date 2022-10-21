@@ -1,6 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.cairo.common.bool import TRUE, FALSE
 from openzeppelin.access.ownable.library import Ownable
 
 @storage_var
@@ -51,7 +52,63 @@ func ModulesManager_defences_address() -> (address: felt) {
 func ModulesManager_fleet_movements_address() -> (address: felt) {
 }
 
+@storage_var
+func ReentrancyGuard_erc721_entered() -> (entered: felt) {
+}
+
+@storage_var
+func ReentrancyGuard_metal_entered() -> (entered: felt) {
+}
+
+@storage_var
+func ReentrancyGuard_crystal_entered() -> (entered: felt) {
+}
+
+@storage_var
+func ReentrancyGuard_deuterium_entered() -> (entered: felt) {
+}
+
 namespace ModulesManager {
+    func erc721_reentrancy_start{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        ) {
+        let (has_entered) = ReentrancyGuard_erc721_entered.read();
+        with_attr error_message("ReentrancyGuard: reentrant call") {
+            assert has_entered = FALSE;
+        }
+        ReentrancyGuard_erc721_entered.write(TRUE);
+        return ();
+    }
+
+    func metal_reentrancy_start{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+        let (has_entered) = ReentrancyGuard_metal_entered.read();
+        with_attr error_message("ReentrancyGuard: reentrant call") {
+            assert has_entered = FALSE;
+        }
+        ReentrancyGuard_metal_entered.write(TRUE);
+        return ();
+    }
+
+    func crystal_reentrancy_start{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        ) {
+        let (has_entered) = ReentrancyGuard_crystal_entered.read();
+        with_attr error_message("ReentrancyGuard: reentrant call") {
+            assert has_entered = FALSE;
+        }
+        ReentrancyGuard_crystal_entered.write(TRUE);
+        return ();
+    }
+
+    func deuterium_reentrancy_start{
+        syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+    }() {
+        let (has_entered) = ReentrancyGuard_deuterium_entered.read();
+        with_attr error_message("ReentrancyGuard: reentrant call") {
+            assert has_entered = FALSE;
+        }
+        ReentrancyGuard_deuterium_entered.write(TRUE);
+        return ();
+    }
+
     func erc721_address{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() -> (
         address: felt
     ) {
