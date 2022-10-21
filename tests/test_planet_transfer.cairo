@@ -136,7 +136,7 @@ func test_upgrades_after_transfer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     let (
         owner_metal, owner_crystal, owner_deuterium, owner_solar_plant
     ) = NoGame.getResourcesBuildingsLevels(addresses.game, addresses.owner);
-    assert p1_solar_plant = 1;
+    assert p1_solar_plant = 2;
     assert owner_solar_plant = 0;
 
     %{
@@ -151,6 +151,6 @@ func test_upgrades_after_transfer{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     let (
         new_p1_metal, new_p1_crystal, new_p1_deuterium, new_p1_solar_plant
     ) = NoGame.getResourcesBuildingsLevels(addresses.game, addresses.p1);
-    assert new_p1_solar_plant = 2;
+    assert new_p1_solar_plant = 3;
     return ();
 }
