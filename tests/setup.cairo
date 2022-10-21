@@ -48,28 +48,83 @@ struct ClassHashes {
     research: felt,
 }
 
-func deploy_game{syscall_ptr: felt*, range_check_ptr}() -> (contracts: Contracts) {
+func deploy_game{syscall_ptr: felt*, range_check_ptr}() -> Contracts {
     tempvar contracts: Contracts;
     %{
-        ids.contracts.owner = deploy_contract("lib/openzeppelin/account/presets/Account.cairo", [ids.PK]).contract_address
-        ids.contracts.p1 = deploy_contract("lib/openzeppelin/account/presets/Account.cairo", [ids.PK2]).contract_address 
-        ids.contracts.minter = deploy_contract("src/minter/erc721_minter.cairo", [ids.contracts.owner]).contract_address
-        ids.contracts.erc721 = deploy_contract("src/token/erc721/ERC721.cairo",[ids.ERC721_NAME, ids.ERC721_SYMBOL, ids.contracts.minter, ids.URI_LEN, ids.URI]).contract_address
-        ids.contracts.manager = deploy_contract("src/manager/ModulesManager.cairo", [ids.contracts.owner]).contract_address
-        ids.contracts.game = deploy_contract("src/main/NoGame.cairo", [ids.contracts.owner, ids.contracts.manager]).contract_address
-        ids.contracts.metal = deploy_contract("src/token/erc20/ERC20_Mintable_Burnable.cairo", [ids.METAL_NAME, ids.METAL_SYMBOL, 18, 0, 0, ids.contracts.game, ids.contracts.game]).contract_address
-        ids.contracts.crystal = deploy_contract("src/token/erc20/ERC20_Mintable_Burnable.cairo", [ids.CRYSTAL_NAME, ids.CRYSTAL_SYMBOL,18,  0, 0, ids.contracts.game, ids.contracts.game]).contract_address
-        ids.contracts.deuterium = deploy_contract("src/token/erc20/ERC20_Mintable_Burnable.cairo", [ids.DEUTERIUM_NAME, ids.DEUTERIUM_SYMBOL,18, 0, 0,ids.contracts.game, ids.contracts.game]).contract_address
-        ids.contracts.resources = deploy_contract("src/resources/Resources.cairo", [ids.contracts.game]).contract_address
-        ids.contracts.facilities = deploy_contract("src/facilities/Facilities.cairo", [ids.contracts.game]).contract_address
-        ids.contracts.shipyard = deploy_contract("src/shipyard/Shipyard.cairo", [ids.contracts.game]).contract_address
-        ids.contracts.research = deploy_contract("src/research/ResearchLab.cairo", [ids.contracts.game]).contract_address
-        ids.contracts.defences = deploy_contract("src/defences/Defences.cairo", [ids.contracts.game]).contract_address
+        declared = declare("lib/openzeppelin/account/presets/Account.cairo")
+        prepared = prepare(declared, [ids.PK])
+        deploy(prepared)
+        ids.contracts.owner = prepared.contract_address
+
+        declared = declare("lib/openzeppelin/account/presets/Account.cairo")
+        prepared = prepare(declared, [ids.PK2])
+        deploy(prepared)
+        ids.contracts.p1 = prepared.contract_address
+
+        declared = declare("src/minter/erc721_minter.cairo")
+        prepared = prepare(declared, [ids.contracts.owner])
+        deploy(prepared)
+        ids.contracts.minter = prepared.contract_address
+
+        declared = declare("src/token/erc721/ERC721.cairo")
+        prepared = prepare(declared, [ids.ERC721_NAME, ids.ERC721_SYMBOL, ids.contracts.minter, ids.URI_LEN, ids.URI])
+        deploy(prepared)
+        ids.contracts.erc721 = prepared.contract_address
+
+        declared = declare("src/manager/ModulesManager.cairo")
+        prepared = prepare(declared, [ids.contracts.owner])
+        deploy(prepared)
+        ids.contracts.manager = prepared.contract_address
+
+        declared = declare("src/main/NoGame.cairo")
+        prepared = prepare(declared, [ids.contracts.manager])
+        deploy(prepared)
+        ids.contracts.game = prepared.contract_address
+
+        declared = declare("src/token/erc20/ERC20_Mintable_Burnable.cairo")
+        prepared = prepare(declared, [ids.METAL_NAME, ids.METAL_SYMBOL, 18, 0, 0, ids.contracts.game, ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.metal = prepared.contract_address
+
+        declared = declare("src/token/erc20/ERC20_Mintable_Burnable.cairo")
+        prepared = prepare(declared, [ids.CRYSTAL_NAME, ids.CRYSTAL_SYMBOL,18,  0, 0, ids.contracts.game, ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.crystal = prepared.contract_address
+
+        declared = declare("src/token/erc20/ERC20_Mintable_Burnable.cairo")
+        prepared = prepare(declared, [ids.DEUTERIUM_NAME, ids.DEUTERIUM_SYMBOL,18, 0, 0,ids.contracts.game, ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.deuterium = prepared.contract_address
+
+        declared = declare("src/resources/Resources.cairo")
+        prepared = prepare(declared, [ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.resources = prepared.contract_address
+
+        declared = declare("src/facilities/Facilities.cairo")
+        prepared = prepare(declared, [ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.facilities = prepared.contract_address
+
+        declared = declare("src/shipyard/Shipyard.cairo")
+        prepared = prepare(declared, [ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.shipyard = prepared.contract_address
+
+        declared = declare("src/research/ResearchLab.cairo")
+        prepared = prepare(declared, [ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.research = prepared.contract_address
+
+        declared = declare("src/defences/Defences.cairo")
+        prepared = prepare(declared, [ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.defences = prepared.contract_address
     %}
-    return (contracts,);
+    return contracts;
 }
 
-func _run_modules_manager{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts) {
+func run_modules_manager{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts) {
     %{
         stop_prank_callable1 = start_prank(
                           ids.addresses.owner, target_contract_address=ids.addresses.manager)
@@ -87,30 +142,7 @@ func _run_modules_manager{syscall_ptr: felt*, range_check_ptr}(addresses: Contra
     return ();
 }
 
-// func _get_test_addresses{syscall_ptr: felt*, range_check_ptr}() -> (addresses: Contracts) {
-//     tempvar _addresses: Contracts;
-//     %{
-//         ids._addresses.owner = ids.owner_address
-//         ids._addresses.p1 = ids.p1_address
-//         ids._addresses.minter = ids.minter_address
-//         ids._addresses.manager = ids.manager_address
-//         ids._addresses.erc721 = ids.erc721_address
-//         ids._addresses.game = ids.game_address
-//         ids._addresses.metal = ids.metal_address
-//         ids._addresses.crystal = ids.crystal_address
-//         ids._addresses.deuterium = ids.deuterium_address
-//         ids._addresses.resources = ids.resources_address
-//         ids._addresses.shipyard = ids.shipyard_address
-//         ids._addresses.facilities = ids.facilities_address
-//         ids._addresses.research = ids.research_address
-//         ids._addresses.defences = ids.defences_address
-
-// stop_prank_callable = start_prank(ids._addresses.owner, target_contract_address=ids._addresses.manager)
-//     %}
-//     return (_addresses,);
-// }
-
-func _run_minter{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts, n_planets: felt) {
+func run_minter{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts, n_planets: felt) {
     %{ stop_prank_callable2 = start_prank(ids.addresses.owner, target_contract_address=ids.addresses.minter) %}
     Minter.setNFTaddress(addresses.minter, addresses.erc721);
     Minter.setNFTapproval(addresses.minter, addresses.game, TRUE);
@@ -139,24 +171,24 @@ func _get_class_hashes{syscall_ptr: felt*, range_check_ptr}() -> (class_hashes: 
     return (ClassHashes(resources, facilities, shipyard, research),);
 }
 
-func _time_warp{syscall_ptr: felt*, range_check_ptr}(new_timestamp: felt, target: felt) {
+func time_warp{syscall_ptr: felt*, range_check_ptr}(new_timestamp: felt, target: felt) {
     %{ stop_warp = warp(ids.new_timestamp, target_contract_address=ids.target) %}
     return ();
 }
 
-func _warp_all{syscall_ptr: felt*, range_check_ptr}(new_timestamp: felt, addresses: Contracts) {
+func warp_all{syscall_ptr: felt*, range_check_ptr}(new_timestamp: felt, addresses: Contracts) {
     %{
-        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.game)
-        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.resources)
-        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.facilities)
-        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.shipyard)
-        stop_warp = warp(ids.new_timestamp, target_contract_address=ids.addresses.research)
+        stop_warp1 = warp(ids.new_timestamp, target_contract_address=ids.addresses.game)
+        stop_warp2 = warp(ids.new_timestamp, target_contract_address=ids.addresses.resources)
+        stop_warp3 = warp(ids.new_timestamp, target_contract_address=ids.addresses.facilities)
+        stop_warp4 = warp(ids.new_timestamp, target_contract_address=ids.addresses.shipyard)
+        stop_warp5 = warp(ids.new_timestamp, target_contract_address=ids.addresses.research)
     %}
     return ();
 }
 
 func _set_resource_levels{syscall_ptr: felt*, range_check_ptr}(
-    resource: felt, wallet: felt, amount: felt
+    resource, wallet: felt, amount: felt
 ) {
     %{
         store(ids.resource, "ERC20_total_supply", [ids.amount*ids.E18, 0])
@@ -165,7 +197,23 @@ func _set_resource_levels{syscall_ptr: felt*, range_check_ptr}(
     return ();
 }
 
-func _set_mines_levels{syscall_ptr: felt*, range_check_ptr}(
+func set_resources_levels{syscall_ptr: felt*, range_check_ptr}(
+    addresses: Contracts, wallet: felt, amount: felt
+) {
+    %{
+        store(ids.addresses.metal, "ERC20_total_supply", [ids.amount*ids.E18, 0])
+        store(ids.addresses.metal, "ERC20_balances", [ids.amount*ids.E18, 0], key=[ids.wallet])
+
+        store(ids.addresses.crystal, "ERC20_total_supply", [ids.amount*ids.E18, 0])
+        store(ids.addresses.crystal, "ERC20_balances", [ids.amount*ids.E18, 0], key=[ids.wallet])
+
+        store(ids.addresses.deuterium, "ERC20_total_supply", [ids.amount*ids.E18, 0])
+        store(ids.addresses.deuterium, "ERC20_balances", [ids.amount*ids.E18, 0], key=[ids.wallet])
+    %}
+    return ();
+}
+
+func set_mines_levels{syscall_ptr: felt*, range_check_ptr}(
     game: felt, id: felt, m: felt, c: felt, d: felt, s: felt
 ) {
     %{
@@ -177,7 +225,7 @@ func _set_mines_levels{syscall_ptr: felt*, range_check_ptr}(
     return ();
 }
 
-func _set_facilities_levels{syscall_ptr: felt*, range_check_ptr}(
+func set_facilities_levels{syscall_ptr: felt*, range_check_ptr}(
     game: felt, id: felt, robot: felt, shipyard: felt, research: felt, nanite: felt
 ) {
     %{
@@ -189,7 +237,7 @@ func _set_facilities_levels{syscall_ptr: felt*, range_check_ptr}(
     return ();
 }
 
-func _set_tech_levels{syscall_ptr: felt*, range_check_ptr}(
+func set_tech_levels{syscall_ptr: felt*, range_check_ptr}(
     game: felt,
     id: felt,
     armour_tech: felt,
@@ -226,13 +274,19 @@ func _set_tech_levels{syscall_ptr: felt*, range_check_ptr}(
     return ();
 }
 
-func _reset_resources_timelock{syscall_ptr: felt*, range_check_ptr}(resources: felt, player: felt) {
+func reset_buildings_timelock{syscall_ptr: felt*, range_check_ptr}(game_addr: felt) {
+    %{ store(ids.game_addr, "NoGame_resources_que_status", [0,0], key=[1,0]) %}
+
+    return ();
+}
+
+func reset_resources_timelock{syscall_ptr: felt*, range_check_ptr}(resources: felt, player: felt) {
     %{ store(ids.resources, "Resources_timelock", [0,0], key=[ids.player]) %}
 
     return ();
 }
 
-func _reset_facilities_timelock{syscall_ptr: felt*, range_check_ptr}(
+func reset_facilities_timelock{syscall_ptr: felt*, range_check_ptr}(
     facilities: felt, player: felt
 ) {
     %{ store(ids.facilities, "Facilities_timelock", [0,0], key=[ids.player]) %}
@@ -240,25 +294,25 @@ func _reset_facilities_timelock{syscall_ptr: felt*, range_check_ptr}(
     return ();
 }
 
-func _reset_shipyard_timelock{syscall_ptr: felt*, range_check_ptr}(shipyard: felt, player: felt) {
+func reset_shipyard_timelock{syscall_ptr: felt*, range_check_ptr}(shipyard: felt, player: felt) {
     %{ store(ids.shipyard, "Shipyard_timelock", [0,0,0], key=[ids.player]) %}
 
     return ();
 }
 
-func _reset_lab_timelock{syscall_ptr: felt*, range_check_ptr}(lab: felt, player: felt) {
+func reset_lab_timelock{syscall_ptr: felt*, range_check_ptr}(lab: felt, player: felt) {
     %{ store(ids.research, "Research_timelock", [0,0], key=[ids.player]) %}
 
     return ();
 }
 
-func _reset_que{syscall_ptr: felt*, range_check_ptr}(resources: felt, player: felt, id: felt) {
+func reset_que{syscall_ptr: felt*, range_check_ptr}(resources: felt, player: felt, id: felt) {
     %{ store(ids.resources, "Resources_timelock", [0], key=[ids.player, ids.id]) %}
 
     return ();
 }
 
-func _get_expected_cost{syscall_ptr: felt*, range_check_ptr}(
+func get_expected_cost{syscall_ptr: felt*, range_check_ptr}(
     base_m: felt, base_c: felt, multiplier: felt, level: felt
 ) -> (metal: felt, crystal: felt) {
     tempvar metal: felt;
@@ -270,7 +324,7 @@ func _get_expected_cost{syscall_ptr: felt*, range_check_ptr}(
     return (metal, crystal);
 }
 
-func _print_game_state{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts) {
+func print_game_state{syscall_ptr: felt*, range_check_ptr}(addresses: Contracts) {
     let (m, c, d, s) = NoGame.getResourcesBuildingsLevels(addresses.game, addresses.owner);
     let (ro, sh, re, na) = NoGame.getFacilitiesLevels(addresses.game, addresses.owner);
     let (t) = NoGame.getTechLevels(addresses.game, addresses.owner);
