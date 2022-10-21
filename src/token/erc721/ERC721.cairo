@@ -134,7 +134,10 @@ func setApprovalForAll{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_che
 func transferFrom{pedersen_ptr: HashBuiltin*, syscall_ptr: felt*, range_check_ptr}(
     from_: felt, to: felt, tokenId: Uint256
 ) {
+    let (balance) = ERC721.balance_of(to);
+    ERC721_nogame.assert_no_ownership(balance);
     ERC721.transfer_from(from_, to, tokenId);
+    ERC721_nogame.update_ownership(from_, to, tokenId);
     return ();
 }
 
