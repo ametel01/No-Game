@@ -39,6 +39,7 @@ struct Contracts {
     shipyard: felt,
     research: felt,
     defences: felt,
+    fleet: felt,
 }
 
 struct ClassHashes {
@@ -120,6 +121,11 @@ func deploy_game{syscall_ptr: felt*, range_check_ptr}() -> Contracts {
         prepared = prepare(declared, [ids.contracts.game])
         deploy(prepared)
         ids.contracts.defences = prepared.contract_address
+
+        declared = declare("src/fleet_movements/FleetMovements.cairo")
+        prepared = prepare(declared, [ids.contracts.game])
+        deploy(prepared)
+        ids.contracts.fleet = prepared.contract_address
     %}
     return contracts;
 }
@@ -139,6 +145,7 @@ func run_modules_manager{syscall_ptr: felt*, range_check_ptr}(addresses: Contrac
     Manager.setShipyard(addresses.manager, addresses.shipyard);
     Manager.setResearch(addresses.manager, addresses.research);
     Manager.setDefences(addresses.manager, addresses.defences);
+    Manager.setFleet(addresses.manager, addresses.fleet);
     return ();
 }
 

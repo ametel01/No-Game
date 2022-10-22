@@ -323,6 +323,9 @@ namespace NoGame {
 
     func largeDomeBuildComplete() {
     }
+
+    func sendEspionageMission(ships: Fleet, destination: Uint256) -> (mission_id: felt) {
+    }
 }
 
 @contract_interface
