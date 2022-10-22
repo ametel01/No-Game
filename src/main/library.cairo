@@ -1728,7 +1728,11 @@ namespace NoGame {
         let (manager) = NoGame_modules_manager.read();
         let (_, _, _, _, _, fleet) = IModulesManager.getModulesAddresses(manager);
         _check_slots_available(planet_id);
-        let (mission_id) = IFleetMovements.sendSpyMission(fleet, caller, ships, destination);
+        let (mission_id, fuel_consumption) = IFleetMovements.sendSpyMission(
+            fleet, caller, ships, destination
+        );
+        _pay_resources_erc20(caller, 0, 0, fuel_consumption);
+
         return mission_id;
     }
 
