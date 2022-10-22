@@ -24,9 +24,11 @@ func getQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
 @external
 func sendSpyMission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt, ships: Fleet, destination: Uint256
-) -> (mission_id: felt) {
-    let mission_id = FleetMovements.send_spy_mission(caller, ships, destination);
-    return (mission_id,);
+) -> (mission_id: felt, fuel_consumption: felt) {
+    let (mission_id, fuel_consumption) = FleetMovements.send_spy_mission(
+        caller, ships, destination
+    );
+    return (mission_id, fuel_consumption);
 }
 
 @external

@@ -9,7 +9,9 @@ namespace IFleetMovements {
     func getQueStatus(caller: felt, mission_id: felt) -> (res: FleetQue) {
     }
 
-    func sendSpyMission(caller: felt, fleet: Fleet, destination: Uint256) -> (mission_id: felt) {
+    func sendSpyMission(caller: felt, fleet: Fleet, destination: Uint256) -> (
+        mission_id: felt, fuel_consumption: felt
+    ) {
     }
 
     func readEspionageReport(caller: felt, mission_id: felt) -> (res: EspionageReport) {

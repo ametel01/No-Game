@@ -25,9 +25,11 @@ from main.structs import (
     FleetQue,
     EspionageReport,
 )
+from token.erc20.interfaces.IERC20 import IERC20
 from token.erc721.interfaces.IERC721 import IERC721
 
 const SCALER = 10 ** 9;
+const E18 = 10 ** 18;
 
 @storage_var
 func FleetMovements_no_game_address() -> (address: felt) {
@@ -59,15 +61,16 @@ namespace FleetMovements {
 
     func send_spy_mission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         caller: felt, ships: Fleet, destination: Uint256
-    ) -> felt {
+    ) -> (mission_id: felt, fuel_consumption: felt) {
         alloc_locals;
         check_fleet_composition(caller, ships);
         let planet_id = get_planet_id(caller);
         let distance = calculate_distance(planet_id.low, destination.low);
+        let fuel_consumption = check_enough_fuel(caller, ships, distance);
         let speed = calculate_speed(ships);
         let travel_time = calculate_travel_time(distance, speed);
         let mission_id = set_fleet_que(planet_id, destination, travel_time);
-        return (mission_id);
+        return (mission_id, fuel_consumption);
     }
 
     func read_espionage_report{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -99,6 +102,21 @@ namespace FleetMovements {
             return spy_report_5(planet_id, destination);
         }
     }
+}
+
+func check_enough_fuel{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt, ships: Fleet, distance: felt
+) -> felt {
+    alloc_locals;
+    let (game) = FleetMovements_no_game_address.read();
+    let (_, _, _, deuterium_addr) = INoGame.getTokensAddresses(game);
+    let (deuterium_available) = IERC20.balanceOf(deuterium_addr, caller);
+    let fuel_required = calculate_fuel_consumption(ships, distance);
+
+    with_attr error_message("FLEET MOVEMENTS::Insufficient deuterium available to send the fleet") {
+        assert_le_felt(fuel_required * E18, deuterium_available.low);
+    }
+    return fuel_required;
 }
 
 func check_fleet_composition{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
