@@ -7,7 +7,13 @@ from resources.library import (
     _deuterium_building_cost,
     _solar_plant_building_cost,
 )
-from fleet_movements.library import _calculate_distance, _calculate_travel_time, _calculate_speed
+from fleet_movements.library import (
+    calculate_distance,
+    calculate_travel_time,
+    calculate_speed,
+    fuel_consumption_formula,
+    calculate_fuel_consumption,
+)
 from shipyard.ships_performance import FleetPerformance
 from main.structs import Fleet
 from utils.formulas import Formulas
@@ -194,16 +200,16 @@ func test_production_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 
 @external
 func test_calculate_distance{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
-    let res = _calculate_distance(1, 100);
-    assert res = 1495;
+    let res = calculate_distance(1, 800);
+    assert res = 4995;
     return ();
 }
 
 @external
 func test_calculate_travel_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
-    let distance = _calculate_distance(1, 2);
+    let distance = calculate_distance(1, 2);
     let speed = FleetPerformance.EspionageProbe.base_speed;
-    let res = _calculate_travel_time(distance, speed);
+    let res = calculate_travel_time(distance, speed);
     assert res = 50;
     return ();
 }
@@ -211,7 +217,34 @@ func test_calculate_travel_time{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
 @external
 func test_calculate_speed{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     let fleet = Fleet(0, 0, 1, 0, 0, 0, 0, 0);
-    let res = _calculate_speed(fleet);
+    let res = calculate_speed(fleet);
     assert res = 100000000;
+    return ();
+}
+
+@external
+func test_fuel_consumption_formula{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    ) {
+    let res = fuel_consumption_formula(FleetPerformance.EspionageProbe.fuel_consumption, 1005);
+    assert res = 1;
+
+    let res = fuel_consumption_formula(FleetPerformance.Cargo.fuel_consumption, 1005);
+    assert res = 3;
+
+    let res = fuel_consumption_formula(FleetPerformance.Recycler.fuel_consumption, 1005);
+    assert res = 87;
+
+    let res = fuel_consumption_formula(FleetPerformance.LightFighter.fuel_consumption, 1005);
+    assert res = 6;
+
+    let res = fuel_consumption_formula(FleetPerformance.Cruiser.fuel_consumption, 1005);
+    assert res = 87;
+
+    let res = fuel_consumption_formula(FleetPerformance.BattleShip.fuel_consumption, 1005);
+    assert res = 144;
+
+    let res = fuel_consumption_formula(FleetPerformance.Deathstar.fuel_consumption, 1005);
+    assert res = 1;
+
     return ();
 }
