@@ -13,6 +13,7 @@ from fleet_movements.library import (
     calculate_speed,
     fuel_consumption_formula,
     calculate_fuel_consumption,
+    get_ship_consumption,
 )
 from shipyard.ships_performance import FleetPerformance
 from main.structs import Fleet
@@ -225,14 +226,14 @@ func test_calculate_speed{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 @external
 func test_fuel_consumption_formula{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     ) {
-    let res = fuel_consumption_formula(FleetPerformance.EspionageProbe.fuel_consumption, 1005);
-    assert res = 1;
-
     let res = fuel_consumption_formula(FleetPerformance.Cargo.fuel_consumption, 1005);
     assert res = 3;
 
     let res = fuel_consumption_formula(FleetPerformance.Recycler.fuel_consumption, 1005);
     assert res = 87;
+
+    let res = fuel_consumption_formula(FleetPerformance.EspionageProbe.fuel_consumption, 1005);
+    assert res = 1;
 
     let res = fuel_consumption_formula(FleetPerformance.LightFighter.fuel_consumption, 1005);
     assert res = 6;
@@ -245,6 +246,69 @@ func test_fuel_consumption_formula{syscall_ptr: felt*, pedersen_ptr: HashBuiltin
 
     let res = fuel_consumption_formula(FleetPerformance.Deathstar.fuel_consumption, 1005);
     assert res = 1;
+
+    return ();
+}
+
+@external
+func test_calculate_fuel_consumption{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}() {
+    let ships = Fleet(1, 0, 0, 0, 0, 0, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 3;
+
+    let ships = Fleet(10, 0, 0, 0, 0, 0, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 30;
+
+    let ships = Fleet(1, 1, 0, 0, 0, 0, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 90;
+
+    let ships = Fleet(10, 10, 0, 0, 0, 0, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 900;
+
+    let ships = Fleet(1, 1, 1, 0, 0, 0, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 91;
+
+    let ships = Fleet(10, 10, 10, 0, 0, 0, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 910;
+
+    let ships = Fleet(1, 1, 1, 0, 1, 0, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 97;
+
+    let ships = Fleet(10, 10, 10, 0, 10, 0, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 970;
+
+    let ships = Fleet(1, 1, 1, 0, 1, 1, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 184;
+
+    let ships = Fleet(10, 10, 10, 0, 10, 10, 0, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 1840;
+
+    let ships = Fleet(1, 1, 1, 0, 1, 1, 1, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 328;
+
+    let ships = Fleet(10, 10, 10, 0, 10, 10, 10, 0);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 3280;
+
+    let ships = Fleet(1, 1, 1, 0, 1, 1, 1, 1);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 329;
+
+    let ships = Fleet(10, 10, 10, 0, 10, 10, 10, 10);
+    let res = calculate_fuel_consumption(ships, 1005);
+    assert res = 3290;
 
     return ();
 }
