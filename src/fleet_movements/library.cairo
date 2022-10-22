@@ -15,45 +15,18 @@ from starkware.starknet.common.syscalls import get_block_timestamp
 from shipyard.ships_performance import FleetPerformance
 from main.INoGame import INoGame
 from main.storage import NoGame_max_slots
-from main.structs import Fleet, TechLevels
+from main.structs import (
+    PlanetResources,
+    ResourcesBuildings,
+    FacilitiesBuildings,
+    Fleet,
+    TechLevels,
+    FleetQue,
+    EspionageReport,
+)
 from token.erc721.interfaces.IERC721 import IERC721
 
 const SCALER = 10 ** 9;
-
-struct PlanetResources {
-    metal: felt,
-    crystal: felt,
-    deuterium: felt,
-}
-
-struct ResourcesBuildings {
-    metal_mine: felt,
-    crystal_mine: felt,
-    deuterium_mine: felt,
-    solar_plant: felt,
-}
-
-struct FacilitiesBuildings {
-    robot_factory: felt,
-    shipyard: felt,
-    research_lab: felt,
-    nanite: felt,
-}
-
-struct EspionageReport {
-    resources_available: PlanetResources,
-    resources_buildings: ResourcesBuildings,
-    fleet: Fleet,
-    facilities: FacilitiesBuildings,
-    research: TechLevels,
-}
-
-struct FleetQue {
-    planet_id: felt,
-    mission_id: felt,
-    time_end: felt,
-    destination: felt,
-}
 
 @storage_var
 func FleetMovements_no_game_address() -> (address: felt) {
@@ -75,50 +48,58 @@ namespace FleetMovements {
         return ();
     }
 
+    func get_que_status{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        caller: felt, mission_id: felt
+    ) -> FleetQue {
+        let planet_id = get_planet_id(caller);
+        let (res) = FleetMovements_que_details.read(planet_id, mission_id);
+        return res;
+    }
+
     func send_spy_mission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        caller: felt, fleet: Fleet, destination: Uint256
-    ) {
+        caller: felt, ships: Fleet, destination: Uint256
+    ) -> felt {
         alloc_locals;
-        let planet_id = _get_planet_id(caller);
-        let distance = _calculate_distance(planet_id.low, destination.low);
-        let speed = _calculate_speed(fleet);
-        let travel_time = _calculate_travel_time(distance, speed);
-        _set_fleet_que(planet_id, destination, travel_time);
-        return ();
+        let planet_id = get_planet_id(caller);
+        let distance = calculate_distance(planet_id.low, destination.low);
+        let speed = calculate_speed(ships);
+        let travel_time = calculate_travel_time(distance, speed);
+        let mission_id = set_fleet_que(planet_id, destination, travel_time);
+        return (mission_id);
     }
 
     func read_espionage_report{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         caller: felt, mission_id: felt
     ) -> EspionageReport {
         alloc_locals;
-        let planet_id = _get_planet_id(caller);
+        let planet_id = get_planet_id(caller);
         let (que_details) = FleetMovements_que_details.read(planet_id, mission_id);
-        _check_timelock_expired(que_details);
+        check_timelock_expired(que_details);
         let destination = Uint256(que_details.destination, 0);
-        let espionage_difference = _get_espionage_power_difference(planet_id, destination);
-        _reduce_active_missions(planet_id);
+        let espionage_difference = get_espionage_power_difference(planet_id, destination);
+        reduce_active_missions(planet_id);
 
         if (espionage_difference == 0) {
-            return _spy_report_0(planet_id, destination);
+            return spy_report_0(planet_id, destination);
         }
         if (espionage_difference == 1) {
-            return _spy_report_1(planet_id, destination);
+            return spy_report_1(planet_id, destination);
         }
         if (espionage_difference == 2) {
-            return _spy_report_2(planet_id, destination);
+            return spy_report_2(planet_id, destination);
         }
         if (espionage_difference == 3) {
-            return _spy_report_3(planet_id, destination);
+            return spy_report_3(planet_id, destination);
         }
         if (espionage_difference == 4) {
-            return _spy_report_4(planet_id, destination);
+            return spy_report_4(planet_id, destination);
         } else {
-            return _spy_report_5(planet_id, destination);
+            return spy_report_5(planet_id, destination);
         }
     }
 }
 
-func _get_owners_from_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func get_owners_from_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     planet_id: Uint256
 ) -> felt {
     let (game) = FleetMovements_no_game_address.read();
@@ -127,12 +108,12 @@ func _get_owners_from_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, 
     return res;
 }
 
-func _get_espionage_power_difference{
+func get_espionage_power_difference{
     syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(planet_id: Uint256, destination: Uint256) -> felt {
     alloc_locals;
-    let attacker_addr = _get_owners_from_planet_id(planet_id);
-    let target_addr = _get_owners_from_planet_id(destination);
+    let attacker_addr = get_owners_from_planet_id(planet_id);
+    let target_addr = get_owners_from_planet_id(destination);
     let (game) = FleetMovements_no_game_address.read();
     let (target_tech_levels: TechLevels) = INoGame.getTechLevels(game, target_addr);
     let target_espionage_level = target_tech_levels.espionage_tech;
@@ -157,7 +138,7 @@ func _get_espionage_power_difference{
     }
 }
 
-func _calculate_distance{range_check_ptr}(p1_position: felt, p2_position: felt) -> felt {
+func calculate_distance{range_check_ptr}(p1_position: felt, p2_position: felt) -> felt {
     let zero_check_1 = is_not_zero(p1_position);
     let zero_check_2 = is_not_zero(p2_position);
     if (zero_check_1 * zero_check_2 == FALSE) {
@@ -169,14 +150,14 @@ func _calculate_distance{range_check_ptr}(p1_position: felt, p2_position: felt) 
     return distance;
 }
 
-func _calculate_travel_time{range_check_ptr}(distance: felt, speed: felt) -> felt {
+func calculate_travel_time{range_check_ptr}(distance: felt, speed: felt) -> felt {
     let (fact1, _) = unsigned_div_rem(SCALER * distance, speed);
     let fact2 = sqrt(fact1);
     let (res, _) = unsigned_div_rem(fact2, 2);
     return res;
 }
 
-func _calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
+func calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
     let cond_1 = is_not_zero(fleet.death_star);
     if (cond_1 == TRUE) {
         return FleetPerformance.Deathstar.base_speed;
@@ -210,7 +191,7 @@ func _calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
     }
 }
 
-func _check_timelock_expired{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func check_timelock_expired{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     que_details: FleetQue
 ) {
     let (time_now) = get_block_timestamp();
@@ -221,7 +202,7 @@ func _check_timelock_expired{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
     return ();
 }
 
-func _get_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func get_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
 ) -> Uint256 {
     let (game) = FleetMovements_no_game_address.read();
@@ -230,7 +211,7 @@ func _get_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
     return planet_id;
 }
 
-func _reduce_active_missions{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func reduce_active_missions{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     planet_id: Uint256
 ) {
     let (active_missions) = FleetMovements_active_missions.read(planet_id);
@@ -238,9 +219,9 @@ func _reduce_active_missions{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ran
     return ();
 }
 
-func _set_fleet_que{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func set_fleet_que{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     starting_planet: Uint256, destination: Uint256, travel_time: felt
-) {
+) -> felt {
     let (time_now) = get_block_timestamp();
     let time_end = time_now + travel_time;
     let (active_missions) = FleetMovements_active_missions.read(starting_planet);
@@ -250,13 +231,13 @@ func _set_fleet_que{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_
         time_end=time_end,
         destination=destination.low,
     );
-    let sender_addr = _get_owners_from_planet_id(starting_planet);
+    let sender_addr = get_owners_from_planet_id(starting_planet);
     FleetMovements_que_details.write(starting_planet, active_missions + 1, new_que_point);
     FleetMovements_active_missions.write(starting_planet, active_missions + 1);
-    return ();
+    return (active_missions + 1);
 }
 
-func _spy_report_0{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func spy_report_0{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     planet_id: Uint256, destination: Uint256
 ) -> EspionageReport {
     let (game) = FleetMovements_no_game_address.read();
@@ -277,7 +258,7 @@ func _spy_report_0{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     return report;
 }
 
-func _spy_report_1{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func spy_report_1{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     planet_id: Uint256, destination: Uint256
 ) -> EspionageReport {
     let (game) = FleetMovements_no_game_address.read();
@@ -298,7 +279,7 @@ func _spy_report_1{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     return report;
 }
 
-func _spy_report_2{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func spy_report_2{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     planet_id: Uint256, destination: Uint256
 ) -> EspionageReport {
     let (game) = FleetMovements_no_game_address.read();
@@ -326,7 +307,7 @@ func _spy_report_2{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     return report;
 }
 
-func _spy_report_3{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func spy_report_3{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     planet_id: Uint256, destination: Uint256
 ) -> EspionageReport {
     let (game) = FleetMovements_no_game_address.read();
@@ -355,7 +336,7 @@ func _spy_report_3{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     return report;
 }
 
-func _spy_report_4{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func spy_report_4{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     planet_id: Uint256, destination: Uint256
 ) -> EspionageReport {
     let (game) = FleetMovements_no_game_address.read();
@@ -386,7 +367,7 @@ func _spy_report_4{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_p
     return report;
 }
 
-func _spy_report_5{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func spy_report_5{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     planet_id: Uint256, destination: Uint256
 ) -> EspionageReport {
     let (game) = FleetMovements_no_game_address.read();
