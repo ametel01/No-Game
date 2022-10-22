@@ -16,7 +16,7 @@ multidict = ">=4.5,<7.0"
 yarl = ">=1.0,<2.0"
 
 [package.extras]
-speedups = ["Brotli", "aiodns", "cchardet"]
+speedups = ["aiodns", "brotli", "cchardet"]
 
 [[package]]
 name = "aiosignal"
@@ -46,10 +46,10 @@ optional = false
 python-versions = ">=3.5"
 
 [package.extras]
-dev = ["cloudpickle", "coverage[toml] (>=5.0.2)", "furo", "hypothesis", "mypy (>=0.900,!=0.940)", "pre-commit", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "sphinx", "sphinx-notfound-page", "zope.interface"]
-docs = ["furo", "sphinx", "sphinx-notfound-page", "zope.interface"]
-tests = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins", "zope.interface"]
-tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy (>=0.900,!=0.940)", "pympler", "pytest (>=4.3.0)", "pytest-mypy-plugins"]
+dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "zope.interface", "furo", "sphinx", "sphinx-notfound-page", "pre-commit", "cloudpickle"]
+docs = ["furo", "sphinx", "zope.interface", "sphinx-notfound-page"]
+tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "zope.interface", "cloudpickle"]
+tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "mypy (>=0.900,!=0.940)", "pytest-mypy-plugins", "cloudpickle"]
 
 [[package]]
 name = "base58"
@@ -60,7 +60,7 @@ optional = false
 python-versions = ">=3.5"
 
 [package.extras]
-tests = ["PyHamcrest (>=2.0.2)", "mypy", "pytest (>=4.6)", "pytest-benchmark", "pytest-cov", "pytest-flake8"]
+tests = ["pytest-flake8", "pytest-cov", "pytest-benchmark", "pytest (>=4.6)", "PyHamcrest (>=2.0.2)", "mypy"]
 
 [[package]]
 name = "bitarray"
@@ -179,11 +179,11 @@ eth-utils = ">=1.2.0,<2.0.0"
 parsimonious = ">=0.8.0,<0.9.0"
 
 [package.extras]
-dev = ["Sphinx (>=1.6.5,<2)", "bumpversion (>=0.5.3,<1)", "eth-hash[pycryptodome]", "flake8 (==4.0.1)", "hypothesis (>=4.18.2,<5.0.0)", "ipython", "isort (>=4.2.15,<5)", "jinja2 (>=3.0.0,<3.1.0)", "mypy (==0.910)", "pydocstyle (>=3.0.0,<4)", "pytest (==4.4.1)", "pytest-pythonpath (>=0.7.1)", "pytest-watch (>=4.1.0,<5)", "pytest-xdist (==1.22.3)", "sphinx-rtd-theme (>=0.1.9)", "towncrier (>=21,<22)", "tox (>=2.9.1,<3)", "twine", "wheel"]
-doc = ["Sphinx (>=1.6.5,<2)", "jinja2 (>=3.0.0,<3.1.0)", "sphinx-rtd-theme (>=0.1.9)", "towncrier (>=21,<22)"]
-lint = ["flake8 (==4.0.1)", "isort (>=4.2.15,<5)", "mypy (==0.910)", "pydocstyle (>=3.0.0,<4)"]
-test = ["eth-hash[pycryptodome]", "hypothesis (>=4.18.2,<5.0.0)", "pytest (==4.4.1)", "pytest-pythonpath (>=0.7.1)", "pytest-xdist (==1.22.3)", "tox (>=2.9.1,<3)"]
 tools = ["hypothesis (>=4.18.2,<5.0.0)"]
+test = ["hypothesis (>=4.18.2,<5.0.0)", "eth-hash", "tox (>=2.9.1,<3)", "pytest-xdist (==1.22.3)", "pytest-pythonpath (>=0.7.1)", "pytest (==4.4.1)"]
+lint = ["pydocstyle (>=3.0.0,<4)", "mypy (==0.910)", "isort (>=4.2.15,<5)", "flake8 (==4.0.1)"]
+doc = ["towncrier (>=21,<22)", "sphinx-rtd-theme (>=0.1.9)", "jinja2 (>=3.0.0,<3.1.0)", "Sphinx (>=1.6.5,<2)"]
+dev = ["towncrier (>=21,<22)", "sphinx-rtd-theme (>=0.1.9)", "jinja2 (>=3.0.0,<3.1.0)", "Sphinx (>=1.6.5,<2)", "pydocstyle (>=3.0.0,<4)", "mypy (==0.910)", "isort (>=4.2.15,<5)", "flake8 (==4.0.1)", "hypothesis (>=4.18.2,<5.0.0)", "eth-hash", "tox (>=2.9.1,<3)", "pytest-xdist (==1.22.3)", "pytest-pythonpath (>=0.7.1)", "pytest (==4.4.1)", "ipython", "twine", "wheel", "pytest-watch (>=4.1.0,<5)", "bumpversion (>=0.5.3,<1)"]
 
 [[package]]
 name = "eth-account"
@@ -204,7 +204,7 @@ hexbytes = ">=0.1.0,<1"
 rlp = ">=1.0.0,<3"
 
 [package.extras]
-dev = ["Sphinx (>=1.6.5,<2)", "bumpversion (>=0.5.3,<1)", "flake8 (==3.7.9)", "hypothesis (>=4.18.0,<5)", "ipython", "isort (>=4.2.15,<5)", "mypy (==0.910)", "pydocstyle (>=5.0.0,<6)", "pytest (>=6.2.5,<7)", "pytest-watch (>=4.1.0,<5)", "pytest-xdist", "sphinx-rtd-theme (>=0.1.9,<1)", "towncrier (>=21.9.0)", "tox (==3.14.6)", "twine", "wheel"]
+dev = ["bumpversion (>=0.5.3,<1)", "pytest-watch (>=4.1.0,<5)", "wheel", "twine", "ipython", "hypothesis (>=4.18.0,<5)", "pytest (>=6.2.5,<7)", "pytest-xdist", "tox (==3.14.6)", "flake8 (==3.7.9)", "isort (>=4.2.15,<5)", "mypy (==0.910)", "pydocstyle (>=5.0.0,<6)", "Sphinx (>=1.6.5,<2)", "sphinx-rtd-theme (>=0.1.9,<1)", "towncrier (>=21.9.0)"]
 doc = ["Sphinx (>=1.6.5,<2)", "sphinx-rtd-theme (>=0.1.9,<1)", "towncrier (>=21.9.0)"]
 lint = ["flake8 (==3.7.9)", "isort (>=4.2.15,<5)", "mypy (==0.910)", "pydocstyle (>=5.0.0,<6)"]
 test = ["hypothesis (>=4.18.0,<5)", "pytest (>=6.2.5,<7)", "pytest-xdist", "tox (==3.14.6)"]
@@ -221,12 +221,12 @@ python-versions = ">=3.7, <4"
 pycryptodome = {version = ">=3.6.6,<4", optional = true, markers = "extra == \"pycryptodome\""}
 
 [package.extras]
-dev = ["Sphinx (>=5.0.0,<6)", "black (>=22.0,<23)", "bumpversion (>=0.5.3,<1)", "flake8 (==3.7.9)", "ipython", "isort (>=4.2.15,<5)", "jinja2 (>=3.0.0,<3.1.0)", "mypy (==0.961)", "pydocstyle (>=5.0.0,<6)", "pytest (>=6.2.5,<7)", "pytest-watch (>=4.1.0,<5)", "pytest-xdist (>=2.4.0,<3)", "sphinx-rtd-theme (>=0.1.9,<1)", "towncrier (>=21,<22)", "tox (>=3.14.6,<4)", "twine", "wheel"]
-doc = ["Sphinx (>=5.0.0,<6)", "jinja2 (>=3.0.0,<3.1.0)", "sphinx-rtd-theme (>=0.1.9,<1)", "towncrier (>=21,<22)"]
-lint = ["black (>=22.0,<23)", "flake8 (==3.7.9)", "isort (>=4.2.15,<5)", "mypy (==0.961)", "pydocstyle (>=5.0.0,<6)"]
-pycryptodome = ["pycryptodome (>=3.6.6,<4)"]
+test = ["tox (>=3.14.6,<4)", "pytest-xdist (>=2.4.0,<3)", "pytest (>=6.2.5,<7)"]
 pysha3 = ["pysha3 (>=1.0.0,<2.0.0)"]
-test = ["pytest (>=6.2.5,<7)", "pytest-xdist (>=2.4.0,<3)", "tox (>=3.14.6,<4)"]
+pycryptodome = ["pycryptodome (>=3.6.6,<4)"]
+lint = ["black (>=22.0,<23)", "pydocstyle (>=5.0.0,<6)", "mypy (==0.961)", "isort (>=4.2.15,<5)", "flake8 (==3.7.9)"]
+doc = ["jinja2 (>=3.0.0,<3.1.0)", "towncrier (>=21,<22)", "sphinx-rtd-theme (>=0.1.9,<1)", "Sphinx (>=5.0.0,<6)"]
+dev = ["jinja2 (>=3.0.0,<3.1.0)", "towncrier (>=21,<22)", "sphinx-rtd-theme (>=0.1.9,<1)", "Sphinx (>=5.0.0,<6)", "black (>=22.0,<23)", "pydocstyle (>=5.0.0,<6)", "mypy (==0.961)", "isort (>=4.2.15,<5)", "flake8 (==3.7.9)", "tox (>=3.14.6,<4)", "pytest-xdist (>=2.4.0,<3)", "pytest (>=6.2.5,<7)", "ipython", "twine", "wheel", "pytest-watch (>=4.1.0,<5)", "bumpversion (>=0.5.3,<1)"]
 
 [[package]]
 name = "eth-keyfile"
@@ -255,11 +255,11 @@ eth-typing = ">=2.2.1,<3.0.0"
 eth-utils = ">=1.8.2,<2.0.0"
 
 [package.extras]
-coincurve = ["coincurve (>=7.0.0,<13.0.0)"]
-dev = ["asn1tools (>=0.146.2,<0.147)", "bumpversion (==0.5.3)", "eth-hash[pycryptodome]", "eth-hash[pysha3]", "eth-typing (>=2.2.1,<3.0.0)", "eth-utils (>=1.8.2,<2.0.0)", "factory-boy (>=3.0.1,<3.1)", "flake8 (==3.0.4)", "hypothesis (>=5.10.3,<6.0.0)", "mypy (==0.782)", "pyasn1 (>=0.4.5,<0.5)", "pytest (==5.4.1)", "tox (==3.20.0)", "twine"]
+test = ["eth-hash", "eth-hash", "hypothesis (>=5.10.3,<6.0.0)", "pytest (==5.4.1)", "pyasn1 (>=0.4.5,<0.5)", "factory-boy (>=3.0.1,<3.1)", "asn1tools (>=0.146.2,<0.147)"]
+lint = ["mypy (==0.782)", "flake8 (==3.0.4)"]
 eth-keys = ["eth-typing (>=2.2.1,<3.0.0)", "eth-utils (>=1.8.2,<2.0.0)"]
-lint = ["flake8 (==3.0.4)", "mypy (==0.782)"]
-test = ["asn1tools (>=0.146.2,<0.147)", "eth-hash[pycryptodome]", "eth-hash[pysha3]", "factory-boy (>=3.0.1,<3.1)", "hypothesis (>=5.10.3,<6.0.0)", "pyasn1 (>=0.4.5,<0.5)", "pytest (==5.4.1)"]
+dev = ["eth-hash", "eth-hash", "hypothesis (>=5.10.3,<6.0.0)", "pytest (==5.4.1)", "pyasn1 (>=0.4.5,<0.5)", "factory-boy (>=3.0.1,<3.1)", "asn1tools (>=0.146.2,<0.147)", "mypy (==0.782)", "flake8 (==3.0.4)", "eth-typing (>=2.2.1,<3.0.0)", "eth-utils (>=1.8.2,<2.0.0)", "twine", "bumpversion (==0.5.3)", "tox (==3.20.0)"]
+coincurve = ["coincurve (>=7.0.0,<13.0.0)"]
 
 [[package]]
 name = "eth-rlp"
@@ -275,10 +275,10 @@ hexbytes = ">=0.1.0,<1"
 rlp = ">=0.6.0,<3"
 
 [package.extras]
-dev = ["Sphinx (>=1.6.5,<2)", "bumpversion (>=0.5.3,<1)", "eth-hash[pycryptodome]", "flake8 (==3.7.9)", "ipython", "isort (>=4.2.15,<5)", "mypy (==0.770)", "pydocstyle (>=3.0.0,<4)", "pytest (==5.4.1)", "pytest-watch (>=4.1.0,<5)", "pytest-xdist", "sphinx-rtd-theme (>=0.1.9)", "towncrier (>=19.2.0,<20)", "tox (==3.14.6)", "twine", "wheel"]
-doc = ["Sphinx (>=1.6.5,<2)", "sphinx-rtd-theme (>=0.1.9)", "towncrier (>=19.2.0,<20)"]
-lint = ["flake8 (==3.7.9)", "isort (>=4.2.15,<5)", "mypy (==0.770)", "pydocstyle (>=3.0.0,<4)"]
-test = ["eth-hash[pycryptodome]", "pytest (==5.4.1)", "pytest-xdist", "tox (==3.14.6)"]
+test = ["tox (==3.14.6)", "pytest (==5.4.1)", "pytest-xdist", "eth-hash"]
+lint = ["pydocstyle (>=3.0.0,<4)", "mypy (==0.770)", "isort (>=4.2.15,<5)", "flake8 (==3.7.9)"]
+doc = ["towncrier (>=19.2.0,<20)", "sphinx-rtd-theme (>=0.1.9)", "Sphinx (>=1.6.5,<2)"]
+dev = ["wheel", "twine", "tox (==3.14.6)", "towncrier (>=19.2.0,<20)", "sphinx-rtd-theme (>=0.1.9)", "pytest (==5.4.1)", "pytest-xdist", "pytest-watch (>=4.1.0,<5)", "pydocstyle (>=3.0.0,<4)", "mypy (==0.770)", "isort (>=4.2.15,<5)", "ipython", "flake8 (==3.7.9)", "eth-hash", "bumpversion (>=0.5.3,<1)", "Sphinx (>=1.6.5,<2)"]
 
 [[package]]
 name = "eth-typing"
@@ -289,10 +289,10 @@ optional = false
 python-versions = ">=3.5, <4"
 
 [package.extras]
-dev = ["Sphinx (>=1.6.5,<2)", "bumpversion (>=0.5.3,<1)", "flake8 (==3.8.3)", "ipython", "isort (>=4.2.15,<5)", "mypy (==0.782)", "pydocstyle (>=3.0.0,<4)", "pytest (>=4.4,<4.5)", "pytest-watch (>=4.1.0,<5)", "pytest-xdist", "sphinx-rtd-theme (>=0.1.9)", "tox (>=2.9.1,<3)", "twine", "wheel"]
-doc = ["Sphinx (>=1.6.5,<2)", "sphinx-rtd-theme (>=0.1.9)"]
-lint = ["flake8 (==3.8.3)", "isort (>=4.2.15,<5)", "mypy (==0.782)", "pydocstyle (>=3.0.0,<4)"]
-test = ["pytest (>=4.4,<4.5)", "pytest-xdist", "tox (>=2.9.1,<3)"]
+test = ["tox (>=2.9.1,<3)", "pytest-xdist", "pytest (>=4.4,<4.5)"]
+lint = ["pydocstyle (>=3.0.0,<4)", "mypy (==0.782)", "isort (>=4.2.15,<5)", "flake8 (==3.8.3)"]
+doc = ["sphinx-rtd-theme (>=0.1.9)", "Sphinx (>=1.6.5,<2)"]
+dev = ["sphinx-rtd-theme (>=0.1.9)", "Sphinx (>=1.6.5,<2)", "pydocstyle (>=3.0.0,<4)", "mypy (==0.782)", "isort (>=4.2.15,<5)", "flake8 (==3.8.3)", "tox (>=2.9.1,<3)", "pytest-xdist", "pytest (>=4.4,<4.5)", "ipython", "twine", "wheel", "pytest-watch (>=4.1.0,<5)", "bumpversion (>=0.5.3,<1)"]
 
 [[package]]
 name = "eth-utils"
@@ -310,7 +310,7 @@ toolz = {version = ">0.8.2,<1", markers = "implementation_name == \"pypy\""}
 
 [package.extras]
 deploy = ["bumpversion (>=0.5.3,<1.0.0)", "tox (>=2.9.1,<3.0.0)", "wheel (>=0.30.0,<1.0.0)"]
-dev = ["Sphinx (>=1.5.5,<2)", "black (>=18.6b4,<19)", "bumpversion (>=0.5.3,<1.0.0)", "flake8 (>=3.7.0,<4.0.0)", "hypothesis (>=4.43.0,<5.0.0)", "isort (==4.3.18)", "mypy (==0.720)", "pytest (>=3.4.1,<4.0.0)", "pytest-pythonpath (>=0.3,<1.0)", "sphinx-rtd-theme (>=0.1.9,<2)", "towncrier (>=19.2.0,<20)", "tox (>=2.9.1,<3.0.0)", "twine (>=1.13,<2)", "wheel (>=0.30.0,<1.0.0)"]
+dev = ["twine (>=1.13,<2)", "Sphinx (>=1.5.5,<2)", "sphinx-rtd-theme (>=0.1.9,<2)", "towncrier (>=19.2.0,<20)", "black (>=18.6b4,<19)", "flake8 (>=3.7.0,<4.0.0)", "isort (==4.3.18)", "mypy (==0.720)", "pytest (>=3.4.1,<4.0.0)", "hypothesis (>=4.43.0,<5.0.0)", "pytest-pythonpath (>=0.3,<1.0)", "bumpversion (>=0.5.3,<1.0.0)", "tox (>=2.9.1,<3.0.0)", "wheel (>=0.30.0,<1.0.0)"]
 doc = ["Sphinx (>=1.5.5,<2)", "sphinx-rtd-theme (>=0.1.9,<2)", "towncrier (>=19.2.0,<20)"]
 lint = ["black (>=18.6b4,<19)", "flake8 (>=3.7.0,<4.0.0)", "isort (==4.3.18)", "mypy (==0.720)", "pytest (>=3.4.1,<4.0.0)"]
 test = ["hypothesis (>=4.43.0,<5.0.0)", "pytest (>=3.4.1,<4.0.0)", "pytest-pythonpath (>=0.3,<1.0)"]
@@ -348,10 +348,10 @@ optional = false
 python-versions = ">=3.7, <4"
 
 [package.extras]
-dev = ["Sphinx (>=4.0.0,<5)", "black (>=22,<23)", "bumpversion (>=0.5.3,<1)", "eth-utils (>=1.0.1,<3)", "flake8 (==3.7.9)", "hypothesis (>=3.44.24,<=6.31.6)", "ipython", "isort (>=4.2.15,<5)", "mypy (==0.971)", "pydocstyle (>=5.0.0,<6)", "pytest (>=7,<8)", "pytest-watch (>=4.1.0,<5)", "pytest-xdist", "sphinx-rtd-theme (>=0.1.9,<1)", "towncrier (>=21,<22)", "tox (>=3.25.1,<4)", "twine", "wheel"]
-doc = ["Sphinx (>=4.0.0,<5)", "sphinx-rtd-theme (>=0.1.9,<1)", "towncrier (>=21,<22)"]
-lint = ["black (>=22,<23)", "flake8 (==3.7.9)", "isort (>=4.2.15,<5)", "mypy (==0.971)", "pydocstyle (>=5.0.0,<6)"]
-test = ["eth-utils (>=1.0.1,<3)", "hypothesis (>=3.44.24,<=6.31.6)", "pytest (>=7,<8)", "pytest-xdist", "tox (>=3.25.1,<4)"]
+test = ["eth-utils (>=1.0.1,<3)", "hypothesis (>=3.44.24,<=6.31.6)", "tox (>=3.25.1,<4)", "pytest-xdist", "pytest (>=7,<8)"]
+lint = ["black (>=22,<23)", "pydocstyle (>=5.0.0,<6)", "mypy (==0.971)", "isort (>=4.2.15,<5)", "flake8 (==3.7.9)"]
+doc = ["towncrier (>=21,<22)", "sphinx-rtd-theme (>=0.1.9,<1)", "Sphinx (>=4.0.0,<5)"]
+dev = ["towncrier (>=21,<22)", "sphinx-rtd-theme (>=0.1.9,<1)", "Sphinx (>=4.0.0,<5)", "black (>=22,<23)", "pydocstyle (>=5.0.0,<6)", "mypy (==0.971)", "isort (>=4.2.15,<5)", "flake8 (==3.7.9)", "eth-utils (>=1.0.1,<3)", "hypothesis (>=3.44.24,<=6.31.6)", "tox (>=3.25.1,<4)", "pytest-xdist", "pytest (>=7,<8)", "ipython", "twine", "wheel", "pytest-watch (>=4.1.0,<5)", "bumpversion (>=0.5.3,<1)"]
 
 [[package]]
 name = "idna"
@@ -406,9 +406,9 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-atomic_cache = ["atomicwrites"]
-nearley = ["js2py"]
 regex = ["regex"]
+nearley = ["js2py"]
+atomic_cache = ["atomicwrites"]
 
 [[package]]
 name = "lru-dict"
@@ -433,9 +433,9 @@ python-versions = ">=3.7"
 packaging = ">=17.0"
 
 [package.extras]
-dev = ["flake8 (==5.0.4)", "flake8-bugbear (==22.9.11)", "mypy (==0.971)", "pre-commit (>=2.4,<3.0)", "pytest", "pytz", "simplejson", "tox"]
-docs = ["alabaster (==0.7.12)", "autodocsumm (==0.2.9)", "sphinx (==5.1.1)", "sphinx-issues (==3.0.1)", "sphinx-version-warning (==1.1.2)"]
-lint = ["flake8 (==5.0.4)", "flake8-bugbear (==22.9.11)", "mypy (==0.971)", "pre-commit (>=2.4,<3.0)"]
+dev = ["pytest", "pytz", "simplejson", "mypy (==0.971)", "flake8 (==5.0.4)", "flake8-bugbear (==22.9.11)", "pre-commit (>=2.4,<3.0)", "tox"]
+docs = ["sphinx (==5.1.1)", "sphinx-issues (==3.0.1)", "alabaster (==0.7.12)", "sphinx-version-warning (==1.1.2)", "autodocsumm (==0.2.9)"]
+lint = ["mypy (==0.971)", "flake8 (==5.0.4)", "flake8-bugbear (==22.9.11)", "pre-commit (>=2.4,<3.0)"]
 tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
@@ -451,7 +451,7 @@ marshmallow = ">=3.13.0,<4.0"
 typing-inspect = ">=0.7.1"
 
 [package.extras]
-dev = ["marshmallow-enum", "pre-commit (>=2.17,<3.0)", "pytest (>=5.4)", "pytest-mypy-plugins (>=1.2.0)", "sphinx", "typeguard", "typing-extensions (>=3.7.2)"]
+dev = ["marshmallow-enum", "typeguard", "pre-commit (>=2.17,<3.0)", "sphinx", "pytest (>=5.4)", "pytest-mypy-plugins (>=1.2.0)", "typing-extensions (>=3.7.2)"]
 docs = ["sphinx"]
 enum = ["marshmallow-enum"]
 lint = ["pre-commit (>=2.17,<3.0)"]
@@ -481,9 +481,9 @@ python-versions = ">=3.6"
 marshmallow = ">=3.0.0,<4.0.0"
 
 [package.extras]
-dev = ["flake8 (==3.9.2)", "flake8-bugbear (==21.4.3)", "mock", "pre-commit (>=2.7,<3.0)", "pytest", "tox"]
+dev = ["pytest", "mock", "flake8 (==3.9.2)", "flake8-bugbear (==21.4.3)", "pre-commit (>=2.7,<3.0)", "tox"]
 lint = ["flake8 (==3.9.2)", "flake8-bugbear (==21.4.3)", "pre-commit (>=2.7,<3.0)"]
-tests = ["mock", "pytest"]
+tests = ["pytest", "mock"]
 
 [[package]]
 name = "mpmath"
@@ -494,8 +494,8 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-develop = ["codecov", "pycodestyle", "pytest (>=4.6)", "pytest-cov", "wheel"]
 tests = ["pytest (>=4.6)"]
+develop = ["wheel", "codecov", "pytest-cov", "pycodestyle", "pytest (>=4.6)"]
 
 [[package]]
 name = "multiaddr"
@@ -575,7 +575,7 @@ python-versions = ">=3.7"
 
 [package.extras]
 graphviz = ["graphviz (>=0.20.1)"]
-test = ["covdefaults (>=2.2)", "diff-cover (>=6.5.1)", "pip (>=22.2.2)", "pytest (>=7.1.3)", "pytest-cov (>=3)", "pytest-mock (>=3.8.2)", "virtualenv (>=20.16.5,<21)"]
+test = ["covdefaults (>=2.2)", "diff-cover (>=6.5.1)", "pip (>=22.2.2)", "pytest-cov (>=3)", "pytest-mock (>=3.8.2)", "pytest (>=7.1.3)", "virtualenv (>=20.16.5,<21)"]
 
 [[package]]
 name = "pluggy"
@@ -586,8 +586,8 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-dev = ["pre-commit", "tox"]
-testing = ["pytest", "pytest-benchmark"]
+testing = ["pytest-benchmark", "pytest"]
+dev = ["tox", "pre-commit"]
 
 [[package]]
 name = "prometheus-client"
@@ -633,7 +633,7 @@ optional = false
 python-versions = ">=3.6.8"
 
 [package.extras]
-diagrams = ["jinja2", "railroad-diagrams"]
+diagrams = ["railroad-diagrams", "jinja2"]
 
 [[package]]
 name = "pyrsistent"
@@ -665,7 +665,7 @@ testing = ["argcomplete", "hypothesis (>=3.56)", "mock", "nose", "pygments (>=2.
 
 [[package]]
 name = "pytest-asyncio"
-version = "0.19.0"
+version = "0.20.1"
 description = "Pytest support for asyncio"
 category = "main"
 optional = false
@@ -675,7 +675,7 @@ python-versions = ">=3.7"
 pytest = ">=6.1.0"
 
 [package.extras]
-testing = ["coverage (>=6.2)", "flaky (>=3.5.0)", "hypothesis (>=5.7.1)", "mypy (>=0.931)", "pytest-trio (>=0.7.0)"]
+testing = ["coverage (>=6.2)", "hypothesis (>=5.7.1)", "flaky (>=3.5.0)", "mypy (>=0.931)", "pytest-trio (>=0.7.0)"]
 
 [[package]]
 name = "pywin32"
@@ -686,7 +686,7 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "PyYAML"
+name = "pyyaml"
 version = "6.0"
 description = "YAML parser and emitter for Python"
 category = "main"
@@ -723,11 +723,11 @@ python-versions = "*"
 eth-utils = ">=1.0.2,<2"
 
 [package.extras]
-dev = ["Sphinx (>=1.6.5,<2)", "bumpversion (>=0.5.3,<1)", "flake8 (==3.4.1)", "hypothesis (==5.19.0)", "ipython", "pytest (==5.4.3)", "pytest-watch (>=4.1.0,<5)", "pytest-xdist", "setuptools (>=36.2.0)", "sphinx-rtd-theme (>=0.1.9)", "tox (>=2.9.1,<3)", "twine", "wheel"]
-doc = ["Sphinx (>=1.6.5,<2)", "sphinx-rtd-theme (>=0.1.9)"]
-lint = ["flake8 (==3.4.1)"]
+test = ["tox (>=2.9.1,<3)", "pytest (==5.4.3)", "hypothesis (==5.19.0)"]
 rust-backend = ["rusty-rlp (>=0.1.15,<0.2)"]
-test = ["hypothesis (==5.19.0)", "pytest (==5.4.3)", "tox (>=2.9.1,<3)"]
+lint = ["flake8 (==3.4.1)"]
+doc = ["sphinx-rtd-theme (>=0.1.9)", "Sphinx (>=1.6.5,<2)"]
+dev = ["wheel", "twine", "tox (>=2.9.1,<3)", "sphinx-rtd-theme (>=0.1.9)", "setuptools (>=36.2.0)", "pytest (==5.4.3)", "pytest-xdist", "pytest-watch (>=4.1.0,<5)", "ipython", "hypothesis (==5.19.0)", "flake8 (==3.4.1)", "bumpversion (>=0.5.3,<1)", "Sphinx (>=1.6.5,<2)"]
 
 [[package]]
 name = "six"
@@ -773,8 +773,8 @@ optional = false
 python-versions = ">=3.5.3"
 
 [package.extras]
-doc = ["sphinx-autodoc-typehints (>=1.2.0)", "sphinx-rtd-theme"]
-test = ["mypy", "pytest", "typing-extensions"]
+doc = ["sphinx-rtd-theme", "sphinx-autodoc-typehints (>=1.2.0)"]
+test = ["pytest", "typing-extensions", "mypy"]
 
 [[package]]
 name = "typing-extensions"
@@ -805,8 +805,8 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4"
 
 [package.extras]
-brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)", "brotlipy (>=0.6.0)"]
-secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "pyOpenSSL (>=0.14)", "urllib3-secure-extra"]
+brotli = ["brotlicffi (>=0.8.0)", "brotli (>=1.0.9)", "brotlipy (>=0.6.0)"]
+secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "urllib3-secure-extra", "ipaddress"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
@@ -843,9 +843,9 @@ requests = ">=2.16.0,<3.0.0"
 websockets = ">=9.1,<10"
 
 [package.extras]
-dev = ["Jinja2 (<=3.0.3)", "bumpversion", "click (>=5.1)", "configparser (==3.5.0)", "contextlib2 (>=0.5.4)", "eth-tester[py-evm] (==v0.6.0-beta.6)", "flake8 (==3.8.3)", "flaky (>=3.7.0,<4)", "hypothesis (>=3.31.2,<6)", "importlib-metadata (<5.0)", "isort (>=4.2.15,<4.3.5)", "mock", "mypy (==0.910)", "pluggy (==0.13.1)", "py-geth (>=3.9.1,<4)", "py-solc (>=0.4.0)", "pytest (>=4.4.0,<5.0.0)", "pytest-asyncio (>=0.10.0,<0.11)", "pytest-mock (>=1.10,<2)", "pytest-pythonpath (>=0.3)", "pytest-watch (>=4.2,<5)", "pytest-xdist (>=1.29,<2)", "setuptools (>=38.6.0)", "sphinx (>=3.0,<4)", "sphinx-better-theme (>=0.1.4)", "sphinx-rtd-theme (>=0.1.9)", "toposort (>=1.4)", "towncrier (==18.5.0)", "tox (>=1.8.0)", "tqdm (>4.32,<5)", "twine (>=1.13,<2)", "types-protobuf (==3.19.13)", "types-requests (>=2.26.1,<3)", "types-setuptools (>=57.4.4,<58)", "urllib3", "wheel", "when-changed (>=0.3.0,<0.4)"]
-docs = ["Jinja2 (<=3.0.3)", "click (>=5.1)", "configparser (==3.5.0)", "contextlib2 (>=0.5.4)", "mock", "py-geth (>=3.9.1,<4)", "py-solc (>=0.4.0)", "pytest (>=4.4.0,<5.0.0)", "sphinx (>=3.0,<4)", "sphinx-better-theme (>=0.1.4)", "sphinx-rtd-theme (>=0.1.9)", "toposort (>=1.4)", "towncrier (==18.5.0)", "urllib3", "wheel"]
-linter = ["flake8 (==3.8.3)", "isort (>=4.2.15,<4.3.5)", "mypy (==0.910)", "types-protobuf (==3.19.13)", "types-requests (>=2.26.1,<3)", "types-setuptools (>=57.4.4,<58)"]
+dev = ["eth-tester[py-evm] (==v0.6.0-beta.6)", "py-geth (>=3.9.1,<4)", "flake8 (==3.8.3)", "isort (>=4.2.15,<4.3.5)", "mypy (==0.910)", "types-setuptools (>=57.4.4,<58)", "types-requests (>=2.26.1,<3)", "types-protobuf (==3.19.13)", "mock", "sphinx-better-theme (>=0.1.4)", "click (>=5.1)", "configparser (==3.5.0)", "contextlib2 (>=0.5.4)", "py-solc (>=0.4.0)", "pytest (>=4.4.0,<5.0.0)", "sphinx (>=3.0,<4)", "sphinx-rtd-theme (>=0.1.9)", "toposort (>=1.4)", "towncrier (==18.5.0)", "urllib3", "wheel", "Jinja2 (<=3.0.3)", "bumpversion", "flaky (>=3.7.0,<4)", "hypothesis (>=3.31.2,<6)", "importlib-metadata (<5.0)", "pytest-asyncio (>=0.10.0,<0.11)", "pytest-mock (>=1.10,<2)", "pytest-pythonpath (>=0.3)", "pytest-watch (>=4.2,<5)", "pytest-xdist (>=1.29,<2)", "setuptools (>=38.6.0)", "tox (>=1.8.0)", "tqdm (>4.32,<5)", "twine (>=1.13,<2)", "pluggy (==0.13.1)", "when-changed (>=0.3.0,<0.4)"]
+docs = ["mock", "sphinx-better-theme (>=0.1.4)", "click (>=5.1)", "configparser (==3.5.0)", "contextlib2 (>=0.5.4)", "py-geth (>=3.9.1,<4)", "py-solc (>=0.4.0)", "pytest (>=4.4.0,<5.0.0)", "sphinx (>=3.0,<4)", "sphinx-rtd-theme (>=0.1.9)", "toposort (>=1.4)", "towncrier (==18.5.0)", "urllib3", "wheel", "Jinja2 (<=3.0.3)"]
+linter = ["flake8 (==3.8.3)", "isort (>=4.2.15,<4.3.5)", "mypy (==0.910)", "types-setuptools (>=57.4.4,<58)", "types-requests (>=2.26.1,<3)", "types-protobuf (==3.19.13)"]
 tester = ["eth-tester[py-evm] (==v0.6.0-beta.6)", "py-geth (>=3.9.1,<4)"]
 
 [[package]]
@@ -1577,8 +1577,8 @@ pytest = [
     {file = "pytest-7.1.3.tar.gz", hash = "sha256:4f365fec2dff9c1162f834d9f18af1ba13062db0c708bf7b946f8a5c76180c39"},
 ]
 pytest-asyncio = [
-    {file = "pytest-asyncio-0.19.0.tar.gz", hash = "sha256:ac4ebf3b6207259750bc32f4c1d8fcd7e79739edbc67ad0c58dd150b1d072fed"},
-    {file = "pytest_asyncio-0.19.0-py3-none-any.whl", hash = "sha256:7a97e37cfe1ed296e2e84941384bdd37c376453912d397ed39293e0916f521fa"},
+    {file = "pytest-asyncio-0.20.1.tar.gz", hash = "sha256:626699de2a747611f3eeb64168b3575f70439b06c3d0206e6ceaeeb956e65519"},
+    {file = "pytest_asyncio-0.20.1-py3-none-any.whl", hash = "sha256:2c85a835df33fda40fe3973b451e0c194ca11bc2c007eabff90bb3d156fc172b"},
 ]
 pywin32 = [
     {file = "pywin32-304-cp310-cp310-win32.whl", hash = "sha256:3c7bacf5e24298c86314f03fa20e16558a4e4138fc34615d7de4070c23e65af3"},
@@ -1596,7 +1596,7 @@ pywin32 = [
     {file = "pywin32-304-cp39-cp39-win32.whl", hash = "sha256:25746d841201fd9f96b648a248f731c1dec851c9a08b8e33da8b56148e4c65cc"},
     {file = "pywin32-304-cp39-cp39-win_amd64.whl", hash = "sha256:d24a3382f013b21aa24a5cfbfad5a2cd9926610c0affde3e8ab5b3d7dbcf4ac9"},
 ]
-PyYAML = [
+pyyaml = [
     {file = "PyYAML-6.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:d4db7c7aef085872ef65a8fd7d6d09a14ae91f691dec3e87ee5ee0539d516f53"},
     {file = "PyYAML-6.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:9df7ed3b3d2e0ecfe09e14741b857df43adb5a3ddadc919a2d94fbdf78fea53c"},
     {file = "PyYAML-6.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:77f396e6ef4c73fdc33a9157446466f1cff553d979bd00ecb64385760c6babdc"},
@@ -1604,6 +1604,13 @@ PyYAML = [
     {file = "PyYAML-6.0-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:f84fbc98b019fef2ee9a1cb3ce93e3187a6df0b2538a651bfb890254ba9f90b5"},
     {file = "PyYAML-6.0-cp310-cp310-win32.whl", hash = "sha256:2cd5df3de48857ed0544b34e2d40e9fac445930039f3cfe4bcc592a1f836d513"},
     {file = "PyYAML-6.0-cp310-cp310-win_amd64.whl", hash = "sha256:daf496c58a8c52083df09b80c860005194014c3698698d1a57cbcfa182142a3a"},
+    {file = "PyYAML-6.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:d4b0ba9512519522b118090257be113b9468d804b19d63c71dbcf4a48fa32358"},
+    {file = "PyYAML-6.0-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:81957921f441d50af23654aa6c5e5eaf9b06aba7f0a19c18a538dc7ef291c5a1"},
+    {file = "PyYAML-6.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:afa17f5bc4d1b10afd4466fd3a44dc0e245382deca5b3c353d8b757f9e3ecb8d"},
+    {file = "PyYAML-6.0-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:dbad0e9d368bb989f4515da330b88a057617d16b6a8245084f1b05400f24609f"},
+    {file = "PyYAML-6.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:432557aa2c09802be39460360ddffd48156e30721f5e8d917f01d31694216782"},
+    {file = "PyYAML-6.0-cp311-cp311-win32.whl", hash = "sha256:bfaef573a63ba8923503d27530362590ff4f576c626d86a9fed95822a8255fd7"},
+    {file = "PyYAML-6.0-cp311-cp311-win_amd64.whl", hash = "sha256:01b45c0191e6d66c470b6cf1b9531a771a83c1c4208272ead47a3ae4f2f603bf"},
     {file = "PyYAML-6.0-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:897b80890765f037df3403d22bab41627ca8811ae55e9a722fd0392850ec4d86"},
     {file = "PyYAML-6.0-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:50602afada6d6cbfad699b0c7bb50d5ccffa7e46a3d738092afddc1f9758427f"},
     {file = "PyYAML-6.0-cp36-cp36m-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:48c346915c114f5fdb3ead70312bd042a953a8ce5c7106d5bfb1a5254e47da92"},
