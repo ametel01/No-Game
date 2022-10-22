@@ -1,13 +1,24 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
+from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_caller_address
 from defences.library import Defence
 from facilities.IFacilities import IFacilities
+from fleet_movements.IFleetMovements import IFleetMovements
 from main.library import NoGame
 from resources.IResources import IResources
 from research.IResearchLab import IResearchLab
-from main.structs import Cost, ResearchQue, TechLevels, TechCosts, ResourcesQue, Fleet, ShipyardQue
+from main.structs import (
+    FleetQue,
+    Cost,
+    ResearchQue,
+    TechLevels,
+    TechCosts,
+    ResourcesQue,
+    Fleet,
+    ShipyardQue,
+)
 from shipyard.IShipyard import IShipyard
 
 //########################################################################################
@@ -239,6 +250,15 @@ func getResearchQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 ) -> (status: ResearchQue) {
     let (_, _, _, lab, _, _) = getModulesAddresses();
     let (que_details) = IResearchLab.getQueStatus(lab, caller);
+    return (que_details,);
+}
+
+@view
+func getFleetMovementsQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt, mission_id: felt
+) -> (res: FleetQue) {
+    let (_, _, _, _, _, fleet) = getModulesAddresses();
+    let (que_details) = IFleetMovements.getQueStatus(fleet, caller, mission_id);
     return (que_details,);
 }
 
@@ -756,4 +776,16 @@ func largeDomeBuildStart{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_c
 func largeDomeBuildComplete{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     NoGame.large_dome_build_complete();
     return ();
+}
+
+//#############################################################################################
+//                              FLEET MOVEMENTS FUNCTIONS                                     #
+//#############################################################################################
+
+@external
+func sendEspionageMission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    ships: Fleet, destination: Uint256
+) -> (mission_id: felt) {
+    let mission_id = NoGame.send_spy_mission(ships, destination);
+    return (mission_id,);
 }

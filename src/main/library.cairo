@@ -2,7 +2,7 @@
 
 from starkware.cairo.common.bool import FALSE, TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero, assert_lt_felt
+from starkware.cairo.common.math import unsigned_div_rem, assert_not_zero, assert_le_felt
 from starkware.cairo.common.math_cmp import is_le_felt, is_not_zero
 from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_block_timestamp, get_caller_address
@@ -1720,15 +1720,16 @@ namespace NoGame {
     //#########################################################################################
 
     func send_spy_mission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        fleet: Fleet, destination: Uint256
-    ) {
+        ships: Fleet, destination: Uint256
+    ) -> felt {
         alloc_locals;
         let (caller) = get_caller_address();
         let (planet_id) = _get_planet_id(caller);
         let (manager) = NoGame_modules_manager.read();
         let (_, _, _, _, _, fleet) = IModulesManager.getModulesAddresses(manager);
         _check_slots_available(planet_id);
-        IFleetMovements.sendSpyMission(fleet, caller, fleet, destination);
+        let (mission_id) = IFleetMovements.sendSpyMission(fleet, caller, ships, destination);
+        return mission_id;
     }
 
     @external
@@ -1802,7 +1803,7 @@ func _check_slots_available{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, rang
     let (max_slots) = NoGame_max_slots.read(planet_id);
     let (active_missions) = NoGame_active_missions.read(planet_id);
     with_attr error_message("FLEET MOVEMENTS::All fleet slots are full") {
-        assert_lt_felt(active_missions, max_slots);
+        assert_le_felt(active_missions, max_slots);
     }
     NoGame_active_missions.write(planet_id, active_missions + 1);
     return ();
