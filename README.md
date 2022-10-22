@@ -33,18 +33,25 @@ protostar install https://github.com/OpenZeppelin/cairo-contracts
 ```
 
 ### Testing:
+
 ```
 protostar test
 ```
+
 ### Compile
+
 ```
 ./run build
 ```
+
 ### Deploy
+
 ```
 ./run deploy
 ```
+
 ### Clean build folder
+
 ```
 ./run clean
 ```
@@ -93,14 +100,13 @@ protostar test
 
 ### v0.3
 
--   [ ] Implement defences.
--   [ ] Implement coordinates system for planets.
--   [ ] Implement ships characteristics.
--   [ ] Implement Fleet Movements module.
-    -   [ ] Travel time calculation
-    -   [ ] Fuel cost calculation
+-   [x] Implement defences. :heavy_check_mark:
+-   [x] Implement coordinates system for planets. :heavy_check_mark:
+-   [x] Implement ships characteristics.:heavy_check_mark:
+-   [x] Implement Fleet Movements module.
+    -   [x] Travel time calculation :heavy_check_mark:
+    -   [x] Fuel cost calculation :heavy_check_mark:
 -   [ ] Implement Space War module.
     -   [ ] Battle damage calculation
     -   [ ] Loot amounts calculation
     -   [ ] ERC20 loot managment
-
