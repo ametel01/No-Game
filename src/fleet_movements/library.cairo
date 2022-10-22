@@ -200,9 +200,51 @@ func calculate_travel_time{range_check_ptr}(distance: felt, speed: felt) -> felt
     return res;
 }
 
-// @external
-// func calculate_fuel_consumption{range_check_ptr}(arguments) {
-// }
+func calculate_fuel_consumption{range_check_ptr}(ships: Fleet, distance: felt) -> felt {
+    alloc_locals;
+    let cargo_consumption = get_ship_consumption(
+        ships.cargo, FleetPerformance.Cargo.fuel_consumption, distance
+    );
+    let recycler_consumption = get_ship_consumption(
+        ships.recycler, FleetPerformance.Recycler.fuel_consumption, distance
+    );
+    let probe_consumption = get_ship_consumption(
+        ships.espionage_probe, FleetPerformance.EspionageProbe.fuel_consumption, distance
+    );
+    let fighter_consumption = get_ship_consumption(
+        ships.light_fighter, FleetPerformance.LightFighter.fuel_consumption, distance
+    );
+    let cruiser_consumption = get_ship_consumption(
+        ships.cruiser, FleetPerformance.Cruiser.fuel_consumption, distance
+    );
+    let bs_consumption = get_ship_consumption(
+        ships.battle_ship, FleetPerformance.BattleShip.fuel_consumption, distance
+    );
+    let death_consumption = get_ship_consumption(
+        ships.death_star, FleetPerformance.Deathstar.fuel_consumption, distance
+    );
+
+    return cargo_consumption + recycler_consumption + probe_consumption + fighter_consumption + cruiser_consumption + bs_consumption + death_consumption;
+}
+
+func get_ship_consumption{range_check_ptr}(n_ships: felt, base_cost: felt, distance: felt) -> felt {
+    alloc_locals;
+    let cond = is_not_zero(n_ships);
+    if (cond == TRUE) {
+        let consumption = fuel_consumption_formula(base_cost, distance);
+        return consumption * n_ships;
+    } else {
+        return 0;
+    }
+}
+
+func fuel_consumption_formula{range_check_ptr}(base_cost: felt, distance: felt) -> felt {
+    alloc_locals;
+    let fact1 = base_cost * distance;
+    let (fact2, _) = unsigned_div_rem(fact1, 3500);
+    let res = fact2 + 1;
+    return res;
+}
 
 func calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
     let cond_1 = is_not_zero(fleet.death_star);
