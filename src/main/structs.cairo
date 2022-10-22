@@ -115,3 +115,42 @@ struct TechLevels {
     shielding_tech: felt,
     weapons_tech: felt,
 }
+
+//
+// FLEET MOVEMENTS
+//
+
+struct ResourcesBuildings {
+    metal_mine: felt,
+    crystal_mine: felt,
+    deuterium_mine: felt,
+    solar_plant: felt,
+}
+
+struct FacilitiesBuildings {
+    robot_factory: felt,
+    shipyard: felt,
+    research_lab: felt,
+    nanite: felt,
+}
+
+struct PlanetResources {
+    metal: felt,
+    crystal: felt,
+    deuterium: felt,
+}
+
+struct FleetQue {
+    planet_id: felt,
+    mission_id: felt,
+    time_end: felt,
+    destination: felt,
+}
+
+struct EspionageReport {
+    resources_available: PlanetResources,
+    resources_buildings: ResourcesBuildings,
+    fleet: Fleet,
+    facilities: FacilitiesBuildings,
+    research: TechLevels,
+}
