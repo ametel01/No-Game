@@ -8,6 +8,7 @@ from starkware.cairo.common.math import (
     sqrt,
     unsigned_div_rem,
     assert_lt_felt,
+    assert_le_felt,
 )
 from starkware.cairo.common.math_cmp import is_not_zero, is_nn
 from starkware.cairo.common.uint256 import Uint256
@@ -60,6 +61,7 @@ namespace FleetMovements {
         caller: felt, ships: Fleet, destination: Uint256
     ) -> felt {
         alloc_locals;
+        check_fleet_composition(caller, ships);
         let planet_id = get_planet_id(caller);
         let distance = calculate_distance(planet_id.low, destination.low);
         let speed = calculate_speed(ships);
@@ -97,6 +99,47 @@ namespace FleetMovements {
             return spy_report_5(planet_id, destination);
         }
     }
+}
+
+func check_fleet_composition{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt, ships: Fleet
+) {
+    let (game) = FleetMovements_no_game_address.read();
+    let (fleet_available) = INoGame.getFleetLevels(game, caller);
+
+    // Checks that no solar satellite are part of the fleet sent to mission.
+    with_attr error_message("FLEET MOVEMENTS::Solar satellite can not be sent on mission") {
+        assert_lt_felt(ships.solar_satellite, 1);
+    }
+
+    with_attr error_message("FLEET MOVEMENTS::Not enough cargo ships available") {
+        assert_le_felt(ships.cargo, fleet_available.cargo);
+    }
+
+    with_attr error_message("FLEET MOVEMENTS::Not enough recycler ships available") {
+        assert_le_felt(ships.recycler, fleet_available.recycler);
+    }
+
+    with_attr error_message("FLEET MOVEMENTS::Not enough espionage probes available") {
+        assert_le_felt(ships.espionage_probe, fleet_available.espionage_probe);
+    }
+
+    with_attr error_message("FLEET MOVEMENTS::Not enough light fighters available") {
+        assert_le_felt(ships.light_fighter, fleet_available.light_fighter);
+    }
+
+    with_attr error_message("FLEET MOVEMENTS::Not enough cruisers available") {
+        assert_le_felt(ships.cruiser, fleet_available.cruiser);
+    }
+
+    with_attr error_message("FLEET MOVEMENTS::Not enough battleships available") {
+        assert_le_felt(ships.battle_ship, fleet_available.battle_ship);
+    }
+
+    with_attr error_message("FLEET MOVEMENTS::Not enough death star available") {
+        assert_le_felt(ships.death_star, fleet_available.death_star);
+    }
+    return ();
 }
 
 func get_owners_from_planet_id{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -156,6 +199,10 @@ func calculate_travel_time{range_check_ptr}(distance: felt, speed: felt) -> felt
     let (res, _) = unsigned_div_rem(fact2, 2);
     return res;
 }
+
+// @external
+// func calculate_fuel_consumption{range_check_ptr}(arguments) {
+// }
 
 func calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
     let cond_1 = is_not_zero(fleet.death_star);
