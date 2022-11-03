@@ -52,12 +52,12 @@ struct ClassHashes {
 func deploy_game{syscall_ptr: felt*, range_check_ptr}() -> Contracts {
     tempvar contracts: Contracts;
     %{
-        declared = declare("lib/openzeppelin/account/presets/Account.cairo")
+        declared = declare("lib/cairo_contracts/src/openzeppelin/account/presets/Account.cairo")
         prepared = prepare(declared, [ids.PK])
         deploy(prepared)
         ids.contracts.owner = prepared.contract_address
 
-        declared = declare("lib/openzeppelin/account/presets/Account.cairo")
+        declared = declare("lib/cairo_contracts/src/openzeppelin/account/presets/Account.cairo")
         prepared = prepare(declared, [ids.PK2])
         deploy(prepared)
         ids.contracts.p1 = prepared.contract_address
@@ -190,6 +190,7 @@ func warp_all{syscall_ptr: felt*, range_check_ptr}(new_timestamp: felt, addresse
         stop_warp3 = warp(ids.new_timestamp, target_contract_address=ids.addresses.facilities)
         stop_warp4 = warp(ids.new_timestamp, target_contract_address=ids.addresses.shipyard)
         stop_warp5 = warp(ids.new_timestamp, target_contract_address=ids.addresses.research)
+        stop_warp5 = warp(ids.new_timestamp, target_contract_address=ids.addresses.fleet)
     %}
     return ();
 }
