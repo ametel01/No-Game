@@ -24,12 +24,12 @@ from main.storage import (
     NoGame_research_lab_level,
     NoGame_nanite_factory_level,
     NoGame_energy_tech,
-    NoGame_computer_tech,
     NoGame_laser_tech,
     NoGame_armour_tech,
     NoGame_astrophysics,
     NoGame_espionage_tech,
     NoGame_hyperspace_drive,
+    NoGame_computer_tech,
     NoGame_hyperspace_tech,
     NoGame_impulse_drive,
     NoGame_ion_tech,
@@ -116,6 +116,7 @@ from main.structs import (
     ShipyardQue,
     ShipsCosts,
     ResourcesQue,
+    EspionageReport,
 )
 
 const E18 = 10 ** 18;
@@ -1736,10 +1737,17 @@ namespace NoGame {
         return mission_id;
     }
 
-    @external
     func read_espionage_report{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-        arguments
-    ) {
+        caller: felt, mission_id: felt
+    ) -> EspionageReport {
+        alloc_locals;
+        let (manager) = NoGame_modules_manager.read();
+        let (_, _, _, _, _, fleet) = IModulesManager.getModulesAddresses(manager);
+        let (res) = IFleetMovements.readEspionageReport(fleet, caller, mission_id);
+        let (planet_id) = _get_planet_id(caller);
+        let (active_missions) = NoGame_active_missions.read(planet_id);
+        NoGame_active_missions.write(planet_id, active_missions - 1);
+        return res;
     }
 }
 //#########################################################################################

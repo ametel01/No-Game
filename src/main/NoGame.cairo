@@ -18,6 +18,7 @@ from main.structs import (
     ResourcesQue,
     Fleet,
     ShipyardQue,
+    EspionageReport,
 )
 from shipyard.IShipyard import IShipyard
 
@@ -788,4 +789,12 @@ func sendEspionageMission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 ) -> (mission_id: felt) {
     let mission_id = NoGame.send_spy_mission(ships, destination);
     return (mission_id,);
+}
+
+@external
+func readEspionageReport{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt, mission_id: felt
+) -> (res: EspionageReport) {
+    let res = NoGame.read_espionage_report(caller, mission_id);
+    return (res,);
 }
