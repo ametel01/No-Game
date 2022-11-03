@@ -4,8 +4,9 @@ from starkware.cairo.common.uint256 import Uint256
 from main.library import Cost
 from resources.library import ResourcesQue
 from research.library import TechLevels, TechCosts
-from shipyard.library import Fleet, ShipyardQue
+from shipyard.library import ShipyardQue
 from defences.library import Defence
+from main.structs import Fleet, EspionageReport
 
 @contract_interface
 namespace NoGame {
@@ -325,6 +326,9 @@ namespace NoGame {
     }
 
     func sendEspionageMission(ships: Fleet, destination: Uint256) -> (mission_id: felt) {
+    }
+
+    func readEspionageReport(caller: felt, mission_id: felt) -> (res: EspionageReport) {
     }
 }
 
