@@ -1,8 +1,8 @@
 ["protostar.config"]
-protostar_version = "0.3.2"
+protostar_version = "0.6.0"
 
 ["protostar.project"]
-libs_path = "./lib/"
+libs_path = "./lib/cairo_contracts/src"
 
 ["protostar.shared_command_configs"]
 cairo_path = ["./src"]
