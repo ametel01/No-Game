@@ -2,5 +2,5 @@
 	url = https://github.com/OpenZeppelin/cairo-contracts.git
 	path = lib/cairo_contracts_git
 [submodule "cairo_contracts"]
+	path = lib/cairo_contracts
 	url = https://github.com/OpenZeppelin/cairo-contracts
-	path = lib/cairo_contracts_git/cairo_contracts
