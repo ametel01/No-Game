@@ -15,14 +15,14 @@ from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_block_timestamp
 from shipyard.ships_performance import FleetPerformance
 from main.INoGame import INoGame
-from main.storage import NoGame_max_slots
 from main.structs import (
     PlanetResources,
     ResourcesBuildings,
     FacilitiesBuildings,
     Fleet,
     TechLevels,
-    FleetQue,
+    EspionageQue,
+    AttackQue,
     EspionageReport,
 )
 from token.erc20.interfaces.IERC20 import IERC20
@@ -38,7 +38,13 @@ func FleetMovements_no_game_address() -> (address: felt) {
 }
 
 @storage_var
-func FleetMovements_que_details(planet_id: Uint256, mission_id: felt) -> (res: FleetQue) {
+func FleetMovements_espionage_que_details(planet_id: Uint256, mission_id: felt) -> (
+    res: EspionageQue
+) {
+}
+
+@storage_var
+func FleetMovements_attack_que_details(planet_id: Uint256, mission_id: felt) -> (res: AttackQue) {
 }
 
 @storage_var
@@ -53,11 +59,19 @@ namespace FleetMovements {
         return ();
     }
 
-    func get_que_status{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    func get_espionage_que_status{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         caller: felt, mission_id: felt
-    ) -> FleetQue {
+    ) -> EspionageQue {
         let planet_id = get_planet_id(caller);
-        let (res) = FleetMovements_que_details.read(planet_id, mission_id);
+        let (res) = FleetMovements_espionage_que_details.read(planet_id, mission_id);
+        return res;
+    }
+
+    func get_attack_que_status{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+        caller: felt, mission_id: felt
+    ) -> AttackQue {
+        let planet_id = get_planet_id(caller);
+        let (res) = FleetMovements_attack_que_details.read(planet_id, mission_id);
         return res;
     }
 
@@ -71,13 +85,22 @@ namespace FleetMovements {
         let fuel_consumption = check_enough_fuel(caller, ships, distance * 2);
         let speed = calculate_speed(ships);
         let travel_time = calculate_travel_time(distance, speed);
-        let mission_id = set_fleet_que(planet_id, destination, travel_time);
+        let mission_id = set_espionage_que(planet_id, destination, travel_time);
         return (mission_id, fuel_consumption);
     }
 
     func send_attack_mission{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         caller: felt, ships: Fleet, destination: Uint256
     ) -> (mission_id: felt, fuel_consumption: felt) {
+        alloc_locals;
+        check_fleet_composition(caller, ships);
+        let planet_id = get_planet_id(caller);
+        let distance = calculate_distance(planet_id.low, destination.low);
+        let fuel_consumption = check_enough_fuel(caller, ships, distance * 2);
+        let speed = calculate_speed(ships);
+        let travel_time = calculate_travel_time(distance, speed);
+        let mission_id = set_attack_que(planet_id, destination, travel_time);
+        return (mission_id, fuel_consumption);
     }
 
     func read_espionage_report{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -85,8 +108,8 @@ namespace FleetMovements {
     ) -> EspionageReport {
         alloc_locals;
         let planet_id = get_planet_id(caller);
-        let (que_details) = FleetMovements_que_details.read(planet_id, mission_id);
-        check_timelock_expired(que_details);
+        let (que_details) = FleetMovements_espionage_que_details.read(planet_id, mission_id);
+        check_espionage_timelock_expired(que_details);
         let destination = Uint256(que_details.destination, 0);
         let espionage_difference = get_espionage_power_difference(planet_id, destination);
         reduce_active_missions(planet_id);
@@ -304,8 +327,19 @@ func calculate_speed{range_check_ptr}(fleet: Fleet) -> felt {
     }
 }
 
-func check_timelock_expired{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    que_details: FleetQue
+func check_espionage_timelock_expired{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(que_details: EspionageQue) {
+    let (time_now) = get_block_timestamp();
+    with_attr error_message("FLEET MOVEMENTS::Timelock not yet expired") {
+        let time_end = que_details.time_end;
+        assert_le_felt(time_end, time_now);
+    }
+    return ();
+}
+
+func check_attack_timelock_expired{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    que_details: AttackQue
 ) {
     let (time_now) = get_block_timestamp();
     with_attr error_message("FLEET MOVEMENTS::Timelock not yet expired") {
@@ -332,20 +366,38 @@ func reduce_active_missions{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, rang
     return ();
 }
 
-func set_fleet_que{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func set_espionage_que{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     starting_planet: Uint256, destination: Uint256, travel_time: felt
 ) -> felt {
     let (time_now) = get_block_timestamp();
     let time_end = time_now + travel_time;
     let (active_missions) = FleetMovements_active_missions.read(starting_planet);
-    let new_que_point = FleetQue(
+    let new_que_point = EspionageQue(
         planet_id=starting_planet.low,
         mission_id=active_missions + 1,
         time_end=time_end,
         destination=destination.low,
     );
     let sender_addr = get_owners_from_planet_id(starting_planet);
-    FleetMovements_que_details.write(starting_planet, active_missions + 1, new_que_point);
+    FleetMovements_espionage_que_details.write(starting_planet, active_missions + 1, new_que_point);
+    FleetMovements_active_missions.write(starting_planet, active_missions + 1);
+    return (active_missions + 1);
+}
+
+func set_attack_que{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    starting_planet: Uint256, destination: Uint256, travel_time: felt
+) -> felt {
+    let (time_now) = get_block_timestamp();
+    let time_end = time_now + travel_time;
+    let (active_missions) = FleetMovements_active_missions.read(starting_planet);
+    let new_que_point = AttackQue(
+        planet_id=starting_planet.low,
+        mission_id=active_missions + 1,
+        time_end=time_end,
+        destination=destination.low,
+    );
+    let sender_addr = get_owners_from_planet_id(starting_planet);
+    FleetMovements_attack_que_details.write(starting_planet, active_missions + 1, new_que_point);
     FleetMovements_active_missions.write(starting_planet, active_missions + 1);
     return (active_missions + 1);
 }
@@ -507,4 +559,112 @@ func spy_report_5{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_pt
         planet_resources, resources_buildings, fleet_on_the_planet, facilities, tech_levels
     );
     return report;
+}
+
+func get_total_fleet_shield_power{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    fleet: Fleet
+) -> felt {
+    // cargos
+    let cargo = fleet.cargo;
+    let cargo_shield = cargo * FleetPerformance.Cargo.shield_power;
+    // recyclers
+    let recycler = fleet.recycler;
+    let recycler_shield = recycler * FleetPerformance.Recycler.shield_power;
+    // espionage probes
+    let probes = fleet.recycler;
+    let probe_shield = probes * FleetPerformance.EspionageProbe.shield_power;
+    // solar satellites
+    let satellites = fleet.solar_satellite;
+    let satellites_shield = satellites * FleetPerformance.SolarSatellite.shield_power;
+    // light fighter
+    let fighters = fleet.light_fighter;
+    let fighter_shield = fighters * FleetPerformance.LightFighter.shield_power;
+    // Cruiser
+    let cruiser = fleet.cruiser;
+    let cruiser_shield = cruiser * FleetPerformance.Cruiser.shield_power;
+    // battleships
+    let battleships = fleet.battle_ship;
+    let bs_shield = battleships * FleetPerformance.BattleShip.shield_power;
+    return cargo_shield + recycler_shield + probe_shield + satellites_shield + fighter_shield + cruiser_shield + bs_shield;
+}
+
+func get_total_fleet_structural_integrity{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(fleet: Fleet) -> felt {
+    // cargos
+    let cargo = fleet.cargo;
+    let cargo_struct = cargo * FleetPerformance.Cargo.structural_intergrity;
+    // recyclers
+    let recycler = fleet.recycler;
+    let recycler_struct = recycler * FleetPerformance.Recycler.structural_intergrity;
+    // espionage probes
+    let probes = fleet.recycler;
+    let probe_struct = probes * FleetPerformance.EspionageProbe.structural_intergrity;
+    // solar satellites
+    let satellites = fleet.solar_satellite;
+    let satellites_struct = satellites * FleetPerformance.SolarSatellite.structural_intergrity;
+    // light fighter
+    let fighters = fleet.light_fighter;
+    let fighter_struct = fighters * FleetPerformance.LightFighter.structural_intergrity;
+    // Cruiser
+    let cruiser = fleet.cruiser;
+    let cruiser_struct = cruiser * FleetPerformance.Cruiser.structural_intergrity;
+    // battleships
+    let battleships = fleet.battle_ship;
+    let bs_struct = battleships * FleetPerformance.BattleShip.structural_intergrity;
+    return cargo_struct + recycler_struct + probe_struct + satellites_struct + fighter_struct + cruiser_struct + bs_struct;
+}
+
+func get_total_fleet_weapon_power{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    fleet: Fleet
+) -> felt {
+    // cargos
+    let cargo = fleet.cargo;
+    let cargo_weapon = cargo * FleetPerformance.Cargo.weapon_power;
+    // recyclers
+    let recycler = fleet.recycler;
+    let recycler_weapon = recycler * FleetPerformance.Recycler.weapon_power;
+    // espionage probes
+    let probes = fleet.recycler;
+    let probe_weapon = probes * FleetPerformance.EspionageProbe.weapon_power;
+    // solar satellites
+    let satellites = fleet.solar_satellite;
+    let satellites_weapon = satellites * FleetPerformance.SolarSatellite.weapon_power;
+    // light fighter
+    let fighters = fleet.light_fighter;
+    let fighter_weapon = fighters * FleetPerformance.LightFighter.weapon_power;
+    // Cruiser
+    let cruiser = fleet.cruiser;
+    let cruiser_weapon = cruiser * FleetPerformance.Cruiser.weapon_power;
+    // battleships
+    let battleships = fleet.battle_ship;
+    let bs_weapon = battleships * FleetPerformance.BattleShip.weapon_power;
+    return cargo_weapon + recycler_weapon + probe_weapon + satellites_weapon + fighter_weapon + cruiser_weapon + bs_weapon;
+}
+
+func calculate_battle_outcome{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    attacker_fleet: Fleet, defender_fleet: Fleet
+) -> (attacker_points: felt, defender_points: felt) {
+    let attacker_shield = get_total_fleet_shield_power(attacker_fleet);
+    let attacker_str_integrity = get_total_fleet_structural_integrity(attacker_fleet);
+    let attacker_weapons = get_total_fleet_weapon_power(attacker_fleet);
+
+    let defender_shield = get_total_fleet_shield_power(defender_fleet);
+    let defender_str_integrity = get_total_fleet_structural_integrity(defender_fleet);
+    let defender_weapons = get_total_fleet_weapon_power(defender_fleet);
+
+    let attacker_points = attacker_shield + attacker_str_integrity - defender_weapons;
+    let defender_points = defender_shield + defender_str_integrity - attacker_weapons;
+
+    return (attacker_points, defender_points);
+}
+
+func get_fleet_on_planet{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    planet_id: Uint256
+) -> Fleet {
+    let (game) = FleetMovements_no_game_address.read();
+    let (erc721, _, _, _) = INoGame.getTokensAddresses(game);
+    let (defender_addr) = IERC721.ownerOf(erc721, planet_id);
+    let (defender_fleet: Fleet) = INoGame.getFleetLevels(game, defender_addr);
+    return defender_fleet;
 }
