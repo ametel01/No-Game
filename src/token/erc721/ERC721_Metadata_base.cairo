@@ -5,7 +5,7 @@
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.bool import TRUE
 from starkware.cairo.common.cairo_builtins import HashBuiltin, SignatureBuiltin
-from starkware.cairo.common.uint256 import Uint256
+from starkware.cairo.common.uint256 import Uint256, uint256_check
 from openzeppelin.token.erc721.library import ERC721
 from openzeppelin.introspection.erc165.library import ERC165
 from utils.lib import uint256_to_ss, concat_arr
@@ -37,7 +37,9 @@ func ERC721_Metadata_tokenURI{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ra
     token_id: Uint256
 ) -> (token_uri_len: felt, token_uri: felt*) {
     alloc_locals;
-
+    with_attr error_message("token_id is not a valid Uint256") {
+        uint256_check(token_id);
+    }
     let exists = ERC721._exists(token_id);
     assert exists = TRUE;
 

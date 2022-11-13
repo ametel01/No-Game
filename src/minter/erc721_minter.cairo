@@ -1,7 +1,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.uint256 import Uint256, uint256_add
+from starkware.cairo.common.uint256 import Uint256, uint256_add, uint256_check
 from starkware.starknet.common.syscalls import get_caller_address, get_contract_address
 
 from token.erc721.interfaces.IERC721 import IERC721
@@ -58,6 +58,7 @@ func mintAll{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     n: felt, token_id: Uint256
 ) {
     alloc_locals;
+    uint256_check(token_id);
     let (admin) = minte_owner.read();
     let (caller) = get_caller_address();
     with_attr error_msg("Minter::only owner can mint") {

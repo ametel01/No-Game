@@ -5,7 +5,7 @@
 %lang starknet
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from starkware.cairo.common.uint256 import Uint256
+from starkware.cairo.common.uint256 import Uint256, uint256_check
 from starkware.cairo.common.bool import TRUE
 
 from openzeppelin.token.erc20.library import ERC20
@@ -16,6 +16,9 @@ from openzeppelin.access.ownable.library import Ownable
 func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     name: felt, symbol: felt, decimals: felt, initial_supply: Uint256, recipient: felt, owner: felt
 ) {
+    with_attr error_message("initial_supply is not a valid Uint256") {
+        uint256_check(initial_supply);
+    }
     ERC20.initializer(name, symbol, decimals);
     ERC20._mint(recipient, initial_supply);
     Ownable.initializer(owner);
