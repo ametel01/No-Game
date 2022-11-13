@@ -1,54 +1,27 @@
-["protostar.config"]
-protostar_version = "0.6.0"
-
-["protostar.project"]
-libs_path = "./lib/cairo_contracts/src"
-
-["protostar.shared_command_configs"]
-cairo_path = ["./src"]
+[project]
+protostar-version = "0.7.0"
+lib-path = "lib/cairo_contracts/src"
+cairo-path = ["src"]
 disable_hint_validation = true
 
-[profile.devnet.protostar.deploy]
-gateway-url="http://127.0.0.1:5050/"
+[contracts]
+facilities = ["src/facilities/Facilities.cairo"]
+main = ["src/main/NoGame.cairo"]
+manager = ["src/manager/ModulesManager.cairo"]
+minter = ["src/minter/erc721_minter.cairo"]
+research = ["src/research/ResearchLab.cairo"]
+resources = ["src/resources/Resources.cairo"]
+shipyard = ["src/shipyard/Shipyard.cairo"]
+defences = ["src/defences/Defences.cairo"]
+fleet_movements = ["src/fleet_movements/FleetMovements.cairo"]
+erc20 = ["src/token/erc20/ERC20_Mintable_Burnable.cairo"]
+erc721 = ["src/token/erc721/ERC721.cairo"]
 
-[profile.testnet.protostar.deploy]
-network="alpha-goerli"
+[profile.devnet.deploy]
+gateway-url = "http://127.0.0.1:5050/"
 
-[profile.mainnet.protostar.deploy]
-network="alpha-mainnet"
+[profile.testnet.deploy]
+network = "alpha-goerli"
 
-["protostar.contracts"]
-facilities = [
-    "src/facilities/Facilities.cairo"
-]
-main = [
-    "src/main/NoGame.cairo"
-]
-manager = [
-    "src/manager/ModulesManager.cairo"
-]
-minter = [
-   "src/minter/erc721_minter.cairo"
-]
-research = [
-    "src/research/ResearchLab.cairo"
-]
-resources = [
-    "src/resources/Resources.cairo"
-]
-shipyard = [
-    "src/shipyard/Shipyard.cairo"
-]
-defences = [
-    "src/defences/Defences.cairo"
-]
-fleet_movements = [
-    "src/fleet_movements/FleetMovements.cairo"
-]
-erc20 = [
-    "src/token/erc20/ERC20_Mintable_Burnable.cairo"
-]
-erc721 = [
-    "src/token/erc721/ERC721.cairo"
-]
-
+[profile.mainnet.deploy]
+network = "alpha-mainnet"
