@@ -140,7 +140,14 @@ struct PlanetResources {
     deuterium: felt,
 }
 
-struct FleetQue {
+struct AttackQue {
+    planet_id: felt,
+    mission_id: felt,
+    time_end: felt,
+    destination: felt,
+}
+
+struct EspionageQue {
     planet_id: felt,
     mission_id: felt,
     time_end: felt,
