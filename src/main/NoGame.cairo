@@ -10,7 +10,8 @@ from main.library import NoGame
 from resources.IResources import IResources
 from research.IResearchLab import IResearchLab
 from main.structs import (
-    FleetQue,
+    AttackQue,
+    EspionageQue,
     Cost,
     ResearchQue,
     TechLevels,
@@ -255,11 +256,20 @@ func getResearchQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_
 }
 
 @view
-func getFleetMovementsQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    caller: felt, mission_id: felt
-) -> (res: FleetQue) {
+func getEspionageMovementsQueStatus{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(caller: felt, mission_id: felt) -> (res: EspionageQue) {
     let (_, _, _, _, _, fleet) = getModulesAddresses();
-    let (que_details) = IFleetMovements.getQueStatus(fleet, caller, mission_id);
+    let (que_details) = IFleetMovements.getEspionageQueStatus(fleet, caller, mission_id);
+    return (que_details,);
+}
+
+@view
+func getAttackMovementsQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt, mission_id: felt
+) -> (res: AttackQue) {
+    let (_, _, _, _, _, fleet) = getModulesAddresses();
+    let (que_details) = IFleetMovements.getAttackQueStatus(fleet, caller, mission_id);
     return (que_details,);
 }
 
