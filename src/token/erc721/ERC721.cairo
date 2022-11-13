@@ -1,6 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts for Cairo v0.2.0 (token/erc721/ERC721_Mintable_Burnable.cairo)
-//
 // NOTICE: This is a custom version if OZ standard implementation adapted to handle long token's URIs.
 
 %lang starknet
