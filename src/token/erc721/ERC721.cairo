@@ -104,7 +104,7 @@ func owner{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() ->
 func ownerToPlanet{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt
 ) -> (token_id: Uint256) {
-    let (token_id) = ERC721_nogame.owner_to_planet(caller);
+    let token_id = ERC721_nogame.owner_to_planet(caller);
     return (token_id,);
 }
 

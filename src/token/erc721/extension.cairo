@@ -22,12 +22,12 @@ namespace ERC721_nogame {
 
     func owner_to_planet{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         caller: felt
-    ) -> (token_id: Uint256) {
+    ) -> Uint256 {
+        let (token_id) = ERC721_nogame_owner_to_id.read(caller);
         with_attr error_message("ERC721_nogame: token_id is not a valid Uint256") {
             uint256_check(token_id);
         }
-        let (token_id) = ERC721_nogame_owner_to_id.read(caller);
-        return (token_id,);
+        return token_id;
     }
 
     func update_ownership{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
