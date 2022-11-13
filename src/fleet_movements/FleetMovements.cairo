@@ -2,8 +2,8 @@
 
 from starkware.cairo.common.cairo_builtins import HashBuiltin
 from starkware.cairo.common.uint256 import Uint256
-from fleet_movements.library import FleetQue, FleetMovements, EspionageReport
-from main.structs import Fleet
+from fleet_movements.library import FleetMovements, EspionageReport
+from main.structs import Fleet, EspionageQue, AttackQue
 
 @constructor
 func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
@@ -14,10 +14,18 @@ func constructor{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }
 
 @view
-func getQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+func getEspionageQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     caller: felt, mission_id: felt
-) -> (res: FleetQue) {
-    let res = FleetMovements.get_que_status(caller, mission_id);
+) -> (res: EspionageQue) {
+    let res = FleetMovements.get_espionage_que_status(caller, mission_id);
+    return (res,);
+}
+
+@view
+func getAttackQueStatus{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    caller: felt, mission_id: felt
+) -> (res: AttackQue) {
+    let res = FleetMovements.get_attack_que_status(caller, mission_id);
     return (res,);
 }
 
