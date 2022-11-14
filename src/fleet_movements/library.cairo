@@ -649,28 +649,30 @@ func get_total_defences_shield_power{
 }(defences: Defence) -> felt {
     // rocket launcher
     let rocket = defences.rocket;
-    let rocket_shield = DefencesPerformance.Rocket.structural_intergrity * rocket;
+    let rocket_shield = DefencesPerformance.Rocket.shield_power * rocket;
     // light laser
     let l_laser = defences.light_laser;
-    let l_laser_shield = DefencesPerformance.LightLaser.structural_intergrity * l_laser;
+    let l_laser_shield = DefencesPerformance.LightLaser.shield_power * l_laser;
     // heavy laser
     let h_laser = defences.heavy_laser;
-    let h_laser_shield = DefencesPerformance.HeavyLaser.structural_intergrity * h_laser;
+    let h_laser_shield = DefencesPerformance.HeavyLaser.shield_power * h_laser;
     // ion cannon
     let ion = defences.ion_cannon;
-    let ion_shield = DefencesPerformance.IonCannon.structural_intergrity * ion;
+    let ion_shield = DefencesPerformance.IonCannon.shield_power * ion;
     // gauss cannon
     let gauss = defences.gauss;
-    let gauss_shield = DefencesPerformance.GaussCannon.structural_intergrity * gauss;
+    let gauss_shield = DefencesPerformance.GaussCannon.shield_power * gauss;
     // plasma turret
     let plasma = defences.plasma_turret;
-    let plasma_shield = DefencesPerformance.PlasmaTurret.structural_intergrity * plasma;
+    let plasma_shield = DefencesPerformance.PlasmaTurret.shield_power * plasma;
     // small dome
-    let small_dome = DefencesPerformance.SmallDome.structural_intergrity;
+    let s_dome = defences.small_dome;
+    let small_dome = DefencesPerformance.SmallDome.shield_power * s_dome;
     // large dome
-    let large_dome = DefencesPerformance.LargeDome.structural_intergrity;
+    let l_dome = defences.large_dome;
+    let large_dome = DefencesPerformance.LargeDome.shield_power * l_dome;
 
-    let res = rocket_shield + l_laser_shield + h_laser_shield + ion_shield * gauss_shield * plasma_shield * small_dome + large_dome;
+    let res = rocket_shield + l_laser_shield + h_laser_shield + ion_shield + gauss_shield + plasma_shield + small_dome + large_dome;
     return res;
 }
 
@@ -696,11 +698,13 @@ func get_total_defences_structural_power{
     let plasma = defences.plasma_turret;
     let plasma_struct = DefencesPerformance.PlasmaTurret.structural_intergrity * plasma;
     // small dome
-    let small_dome = DefencesPerformance.SmallDome.structural_intergrity;
+    let s_dome = defences.small_dome;
+    let small_dome = DefencesPerformance.SmallDome.structural_intergrity * s_dome;
     // large dome
-    let large_dome = DefencesPerformance.LargeDome.structural_intergrity;
+    let l_dome = defences.large_dome;
+    let large_dome = DefencesPerformance.LargeDome.structural_intergrity * l_dome;
 
-    let res = rocket_struct + l_laser_struct + h_laser_struct + ion_struct * gauss_struct * plasma_struct * small_dome + large_dome;
+    let res = rocket_struct + l_laser_struct + h_laser_struct + ion_struct + gauss_struct + plasma_struct + small_dome + large_dome;
     return res;
 }
 
@@ -726,27 +730,32 @@ func get_total_defences_weapons_power{
     let plasma = defences.plasma_turret;
     let plasma_weapon = DefencesPerformance.PlasmaTurret.weapon_power * plasma;
     // small dome
+    let s_dome = defences.small_dome;
     let small_dome = DefencesPerformance.SmallDome.weapon_power;
     // large dome
+    let l_dome = defences.large_dome;
     let large_dome = DefencesPerformance.LargeDome.weapon_power;
 
-    let res = rocket_weapon + l_laser_weapon + h_laser_weapons + ion_weapon * gauss_weapon * plasma_weapon * small_dome + large_dome;
+    let res = rocket_weapon + l_laser_weapon + h_laser_weapons + ion_weapon + gauss_weapon + plasma_weapon + small_dome * s_dome + large_dome * l_dome;
     return res;
 }
 
 func calculate_battle_outcome{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    attacker_fleet: Fleet, defender_fleet: Fleet
+    attacker_fleet: Fleet, defender_fleet: Fleet, defences: Defence
 ) -> (attacker_points: felt, defender_points: felt) {
     let attacker_shield = get_total_fleet_shield_power(attacker_fleet);
     let attacker_str_integrity = get_total_fleet_structural_integrity(attacker_fleet);
     let attacker_weapons = get_total_fleet_weapon_power(attacker_fleet);
 
-    let defender_shield = get_total_fleet_shield_power(defender_fleet) + get_total_defences_shield_power(defender_fleet);
-    let defender_str_integrity = get_total_fleet_structural_integrity(defender_fleet) + get_total_defences_structural_power(defender_fleet);
-    let defender_weapons = get_total_fleet_weapon_power(defender_fleet) + get_total_defences_weapons_power(defender_fleet);
+    let defender_shield_1 = get_total_fleet_shield_power(defender_fleet);
+    let defender_shield_2 = get_total_defences_shield_power(defences);
+    let defender_str_integrity_1 = get_total_fleet_structural_integrity(defender_fleet);
+    let defender_str_integrity_2 = get_total_defences_structural_power(defences);
+    let defender_weapons_1 = get_total_fleet_weapon_power(defender_fleet);
+    let defender_weapons_2 = get_total_defences_weapons_power(defences);
 
-    let attacker_points = attacker_shield + attacker_str_integrity - defender_weapons;
-    let defender_points = defender_shield + defender_str_integrity - attacker_weapons;
+    let attacker_points = attacker_shield + attacker_str_integrity - defender_weapons_1 - defender_weapons_2;
+    let defender_points = defender_shield_1 + defender_shield_2 + defender_str_integrity_1 + defender_str_integrity_2 - attacker_weapons;
 
     return (attacker_points, defender_points);
 }
