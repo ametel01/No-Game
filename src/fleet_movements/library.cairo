@@ -600,7 +600,7 @@ func get_total_fleet_structural_integrity{
     let recycler = fleet.recycler;
     let recycler_struct = recycler * FleetPerformance.Recycler.structural_intergrity;
     // espionage probes
-    let probes = fleet.recycler;
+    let probes = fleet.espionage_probe;
     let probe_struct = probes * FleetPerformance.EspionageProbe.structural_intergrity;
     // solar satellites
     let satellites = fleet.solar_satellite;
