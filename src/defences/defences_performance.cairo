@@ -25,7 +25,7 @@ namespace DefencesPerformance {
         const weapon_power = 150;
     }
 
-    namespace HeavyLaser {
+    namespace GaussCannon {
         const shield_power = 200;
         const structural_intergrity = 35000;
         const weapon_power = 1100;
@@ -43,7 +43,7 @@ namespace DefencesPerformance {
         const weapon_power = 1;
     }
 
-    namespace SmallDome {
+    namespace LargeDome {
         const shield_power = 10000;
         const structural_intergrity = 100000;
         const weapon_power = 1;
