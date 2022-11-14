@@ -14,6 +14,7 @@ from starkware.cairo.common.math_cmp import is_not_zero, is_nn
 from starkware.cairo.common.uint256 import Uint256
 from starkware.starknet.common.syscalls import get_block_timestamp
 from shipyard.ships_performance import FleetPerformance
+from defences.defences_performance import DefencesPerformance
 from main.INoGame import INoGame
 from main.structs import (
     PlanetResources,
@@ -24,6 +25,7 @@ from main.structs import (
     EspionageQue,
     AttackQue,
     EspionageReport,
+    Defence,
 )
 from token.erc20.interfaces.IERC20 import IERC20
 from token.erc721.interfaces.IERC721 import IERC721
@@ -642,6 +644,96 @@ func get_total_fleet_weapon_power{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*
     return cargo_weapon + recycler_weapon + probe_weapon + satellites_weapon + fighter_weapon + cruiser_weapon + bs_weapon;
 }
 
+func get_total_defences_shield_power{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(defences: Defence) -> felt {
+    // rocket launcher
+    let rocket = defences.rocket;
+    let rocket_shield = DefencesPerformance.Rocket.structural_intergrity * rocket;
+    // light laser
+    let l_laser = defences.light_laser;
+    let l_laser_shield = DefencesPerformance.LightLaser.structural_intergrity * l_laser;
+    // heavy laser
+    let h_laser = defences.heavy_laser;
+    let h_laser_shield = DefencesPerformance.HeavyLaser.structural_intergrity * h_laser;
+    // ion cannon
+    let ion = defences.ion_cannon;
+    let ion_shield = DefencesPerformance.IonCannon.structural_intergrity * ion;
+    // gauss cannon
+    let gauss = defences.gauss;
+    let gauss_shield = DefencesPerformance.GaussCannon.structural_intergrity * gauss;
+    // plasma turret
+    let plasma = defences.plasma_turret;
+    let plasma_shield = DefencesPerformance.PlasmaTurret.structural_intergrity * plasma;
+    // small dome
+    let small_dome = DefencesPerformance.SmallDome.structural_intergrity;
+    // large dome
+    let large_dome = DefencesPerformance.LargeDome.structural_intergrity;
+
+    let res = rocket_shield + l_laser_shield + h_laser_shield + ion_shield * gauss_shield * plasma_shield * small_dome + large_dome;
+    return res;
+}
+
+func get_total_defences_structural_power{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(defences: Defence) -> felt {
+    // rocket launcher
+    let rocket = defences.rocket;
+    let rocket_struct = DefencesPerformance.Rocket.structural_intergrity * rocket;
+    // light laser
+    let l_laser = defences.light_laser;
+    let l_laser_struct = DefencesPerformance.LightLaser.structural_intergrity * l_laser;
+    // heavy laser
+    let h_laser = defences.heavy_laser;
+    let h_laser_struct = DefencesPerformance.HeavyLaser.structural_intergrity * h_laser;
+    // ion cannon
+    let ion = defences.ion_cannon;
+    let ion_struct = DefencesPerformance.IonCannon.structural_intergrity * ion;
+    // gauss cannon
+    let gauss = defences.gauss;
+    let gauss_struct = DefencesPerformance.GaussCannon.structural_intergrity * gauss;
+    // plasma turret
+    let plasma = defences.plasma_turret;
+    let plasma_struct = DefencesPerformance.PlasmaTurret.structural_intergrity * plasma;
+    // small dome
+    let small_dome = DefencesPerformance.SmallDome.structural_intergrity;
+    // large dome
+    let large_dome = DefencesPerformance.LargeDome.structural_intergrity;
+
+    let res = rocket_struct + l_laser_struct + h_laser_struct + ion_struct * gauss_struct * plasma_struct * small_dome + large_dome;
+    return res;
+}
+
+func get_total_defences_weapons_power{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(defences: Defence) -> felt {
+    // rocket launcher
+    let rocket = defences.rocket;
+    let rocket_weapon = DefencesPerformance.Rocket.weapon_power * rocket;
+    // light laser
+    let l_laser = defences.light_laser;
+    let l_laser_weapon = DefencesPerformance.LightLaser.weapon_power * l_laser;
+    // heavy laser
+    let h_laser = defences.heavy_laser;
+    let h_laser_weapons = DefencesPerformance.HeavyLaser.weapon_power * h_laser;
+    // ion cannon
+    let ion = defences.ion_cannon;
+    let ion_weapon = DefencesPerformance.IonCannon.weapon_power * ion;
+    // gauss cannon
+    let gauss = defences.gauss;
+    let gauss_weapon = DefencesPerformance.GaussCannon.weapon_power * gauss;
+    // plasma turret
+    let plasma = defences.plasma_turret;
+    let plasma_weapon = DefencesPerformance.PlasmaTurret.weapon_power * plasma;
+    // small dome
+    let small_dome = DefencesPerformance.SmallDome.weapon_power;
+    // large dome
+    let large_dome = DefencesPerformance.LargeDome.weapon_power;
+
+    let res = rocket_weapon + l_laser_weapon + h_laser_weapons + ion_weapon * gauss_weapon * plasma_weapon * small_dome + large_dome;
+    return res;
+}
+
 func calculate_battle_outcome{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
     attacker_fleet: Fleet, defender_fleet: Fleet
 ) -> (attacker_points: felt, defender_points: felt) {
@@ -649,9 +741,9 @@ func calculate_battle_outcome{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, ra
     let attacker_str_integrity = get_total_fleet_structural_integrity(attacker_fleet);
     let attacker_weapons = get_total_fleet_weapon_power(attacker_fleet);
 
-    let defender_shield = get_total_fleet_shield_power(defender_fleet);
-    let defender_str_integrity = get_total_fleet_structural_integrity(defender_fleet);
-    let defender_weapons = get_total_fleet_weapon_power(defender_fleet);
+    let defender_shield = get_total_fleet_shield_power(defender_fleet) + get_total_defences_shield_power(defender_fleet);
+    let defender_str_integrity = get_total_fleet_structural_integrity(defender_fleet) + get_total_defences_structural_power(defender_fleet);
+    let defender_weapons = get_total_fleet_weapon_power(defender_fleet) + get_total_defences_weapons_power(defender_fleet);
 
     let attacker_points = attacker_shield + attacker_str_integrity - defender_weapons;
     let defender_points = defender_shield + defender_str_integrity - attacker_weapons;
