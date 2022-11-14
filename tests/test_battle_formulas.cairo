@@ -19,44 +19,44 @@ let DEFENDER_FLEET = Fleet(0, 0, 0, 10, 0, 0, 0, 0);
 @external
 func test_defence_shield{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     let DEFENCES = Defence(10, 0, 0, 0, 0, 0, 0, 0);
-    let expected1 = 200;
+    let expected = 200;
     let actual = get_total_defences_shield_power(DEFENCES);
-    assert expected1 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 0, 0, 0, 0, 0, 0);
-    let expected2 = 450;
+    let expected = 450;
     let actual = get_total_defences_shield_power(DEFENCES);
-    assert expected2 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 0, 0, 0, 0, 0);
-    let expected3 = 1450;
+    let expected = 1450;
     let actual = get_total_defences_shield_power(DEFENCES);
-    assert expected3 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 0, 0, 0, 0);
-    let expected4 = 6450;
+    let expected = 6450;
     let actual = get_total_defences_shield_power(DEFENCES);
-    assert expected4 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 10, 0, 0, 0);
-    let expected5 = 8450;
+    let expected = 8450;
     let actual = get_total_defences_shield_power(DEFENCES);
-    assert expected5 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 0, 0);
-    let expected6 = 11450;
+    let expected = 11450;
     let actual = get_total_defences_shield_power(DEFENCES);
-    assert expected6 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 1, 0);
-    let expected6 = 13450;
+    let expected = 13450;
     let actual = get_total_defences_shield_power(DEFENCES);
-    assert expected6 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 1, 1);
-    let expected7 = 23450;
+    let expected = 23450;
     let actual = get_total_defences_shield_power(DEFENCES);
-    assert expected7 = actual;
+    assert expected = actual;
 
     return ();
 }
@@ -64,44 +64,89 @@ func test_defence_shield{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_c
 @external
 func test_defence_struct{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
     let DEFENCES = Defence(10, 0, 0, 0, 0, 0, 0, 0);
-    let expected1 = 20000;
+    let expected = 20000;
     let actual = get_total_defences_structural_power(DEFENCES);
-    assert expected1 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 0, 0, 0, 0, 0, 0);
-    let expected2 = 40000;
+    let expected = 40000;
     let actual = get_total_defences_structural_power(DEFENCES);
-    assert expected2 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 0, 0, 0, 0, 0);
-    let expected3 = 120000;
+    let expected = 120000;
     let actual = get_total_defences_structural_power(DEFENCES);
-    assert expected3 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 0, 0, 0, 0);
-    let expected4 = 200000;
+    let expected = 200000;
     let actual = get_total_defences_structural_power(DEFENCES);
-    assert expected4 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 10, 0, 0, 0);
-    let expected5 = 550000;
+    let expected = 550000;
     let actual = get_total_defences_structural_power(DEFENCES);
-    assert expected5 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 0, 0);
-    let expected6 = 1550000;
+    let expected = 1550000;
     let actual = get_total_defences_structural_power(DEFENCES);
-    assert expected6 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 1, 0);
-    let expected6 = 1570000;
+    let expected = 1570000;
     let actual = get_total_defences_structural_power(DEFENCES);
-    assert expected6 = actual;
+    assert expected = actual;
 
     let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 1, 1);
-    let expected7 = 1670000;
+    let expected = 1670000;
     let actual = get_total_defences_structural_power(DEFENCES);
-    assert expected7 = actual;
+    assert expected = actual;
+
+    return ();
+}
+
+@external
+func test_defence_weapons{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}() {
+    let DEFENCES = Defence(10, 0, 0, 0, 0, 0, 0, 0);
+    let expected = 800;
+    let actual = get_total_defences_weapons_power(DEFENCES);
+    assert expected = actual;
+
+    let DEFENCES = Defence(10, 10, 0, 0, 0, 0, 0, 0);
+    let expected = 1800;
+    let actual = get_total_defences_weapons_power(DEFENCES);
+    assert expected = actual;
+
+    let DEFENCES = Defence(10, 10, 10, 0, 0, 0, 0, 0);
+    let expected = 4300;
+    let actual = get_total_defences_weapons_power(DEFENCES);
+    assert expected = actual;
+
+    let DEFENCES = Defence(10, 10, 10, 10, 0, 0, 0, 0);
+    let expected = 5800;
+    let actual = get_total_defences_weapons_power(DEFENCES);
+    assert expected = actual;
+
+    let DEFENCES = Defence(10, 10, 10, 10, 10, 0, 0, 0);
+    let expected = 16800;
+    let actual = get_total_defences_weapons_power(DEFENCES);
+    assert expected = actual;
+
+    let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 0, 0);
+    let expected = 46800;
+    let actual = get_total_defences_weapons_power(DEFENCES);
+    assert expected = actual;
+
+    let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 1, 0);
+    let expected = 46801;
+    let actual = get_total_defences_weapons_power(DEFENCES);
+    assert expected = actual;
+
+    let DEFENCES = Defence(10, 10, 10, 10, 10, 10, 1, 1);
+    let expected = 46802;
+    let actual = get_total_defences_weapons_power(DEFENCES);
+    assert expected = actual;
 
     return ();
 }
